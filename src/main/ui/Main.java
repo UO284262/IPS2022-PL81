@@ -8,6 +8,10 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+
+import abel.controlador.ActividadFormativaControler;
+import abel.vista.AñadirActividadFormativa;
+
 import java.awt.Font;
 
 public class Main {
@@ -20,6 +24,7 @@ public class Main {
 	private JLabel lblSecretaria;
 	private JLabel lblColegiado;
 	private JPanel panelColBotones;
+	private JPanel panel;
 
 	/**
 	 * Launch the application.

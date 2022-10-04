@@ -17,6 +17,10 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class AñadirActividadFormativa extends JPanel {
 	
@@ -125,9 +129,9 @@ public class AñadirActividadFormativa extends JPanel {
 	private JDayChooser getDayChooser() {
 		if (dayChooser == null) {
 			dayChooser = new JDayChooser();
-			dayChooser.getDayPanel().addFocusListener(new FocusAdapter() {
+			dayChooser.getDayPanel().addMouseListener(new MouseAdapter() {
 				@Override
-				public void focusGained(FocusEvent e) {
+				public void mouseEntered(MouseEvent e) {
 					getLbAvisoDia1().setVisible(false);
 				}
 			});
@@ -138,7 +142,6 @@ public class AñadirActividadFormativa extends JPanel {
 	}
 	private JMonthChooser getMonthChooser() {
 		if (monthChooser == null) {
-			monthChooser.setLayout(new BorderLayout(0, 0));
 			monthChooser = new JMonthChooser();
 			monthChooser.getComboBox().addFocusListener(new FocusAdapter() {
 				@Override

@@ -29,7 +29,11 @@ public class ActividadFormativaControler {
 		int precio = Integer.parseInt(precioStr);
 		if(titulo.trim().length() > 0 && precio >= 0)
 		{
-			if(DataBaseManagement.addActividadToDataBase(new ActividadFormativaDTO(titulo,precio,days)))
+			ActividadFormativaDTO af = new ActividadFormativaDTO();
+			af.title = titulo;
+			af.price = precio;
+			af.days = days;
+			if(DataBaseManagement.addActividadToDataBase(af))
 			{
 				return true;
 			}
