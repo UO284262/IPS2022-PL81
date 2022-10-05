@@ -1,0 +1,141 @@
+package kike.gui;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import kike.modelo.Curso;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JComboBox;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.DefaultComboBoxModel;
+
+public class SelectorCurso extends JDialog {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private final JPanel contentPanel = new JPanel();
+	private JPanel panel;
+	private JLabel lblSelectCurso;
+	private JComboBox<Curso> comboBox;
+	private JPanel panelFinalizar;
+	private JButton btnCancelar;
+	private JButton btnSiguiente;
+	private DefaultComboBoxModel<Curso> modeloCursos;
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		try {
+			DefaultComboBoxModel<Curso> modeloCursos = new DefaultComboBoxModel<>();
+			modeloCursos.addElement(new Curso("curso1", 1000));
+			modeloCursos.addElement(new Curso("curso2", 2000));
+			SelectorCurso dialog = new SelectorCurso(modeloCursos);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the dialog.
+	 */
+	public SelectorCurso(DefaultComboBoxModel<Curso> modeloCursos) {
+		this.modeloCursos = modeloCursos;
+		setTitle("Selector de cursos");
+		setResizable(false);
+		setBounds(100, 100, 500, 450);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(new BorderLayout(0, 0));
+		{
+			JPanel panelSelectorCurso = new JPanel();
+			contentPanel.add(panelSelectorCurso);
+			panelSelectorCurso.setLayout(new BorderLayout(0, 0));
+			panelSelectorCurso.add(getPanel(), BorderLayout.CENTER);
+			panelSelectorCurso.add(getPanelFinalizar(), BorderLayout.SOUTH);
+		}
+	}
+
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setLayout(null);
+			panel.add(getLblSelectCurso());
+			panel.add(getComboBox());
+		}
+		return panel;
+	}
+	private JLabel getLblSelectCurso() {
+		if (lblSelectCurso == null) {
+			lblSelectCurso = new JLabel("Seleccione un curso:");
+			lblSelectCurso.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblSelectCurso.setBounds(37, 95, 151, 39);
+		}
+		return lblSelectCurso;
+	}
+	private JComboBox<Curso> getComboBox() {
+		if (comboBox == null) {
+			comboBox = new JComboBox<Curso>();
+			comboBox.setModel(modeloCursos);
+			comboBox.setBounds(37, 145, 399, 39);
+		}
+		return comboBox;
+	}
+	private JPanel getPanelFinalizar() {
+		if (panelFinalizar == null) {
+			panelFinalizar = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) panelFinalizar.getLayout();
+			flowLayout.setAlignment(FlowLayout.TRAILING);
+			panelFinalizar.add(getBtnCancelar());
+			panelFinalizar.add(getBtnSiguiente());
+		}
+		return panelFinalizar;
+	}
+	private JButton getBtnCancelar() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton("Cancelar");
+			btnCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
+			btnCancelar.setForeground(Color.WHITE);
+			btnCancelar.setBackground(Color.RED);
+		}
+		return btnCancelar;
+	}
+	private JButton getBtnSiguiente() {
+		if (btnSiguiente == null) {
+			btnSiguiente = new JButton("Siguiente");
+			btnSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					AperturaCursos ac = new AperturaCursos(modeloCursos.getElementAt(getComboBox().getSelectedIndex()));
+					ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					ac.setModal(true);
+					ac.setVisible(true);
+				}
+			});
+			btnSiguiente.setForeground(Color.WHITE);
+			btnSiguiente.setBackground(Color.GREEN);
+		}
+		return btnSiguiente;
+	}
+	
+	
+}

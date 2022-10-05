@@ -2,6 +2,9 @@ package kike.gui;
 
 import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
+
+import kike.modelo.Curso;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
@@ -12,8 +15,16 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JSpinner;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 
-public class AperturaCursos extends JPanel {
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.awt.event.ActionEvent;
+import javax.swing.SpinnerNumberModel;
+
+public class AperturaCursos extends JDialog {
 	/**
 	 * 
 	 */
@@ -31,16 +42,26 @@ public class AperturaCursos extends JPanel {
 	private JLabel lblChoosePlazas;
 	private JSpinner spinner;
 	private JPanel panelFinalizar;
+	private JButton btnFinalizar;
+	private JButton btnCancelar;
+	
+	private Curso curso;
 
 	/**
 	 * Create the panel.
 	 */
-	public AperturaCursos() {
-		setBorder(new EmptyBorder(20, 20, 20, 20));
-		setLayout(new BorderLayout(0, 0));
-		add(getPanelPrincipal(), BorderLayout.CENTER);
-		add(getPanelTitulo(), BorderLayout.NORTH);
-		add(getPanelFinalizar(), BorderLayout.SOUTH);
+	public AperturaCursos(Curso curso) {
+		this.curso = curso;
+		
+		setResizable(false);
+		setUndecorated(true);
+				
+		setBounds(100, 100, 500, 450);
+		
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().add(getPanelPrincipal(), BorderLayout.CENTER);
+		getContentPane().add(getPanelTitulo(), BorderLayout.NORTH);
+		getContentPane().add(getPanelFinalizar(), BorderLayout.SOUTH);
 
 	}
 	private JPanel getPanelPrincipal() {
@@ -113,7 +134,8 @@ public class AperturaCursos extends JPanel {
 	}
 	private JLabel getLblNombreCurso() {
 		if (lblNombreCurso == null) {
-			lblNombreCurso = new JLabel("a");
+			lblNombreCurso = new JLabel();
+			lblNombreCurso.setText(curso.getName());
 			lblNombreCurso.setHorizontalTextPosition(SwingConstants.CENTER);
 			lblNombreCurso.setHorizontalAlignment(SwingConstants.CENTER);
 		}
@@ -132,6 +154,7 @@ public class AperturaCursos extends JPanel {
 	private JSpinner getSpinner() {
 		if (spinner == null) {
 			spinner = new JSpinner();
+			spinner.setModel(new SpinnerNumberModel(1, 1, null, 1));
 			spinner.setBounds(201, 11, 102, 27);
 		}
 		return spinner;
@@ -139,7 +162,55 @@ public class AperturaCursos extends JPanel {
 	private JPanel getPanelFinalizar() {
 		if (panelFinalizar == null) {
 			panelFinalizar = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) panelFinalizar.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			panelFinalizar.add(getBtnCancelar());
+			panelFinalizar.add(getBtnFinalizar());
 		}
 		return panelFinalizar;
 	}
+	private JButton getBtnFinalizar() {
+		if (btnFinalizar == null) {
+			btnFinalizar = new JButton("Finalizar");
+			btnFinalizar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(fechasValidads()) {
+						abrirCurso();
+						dispose();
+					}
+				}
+			});
+			btnFinalizar.setForeground(Color.WHITE);
+			btnFinalizar.setBackground(Color.GREEN);
+		}
+		return btnFinalizar;
+	}
+	private JButton getBtnCancelar() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton("Cancelar");
+			btnCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
+			btnCancelar.setForeground(Color.WHITE);
+			btnCancelar.setBackground(Color.RED);
+		}
+		return btnCancelar;
+	}
+	
+	private boolean fechasValidads() {
+		Date inicio = getFechaInicio_1().getDate();
+		Date fin = getFechaFin_1().getDate();
+		if(inicio == null || fin == null)
+			return false;
+		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date()) >= 0)
+			return true;
+		return false;
+	}
+
+	private void abrirCurso() {
+		curso.abrirCurso(getFechaInicio_1().getDate(), getFechaFin_1().getDate(), (int) getSpinner().getValue());
+	}
+	
 }

@@ -3,13 +3,18 @@ package kike.modelo;
 import java.util.Date;
 
 public class Curso {
+	private String name;
+	private double price;
 	private boolean abierto;
 	private Date fechaInicioInscipcion;
 	private Date fechaFinInscipcion;
 	private int plazasDisponibles;
 	
 	
-	public Curso() {
+	
+	public Curso(String name, double price) {
+		this.name = name;
+		this.price = price;
 		abierto = false;
 	}
 	
@@ -45,5 +50,14 @@ public class Curso {
 		if(plazasDisponibles>0)
 			return true;
 		return false;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public String toString() {
+		return name + " - Precio: " + price;
 	}
 }

@@ -11,8 +11,14 @@ import javax.swing.SwingConstants;
 
 import abel.controlador.ActividadFormativaControler;
 import abel.vista.AñadirActividadFormativa;
+import kike.gui.SelectorCurso;
 
 import java.awt.Font;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Main {
 
@@ -25,6 +31,7 @@ public class Main {
 	private JLabel lblColegiado;
 	private JPanel panelColBotones;
 	private JPanel panel;
+	private JButton btnAbrirCurso;
 
 	/**
 	 * Launch the application.
@@ -89,6 +96,7 @@ public class Main {
 	private JPanel getPanelSecBotones() {
 		if (panelSecBotones == null) {
 			panelSecBotones = new JPanel();
+			panelSecBotones.add(getBtnAbrirCurso());
 		}
 		return panelSecBotones;
 	}
@@ -113,5 +121,18 @@ public class Main {
 			panelColBotones = new JPanel();
 		}
 		return panelColBotones;
+	}
+	private JButton getBtnAbrirCurso() {
+		if (btnAbrirCurso == null) {
+			btnAbrirCurso = new JButton("AbrirCurso");
+			btnAbrirCurso.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					SelectorCurso dialog = new SelectorCurso(null);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btnAbrirCurso;
 	}
 }
