@@ -1,7 +1,6 @@
 package abel.controlador;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class ActividadFormativaControler {
 	public boolean añadirDia(int dia, int mes)
 	{
 		@SuppressWarnings("deprecation")
-		Date d = new Date(Calendar.YEAR,mes,dia);
+		Date d = new Date(new Date(System.currentTimeMillis()).getYear(),mes,dia);
 		if(!days.contains(d))
 		{
 			days.add(d);

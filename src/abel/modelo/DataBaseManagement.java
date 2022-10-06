@@ -4,7 +4,7 @@ public class DataBaseManagement
 {
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
-		//FALTA POR IMPLEMENTAR
+		System.out.println(String.format("", null));
 		return true;
 	}
 }

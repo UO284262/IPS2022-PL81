@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDayChooser;
@@ -17,13 +18,16 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
+import java.util.Date;
+import javax.swing.JList;
 
 public class AñadirActividadFormativa extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private ActividadFormativaControler controler;
 	
 	private JLabel lblNewLabel;
@@ -39,6 +43,9 @@ public class AñadirActividadFormativa extends JPanel {
 	private JLabel lbAvisoDia1;
 	private JLabel lbMensajeConfirmacion;
 	private JLabel lbMensajeDenegar;
+	private JList<String> ltDays;
+	private JLabel lbDiasAñadidos;
+	private DefaultListModel<String> modeloDias = new DefaultListModel<String>();
 
 	/**
 	 * Create the panel.
@@ -57,6 +64,8 @@ public class AñadirActividadFormativa extends JPanel {
 		add(getLbAvisoDia1());
 		add(getLbMensajeConfirmacion());
 		add(getLbMensajeDenegar());
+		add(getLtDays());
+		add(getLbDiasAñadidos());
 
 	}
 	private JLabel getLblNewLabel() {
@@ -104,8 +113,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JTextField getTfNombre() {
 		if (tfNombre == null) {
 			tfNombre = new JTextField();
-			tfNombre.setText("Nombre de la actividad formativa");
-			tfNombre.setBounds(85, 61, 163, 19);
+			tfNombre.setBounds(66, 61, 182, 19);
 			tfNombre.setColumns(10);
 		}
 		return tfNombre;
@@ -120,8 +128,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JTextField getTfPrecio() {
 		if (tfPrecio == null) {
 			tfPrecio = new JTextField();
-			tfPrecio.setText("Precio en n\u00FAmeros");
-			tfPrecio.setBounds(85, 103, 99, 19);
+			tfPrecio.setBounds(66, 103, 118, 19);
 			tfPrecio.setColumns(10);
 		}
 		return tfPrecio;
@@ -129,12 +136,6 @@ public class AñadirActividadFormativa extends JPanel {
 	private JDayChooser getDayChooser() {
 		if (dayChooser == null) {
 			dayChooser = new JDayChooser();
-			dayChooser.getDayPanel().addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					getLbAvisoDia1().setVisible(false);
-				}
-			});
 			dayChooser.setBounds(258, 61, 182, 133);
 			dayChooser.add(getMonthChooser(), BorderLayout.NORTH);
 		}
@@ -168,11 +169,17 @@ public class AñadirActividadFormativa extends JPanel {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void añadirDia()
 	{
 		if(!controler.añadirDia(this.getDayChooser().getDay(), this.getMonthChooser().getMonth()))
 		{
 			getLbAvisoDia1().setVisible(true);
+		}
+		else
+		{
+			getLbAvisoDia1().setVisible(false);
+			modeloDias.addElement(new Date(new Date(System.currentTimeMillis()).getYear(),this.getMonthChooser().getMonth(),this.getDayChooser().getDay()).toLocaleString());
 		}
 	}
 	
@@ -213,5 +220,20 @@ public class AñadirActividadFormativa extends JPanel {
 			lbMensajeDenegar.setBounds(10, 250, 145, 13);
 		}
 		return lbMensajeDenegar;
+	}
+	private JList<String> getLtDays() {
+		if (ltDays == null) {
+			ltDays = new JList<String>();
+			ltDays.setBounds(10, 164, 236, 76);
+			ltDays.setModel(modeloDias);
+		}
+		return ltDays;
+	}
+	private JLabel getLbDiasAñadidos() {
+		if (lbDiasAñadidos == null) {
+			lbDiasAñadidos = new JLabel("D\u00EDas a\u00F1adidos:");
+			lbDiasAñadidos.setBounds(10, 141, 85, 13);
+		}
+		return lbDiasAñadidos;
 	}
 }
