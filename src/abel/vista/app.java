@@ -1,9 +1,9 @@
 package abel.vista;
 
 import java.awt.EventQueue;
+import java.sql.SQLException;
 
 import javax.swing.JFrame;
-import java.awt.CardLayout;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
@@ -16,8 +16,9 @@ public class app {
 
 	/**
 	 * Launch the application.
+	 * @throws SQLException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

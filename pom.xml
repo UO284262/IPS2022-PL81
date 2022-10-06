@@ -3,6 +3,20 @@
   <groupId>ips</groupId>
   <artifactId>ips</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies><!-- https://mvnrepository.com/artifact/com.toedter/jcalendar -->
+	<dependency>
+	    <groupId>com.toedter</groupId>
+	    <artifactId>jcalendar</artifactId>
+	    <version>1.4</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.30</version>
+	</dependency>
+	
+  </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>

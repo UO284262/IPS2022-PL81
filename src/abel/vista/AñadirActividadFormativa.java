@@ -4,11 +4,13 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
+
+import com.toedter.calendar.JDayChooser;
+import com.toedter.calendar.JMonthChooser;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import com.toedter.calendar.JDayChooser;
-import com.toedter.calendar.JMonthChooser;
 
 import abel.controlador.ActividadFormativaControler;
 
@@ -18,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JList;
 
@@ -179,7 +182,7 @@ public class AñadirActividadFormativa extends JPanel {
 		else
 		{
 			getLbAvisoDia1().setVisible(false);
-			modeloDias.addElement(new Date(new Date(System.currentTimeMillis()).getYear(),this.getMonthChooser().getMonth(),this.getDayChooser().getDay()).toLocaleString());
+			modeloDias.addElement((new Date(LocalDate.now().getYear(),this.getMonthChooser().getMonth(),this.getDayChooser().getDay())).toLocaleString());
 		}
 	}
 	
