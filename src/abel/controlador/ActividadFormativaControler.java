@@ -7,6 +7,7 @@ import java.util.List;
 
 import abel.modelo.ActividadFormativaDTO;
 import abel.modelo.DataBaseManagement;
+import exception.TypeConvertException;
 
 public class ActividadFormativaControler {
 	
@@ -24,15 +25,23 @@ public class ActividadFormativaControler {
 		return false;
 	}
 	
-	public boolean validarActividad(String titulo, String precioStr)
+	public boolean validarActividad(String titulo, String precioStr) throws TypeConvertException
 	{
-		int precio = Integer.parseInt(precioStr);
-		if(titulo.trim().length() > 0 && precio >= 0)
+		double precio;
+		try {
+			precio = Double.parseDouble(precioStr);
+		}
+		catch(Exception e)
+		{
+			throw new TypeConvertException("Formato requerido 0.00");
+		}
+		if(titulo.trim().length() > 0 && precio >= 0 && days.size() > 0)
 		{
 			ActividadFormativaDTO af = new ActividadFormativaDTO();
 			af.title = titulo;
 			af.price = precio;
 			af.days = days;
+			days = new ArrayList<Date>();
 			if(DataBaseManagement.addActividadToDataBase(af))
 			{
 				return true;

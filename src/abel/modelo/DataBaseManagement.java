@@ -28,7 +28,6 @@ public class DataBaseManagement
 				}
 				conn.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return false;
 		}
 		return true;

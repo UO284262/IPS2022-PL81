@@ -11,8 +11,10 @@ import com.toedter.calendar.JMonthChooser;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import abel.controlador.ActividadFormativaControler;
+import exception.TypeConvertException;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -23,6 +25,9 @@ import java.awt.event.FocusEvent;
 import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JList;
+import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import javax.swing.DropMode;
 
 public class AñadirActividadFormativa extends JPanel {
 	
@@ -33,7 +38,7 @@ public class AñadirActividadFormativa extends JPanel {
 
 	private ActividadFormativaControler controler;
 	
-	private JLabel lblNewLabel;
+	private JLabel lbTitulo;
 	private JButton btCancelar;
 	private JButton btAñadir;
 	private JLabel lbNombre;
@@ -49,6 +54,9 @@ public class AñadirActividadFormativa extends JPanel {
 	private JList<String> ltDays;
 	private JLabel lbDiasAñadidos;
 	private DefaultListModel<String> modeloDias = new DefaultListModel<String>();
+	private JLabel lbException;
+	private JLabel lbEuros;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Create the panel.
@@ -56,7 +64,7 @@ public class AñadirActividadFormativa extends JPanel {
 	public AñadirActividadFormativa(ActividadFormativaControler controler) {
 		this.controler = controler;
 		setLayout(null);
-		add(getLblNewLabel());
+		add(getLbTitulo());
 		add(getBtCancelar());
 		add(getBtAñadir());
 		add(getLbNombre());
@@ -67,29 +75,56 @@ public class AñadirActividadFormativa extends JPanel {
 		add(getLbAvisoDia1());
 		add(getLbMensajeConfirmacion());
 		add(getLbMensajeDenegar());
-		add(getLtDays());
 		add(getLbDiasAñadidos());
+		add(getLbException());
+		add(getLbEuros());
+		add(getScrollPane());
 
 	}
-	private JLabel getLblNewLabel() {
-		if (lblNewLabel == null) {
-			lblNewLabel = new JLabel("A\u00F1adir actividades formativas");
-			lblNewLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-			lblNewLabel.setBackground(Color.WHITE);
-			lblNewLabel.setBounds(10, 10, 430, 36);
+	private JLabel getLbTitulo() {
+		if (lbTitulo == null) {
+			lbTitulo = new JLabel("A\u00F1adir actividades formativas");
+			lbTitulo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+			lbTitulo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+			lbTitulo.setBackground(Color.WHITE);
+			lbTitulo.setBounds(10, 10, 436, 36);
 		}
-		return lblNewLabel;
+		return lbTitulo;
 	}
 	private JButton getBtCancelar() {
 		if (btCancelar == null) {
 			btCancelar = new JButton("Cancelar");
-			btCancelar.setBounds(355, 269, 85, 21);
+			btCancelar.setFocusPainted(false);
+			btCancelar.setBackground(Color.RED);
+			btCancelar.setForeground(Color.BLACK);
+			btCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					resetearCampos();
+				}
+			});
+			btCancelar.setBounds(361, 269, 85, 21);
 		}
 		return btCancelar;
 	}
+	
+	private void resetearCampos()
+	{
+		this.getTfNombre().setText("");
+		this.getTfPrecio().setText("");
+		this.getLbAvisoDia1().setVisible(false);
+		modeloDias = new DefaultListModel<String>();
+		this.getLtDays().setModel(modeloDias);
+		this.getLbException().setVisible(false);
+		this.getLbException().setText("");
+		this.getLbMensajeDenegar().setVisible(false);
+	}
+	
 	private JButton getBtAñadir() {
 		if (btAñadir == null) {
 			btAñadir = new JButton("A\u00F1adir");
+			btAñadir.setFocusPainted(false);
+			btAñadir.setBackground(Color.GREEN);
 			btAñadir.addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusLost(FocusEvent e) {
@@ -99,10 +134,18 @@ public class AñadirActividadFormativa extends JPanel {
 			});
 			btAñadir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					validarActividad();
+					if(validarActividad())
+					{
+						getLbMensajeConfirmacion().setVisible(true);
+						resetearCampos();
+					}
+					else
+					{
+						getLbMensajeDenegar().setVisible(true);
+					}
 				}
 			});
-			btAñadir.setBounds(260, 269, 85, 21);
+			btAñadir.setBounds(258, 269, 85, 21);
 		}
 		return btAñadir;
 	}
@@ -116,7 +159,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JTextField getTfNombre() {
 		if (tfNombre == null) {
 			tfNombre = new JTextField();
-			tfNombre.setBounds(66, 61, 182, 19);
+			tfNombre.setBounds(66, 61, 186, 19);
 			tfNombre.setColumns(10);
 		}
 		return tfNombre;
@@ -124,14 +167,21 @@ public class AñadirActividadFormativa extends JPanel {
 	private JLabel getLbPrecio() {
 		if (lbPrecio == null) {
 			lbPrecio = new JLabel("Precio:");
-			lbPrecio.setBounds(10, 106, 45, 13);
+			lbPrecio.setBounds(10, 97, 45, 13);
 		}
 		return lbPrecio;
 	}
 	private JTextField getTfPrecio() {
 		if (tfPrecio == null) {
 			tfPrecio = new JTextField();
-			tfPrecio.setBounds(66, 103, 118, 19);
+			tfPrecio.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					getLbException().setVisible(false);
+					getLbException().setText("");
+				}
+			});
+			tfPrecio.setBounds(66, 94, 60, 19);
 			tfPrecio.setColumns(10);
 		}
 		return tfPrecio;
@@ -139,7 +189,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JDayChooser getDayChooser() {
 		if (dayChooser == null) {
 			dayChooser = new JDayChooser();
-			dayChooser.setBounds(258, 61, 182, 133);
+			dayChooser.setBounds(258, 61, 188, 133);
 			dayChooser.add(getMonthChooser(), BorderLayout.NORTH);
 		}
 		return dayChooser;
@@ -158,21 +208,19 @@ public class AñadirActividadFormativa extends JPanel {
 		return monthChooser;
 	}
 	
-	private void validarActividad()
+	private boolean validarActividad()
 	{
-		if(controler.validarActividad(this.getTfNombre().getText(), this.getTfPrecio().getText()))
-		{
-			this.getDayChooser().resetKeyboardActions();
-			this.getMonthChooser().resetKeyboardActions();
-			this.getLbMensajeConfirmacion().setVisible(true);
+		try {
+			return controler.validarActividad(this.getTfNombre().getText(), this.getTfPrecio().getText());
 		}
-		else
+		catch(TypeConvertException tfe)
 		{
-			this.getLbMensajeDenegar().setVisible(true);
+			this.getLbException().setText(tfe.getMessage());;
+			this.getLbException().setVisible(true);
 		}
+		return false;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void añadirDia()
 	{
 		if(!controler.añadirDia(this.getDayChooser().getDay(), this.getMonthChooser().getMonth()))
@@ -182,7 +230,7 @@ public class AñadirActividadFormativa extends JPanel {
 		else
 		{
 			getLbAvisoDia1().setVisible(false);
-			modeloDias.addElement((new Date(LocalDate.now().getYear(),this.getMonthChooser().getMonth(),this.getDayChooser().getDay())).toLocaleString());
+			modeloDias.addElement(String.format("%d-%d-%d  ",this.getDayChooser().getDay(),this.getMonthChooser().getMonth(),LocalDate.now().getYear()));
 		}
 	}
 	
@@ -217,18 +265,20 @@ public class AñadirActividadFormativa extends JPanel {
 	}
 	private JLabel getLbMensajeDenegar() {
 		if (lbMensajeDenegar == null) {
-			lbMensajeDenegar = new JLabel("Actividad no a\u00F1adida");
+			lbMensajeDenegar = new JLabel("Actividad no a\u00F1adida. Compruebe los datos.");
 			lbMensajeDenegar.setVisible(false);
 			lbMensajeDenegar.setForeground(Color.RED);
-			lbMensajeDenegar.setBounds(10, 250, 145, 13);
+			lbMensajeDenegar.setBounds(10, 250, 310, 13);
 		}
 		return lbMensajeDenegar;
 	}
 	private JList<String> getLtDays() {
 		if (ltDays == null) {
 			ltDays = new JList<String>();
-			ltDays.setBounds(10, 164, 236, 76);
+			ltDays.setFocusable(false);
+			ltDays.setVisibleRowCount(4);
 			ltDays.setModel(modeloDias);
+			ltDays.setLayoutOrientation(JList.VERTICAL_WRAP);
 		}
 		return ltDays;
 	}
@@ -238,5 +288,29 @@ public class AñadirActividadFormativa extends JPanel {
 			lbDiasAñadidos.setBounds(10, 141, 85, 13);
 		}
 		return lbDiasAñadidos;
+	}
+	private JLabel getLbException() {
+		if (lbException == null) {
+			lbException = new JLabel("");
+			lbException.setVisible(false);
+			lbException.setForeground(Color.RED);
+			lbException.setBounds(66, 123, 182, 13);
+		}
+		return lbException;
+	}
+	private JLabel getLbEuros() {
+		if (lbEuros == null) {
+			lbEuros = new JLabel("\u20AC");
+			lbEuros.setBounds(133, 97, 45, 13);
+		}
+		return lbEuros;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollPane.setBounds(10, 159, 242, 87);
+			scrollPane.setViewportView(getLtDays());
+		}
+		return scrollPane;
 	}
 }
