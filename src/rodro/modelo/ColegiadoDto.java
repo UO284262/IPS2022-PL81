@@ -3,7 +3,7 @@ package rodro.modelo;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class SolicitudDto {
+public class ColegiadoDto {
 	
 	public String dni;
 	public String nombre;
@@ -14,8 +14,8 @@ public class SolicitudDto {
 	public int año;
 	public String cuentaBancaria;
 	public int tlfn;
-	public int estado = 0; // estado pendiente por defecto 1 aprobado -1 denegada
-	public LocalDateTime fecha = LocalDateTime.now();
+	public boolean isValid = false;
+	public LocalDateTime fecha; // = LocalDateTime.now();
 	
 	
 	
@@ -59,7 +59,7 @@ public class SolicitudDto {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SolicitudDto other = (SolicitudDto) obj;
+		ColegiadoDto other = (ColegiadoDto) obj;
 		return Objects.equals(dni, other.dni);
 	}
 	
