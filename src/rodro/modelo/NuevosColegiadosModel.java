@@ -1,15 +1,14 @@
 package rodro.modelo;
 
-import java.sql.CallableStatement;
+
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import abel.modelo.ActividadFormativaDTO;
+
 import main.DatabaseConnection;
 
-public class DataBaseManagementRodro {
+public class NuevosColegiadosModel {
 	
 	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO TRABAJADOR (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
 			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
