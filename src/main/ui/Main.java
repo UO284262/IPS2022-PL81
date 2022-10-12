@@ -9,12 +9,14 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import abel.controlador.ActividadFormativaControler;
-import abel.vista.AñadirActividadFormativa;
 import abel.vista.PlanificadorCurso;
 import kike.gui.SelectorCurso;
+import kike.modelo.curso.CursoDTO;
+import kike.persistence.CursoDataBase;
 
 import java.awt.Font;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
@@ -131,10 +133,12 @@ public class Main {
 			btnAbrirCurso = new JButton("AbrirCurso");
 			btnAbrirCurso.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					SelectorCurso dialog = new SelectorCurso(null);
+					DefaultComboBoxModel<CursoDTO> cursosSinAbrir = new DefaultComboBoxModel<CursoDTO>();
+					cursosSinAbrir.addAll(CursoDataBase.getCursosSinAbrir());
+					SelectorCurso dialog = new SelectorCurso(cursosSinAbrir);
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.setVisible(true);
-				}
+				}				
 			});
 		}
 		return btnAbrirCurso;
