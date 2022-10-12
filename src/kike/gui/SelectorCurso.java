@@ -8,7 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import kike.modelo.Curso;
+import kike.modelo.curso.Curso;
 
 import javax.swing.JLabel;
 import java.awt.Font;

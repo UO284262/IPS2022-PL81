@@ -1,6 +1,7 @@
-package kike.modelo;
+package kike.modelo.curso;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.List;
 
 public class Curso {
 	private String name;
@@ -9,7 +10,7 @@ public class Curso {
 	private Date fechaInicioInscipcion;
 	private Date fechaFinInscipcion;
 	private int plazasDisponibles;
-	
+	public List<Date> days;	
 	
 	
 	public Curso(String name, double price) {
@@ -18,10 +19,10 @@ public class Curso {
 		abierto = false;
 	}
 	
-	public void abrirCurso(Date fi, Date ff, int plazas) {
-		fechaFinInscipcion = fi;
-		fechaFinInscipcion = ff;
-		plazasDisponibles = plazas;
+	public void abrirCurso(CursoDTO cdto) {
+		fechaFinInscipcion = cdto.fechaFinInscipcion;
+		fechaFinInscipcion = cdto.fechaInicioInscipcion;
+		plazasDisponibles = cdto.plazasDisponibles;
 		abierto = true;
 	}
 	
@@ -60,4 +61,19 @@ public class Curso {
 	public String toString() {
 		return name + " - Precio: " + price;
 	}
+	
+	public CursoDTO toDto() {
+		CursoDTO cdto = new CursoDTO();
+		
+		cdto.title = name;
+		cdto.abierto = abierto;
+		cdto.days = days;
+		cdto.fechaFinInscipcion = fechaFinInscipcion;
+		cdto.fechaInicioInscipcion = fechaInicioInscipcion;
+		cdto.plazasDisponibles = plazasDisponibles;
+		cdto.price = price;
+		
+		return cdto;
+	}
 }
+

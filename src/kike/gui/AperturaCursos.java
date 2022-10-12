@@ -3,7 +3,8 @@ package kike.gui;
 import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
 
-import kike.modelo.Curso;
+import kike.modelo.curso.Curso;
+import kike.modelo.curso.CursoDTO;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -20,7 +21,7 @@ import javax.swing.JDialog;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.sql.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.SpinnerNumberModel;
 
@@ -200,17 +201,21 @@ public class AperturaCursos extends JDialog {
 	}
 	
 	private boolean fechasValidads() {
-		Date inicio = getFechaInicio_1().getDate();
-		Date fin = getFechaFin_1().getDate();
+		Date inicio = new Date(getFechaInicio_1().getDate().getTime());
+		Date fin = new Date(getFechaFin_1().getDate().getTime());
 		if(inicio == null || fin == null)
 			return false;
-		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date()) >= 0)
+		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date(System.currentTimeMillis())) >= 0)
 			return true;
 		return false;
 	}
 
 	private void abrirCurso() {
-		curso.abrirCurso(getFechaInicio_1().getDate(), getFechaFin_1().getDate(), (int) getSpinner().getValue());
+		CursoDTO dto = new CursoDTO();
+		dto.plazasDisponibles = (int) getSpinner().getValue();
+		dto.fechaInicioInscipcion = new Date(getFechaInicio_1().getDate().getTime());
+		dto.fechaFinInscipcion = new Date(getFechaFin_1().getDate().getTime());
+		curso.abrirCurso(dto);
 	}
 	
 }
