@@ -35,6 +35,7 @@ public class SelectorCurso extends JDialog {
 	private DefaultComboBoxModel<CursoDTO> modeloCursos;
 
 	private CursoDTO curso;
+	private JLabel lblError;
 	
 //	/**
 //	 * Launch the application.
@@ -79,6 +80,7 @@ public class SelectorCurso extends JDialog {
 			panel.setLayout(null);
 			panel.add(getLblSelectCurso());
 			panel.add(getComboBox());
+			panel.add(getLblError());
 		}
 		return panel;
 	}
@@ -139,13 +141,28 @@ public class SelectorCurso extends JDialog {
 	
 	private void accionSiguiente() {
 		this.curso = modeloCursos.getElementAt(getComboBox().getSelectedIndex());
-		AperturaCursos ac = new AperturaCursos(this);
-		ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		ac.setModal(true);
-		ac.setVisible(true);
+		
+		if(curso == null) {
+			getLblError().setText("Error, seleccione un curso");
+		} else {
+			getLblError().setText("");
+			AperturaCursos ac = new AperturaCursos(this);
+			ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			ac.setModal(true);
+			ac.setVisible(true);
+		}		
 	}
 	
 	public CursoDTO getCurso() {
 		return curso;
+	}
+	private JLabel getLblError() {
+		if (lblError == null) {
+			lblError = new JLabel("");
+			lblError.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblError.setForeground(Color.RED);
+			lblError.setBounds(37, 215, 399, 39);
+		}
+		return lblError;
 	}
 }
