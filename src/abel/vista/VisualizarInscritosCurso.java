@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JButton;
 
 public class VisualizarInscritosCurso extends JFrame {
 
@@ -20,6 +21,7 @@ public class VisualizarInscritosCurso extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JLabel lbTitulo;
+	private JButton btnNewButton;
 
 	/**
 	 * Launch the application.
@@ -48,6 +50,7 @@ public class VisualizarInscritosCurso extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(getLbTitulo());
+		contentPane.add(getBtnNewButton());
 	}
 
 	private JLabel getLbTitulo() {
@@ -60,5 +63,12 @@ public class VisualizarInscritosCurso extends JFrame {
 			lbTitulo.setBounds(10, 10, 436, 36);
 		}
 		return lbTitulo;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("New button");
+			btnNewButton.setBounds(102, 165, 85, 21);
+		}
+		return btnNewButton;
 	}
 }
