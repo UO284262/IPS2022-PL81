@@ -16,10 +16,11 @@ public class DataBaseManagement
 	
 	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre,precio) VALUES(\"%s\",%s);";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
-	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT nombre FROM Actividad_Formativa NATURAL JOIN"
-																	+ "Fecha_Imparticion WHERE fecha >= \"%s\";";
-	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion FROM apuntado a NATURAL JOIN"
-																			+ "Colegiado c WHERE a.nombre_curso = \"%s\";";
+	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
+																	+ "ON a.nombre = f.nombre_curso WHERE f.fecha >= \"%s\";";
+	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
+																			+ "FROM apuntado a NATURAL JOIN "
+																			+ "Colegiado c WHERE a.nombre_curso = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -65,5 +66,38 @@ public class DataBaseManagement
 			nombres.add(rs.getString("nombre"));
 		}
 		return nombres;
+	}
+	
+	public static List<String> getInscritosEn(String actividadFormativa)
+	{
+		System.out.println(actividadFormativa);
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA,actividadFormativa));
+			ResultSet rs = st.executeQuery();
+			conn.commit();
+			List<String> nombres = toApuntadoList(rs);
+			st.close();
+			rs.close();
+			return nombres;
+			
+		} catch (SQLException e) { e.printStackTrace();}
+		return null;
+	}
+	
+	private static List<String> toApuntadoList(ResultSet rs) throws SQLException
+	{
+		List<String> apuntados = new ArrayList<String>();
+		while(rs.next())
+		{
+			String apellidos = rs.getString(2);
+			String nombre = rs.getString(1);
+			String fecha = rs.getString(3);
+			String estado = rs.getString(4);
+			String pagado = rs.getString(5);
+			apuntados.add(String.format("%s, %s (%s) -- %s -- %s €",apellidos,nombre,fecha,estado,pagado));
+		}
+		return apuntados;
 	}
 }
