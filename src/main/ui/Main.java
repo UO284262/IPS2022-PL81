@@ -8,6 +8,10 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
 import kike.gui.SelectorCurso;
@@ -21,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -57,7 +62,35 @@ public class Main {
 	 * Create the application.
 	 */
 	public Main() {
+		setLookAndFeel();
 		initialize();
+	}
+	
+	private void setLookAndFeel()
+	{
+		UIManager.put( "Component.focusWidth", 1 );
+		UIManager.put( "Button.arc", 10 );
+		UIManager.put( "Component.arc", 999 );
+		UIManager.put( "ProgressBar.arc", 999 );
+		UIManager.put( "TextComponent.arc", 999 );
+		UIManager.put("Component.arrowType", "chevron");
+		
+		FlatLightLaf.setup();
+		try {
+			UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

@@ -23,11 +23,9 @@ import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.time.LocalDate;
-import java.util.Date;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
-import javax.swing.DropMode;
 
 public class AñadirActividadFormativa extends JPanel {
 	
@@ -88,7 +86,7 @@ public class AñadirActividadFormativa extends JPanel {
 			lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 			lbTitulo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			lbTitulo.setBackground(Color.WHITE);
-			lbTitulo.setBounds(10, 10, 436, 36);
+			lbTitulo.setBounds(10, 10, 470, 36);
 		}
 		return lbTitulo;
 	}
@@ -103,7 +101,7 @@ public class AñadirActividadFormativa extends JPanel {
 					resetearCampos();
 				}
 			});
-			btCancelar.setBounds(361, 269, 85, 21);
+			btCancelar.setBounds(395, 269, 85, 21);
 		}
 		return btCancelar;
 	}
@@ -123,6 +121,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JButton getBtAñadir() {
 		if (btAñadir == null) {
 			btAñadir = new JButton("A\u00F1adir");
+			btAñadir.setForeground(Color.BLACK);
 			btAñadir.setFocusPainted(false);
 			btAñadir.setBackground(Color.GREEN);
 			btAñadir.addFocusListener(new FocusAdapter() {
@@ -189,7 +188,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JDayChooser getDayChooser() {
 		if (dayChooser == null) {
 			dayChooser = new JDayChooser();
-			dayChooser.setBounds(258, 61, 188, 133);
+			dayChooser.setBounds(258, 61, 222, 156);
 			dayChooser.add(getMonthChooser(), BorderLayout.NORTH);
 		}
 		return dayChooser;
@@ -203,7 +202,7 @@ public class AñadirActividadFormativa extends JPanel {
 					getLbAvisoDia1().setVisible(false);
 				}
 			});
-			monthChooser.add(getBtAñadirDia(), BorderLayout.EAST);
+			monthChooser.add(getBtAñadirDia(), BorderLayout.CENTER);
 		}
 		return monthChooser;
 	}
@@ -237,6 +236,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JButton getBtAñadirDia() {
 		if (btAñadirDia == null) {
 			btAñadirDia = new JButton("A\u00F1adir d\u00EDa");
+			btAñadirDia.setFocusPainted(false);
 			btAñadirDia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añadirDia();
@@ -251,7 +251,7 @@ public class AñadirActividadFormativa extends JPanel {
 			lbAvisoDia1 = new JLabel("Ese d\u00EDa ya ha sido a\u00F1adido");
 			lbAvisoDia1.setVisible(false);
 			lbAvisoDia1.setForeground(Color.RED);
-			lbAvisoDia1.setBounds(260, 204, 180, 13);
+			lbAvisoDia1.setBounds(258, 227, 180, 13);
 		}
 		return lbAvisoDia1;
 	}
