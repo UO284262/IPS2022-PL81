@@ -3,12 +3,18 @@ package rodro.vista;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
+
+import rodro.controlador.SolicitudControler;
+
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class VentanaSolicitud extends JPanel {
+public class VentanaSolicitud extends JDialog {
 
 	/**
 	 * 
@@ -36,13 +42,14 @@ public class VentanaSolicitud extends JPanel {
 	private JPanel pnDatosBancarios;
 	private JLabel lblCuentaBancaria;
 	private JTextField txtCuentaBancaria;
+	private SolicitudControler controler;
 
 	/**
 	 * Create the panel.
 	 */
-	public VentanaSolicitud() {
+	public VentanaSolicitud(SolicitudControler con) {
+		this.controler = con;
 		setBackground(Color.WHITE);
-		setBorder(new TitledBorder(null, "Datos Solicitud", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		setLayout(null);
 		add(getBtnFinalizar());
 		add(getPnDatosPersonales());
@@ -105,9 +112,18 @@ public class VentanaSolicitud extends JPanel {
 	private JButton getBtnFinalizar() {
 		if (btnFinalizar == null) {
 			btnFinalizar = new JButton("Finalizar");
+			btnFinalizar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añadirColegiado();
+				}
+			});
 			btnFinalizar.setBounds(287, 384, 85, 21);
 		}
 		return btnFinalizar;
+	}
+	
+	private void añadirColegiado() {
+		
 	}
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
