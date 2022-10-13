@@ -19,7 +19,7 @@ public class NuevosColegiadosModel {
 	 * Añadimos un nuevo colegiado a la base de datos
 	 * @param colegiado, colegiado que deseamos añadir
 	 */
-	public void addWorker(ColegiadoDto colegiado) {
+	public void addColegiado(ColegiadoDto colegiado) {
 		addColegiadoToDataBase(colegiado);
 	}
 	
@@ -29,7 +29,7 @@ public class NuevosColegiadosModel {
 	 * @param id, identificador del colegiado
 	 * @return true si existe, false en caso contrario
 	 */
-	public boolean isTrueWorker(String id){
+	public boolean isTrueColegiado(String id){
 		if (isTrueColegiadoInDataBase(id)) {
 			return true;
 		}

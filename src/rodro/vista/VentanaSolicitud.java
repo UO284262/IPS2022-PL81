@@ -2,6 +2,7 @@ package rodro.vista;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
 import rodro.controlador.SolicitudControler;
@@ -109,7 +110,7 @@ public class VentanaSolicitud extends JDialog {
 		}
 		return lblCentro;
 	}
-	private JButton getBtnFinalizar() {
+	public JButton getBtnFinalizar() {
 		if (btnFinalizar == null) {
 			btnFinalizar = new JButton("Finalizar");
 			btnFinalizar.addActionListener(new ActionListener() {
@@ -258,4 +259,69 @@ public class VentanaSolicitud extends JDialog {
 		}
 		return txtCuentaBancaria;
 	}
+	
+//-------------------GETTERS--DE-AYUDA-------------------------------
+
+     /* Getters de los que extraer la información del usuario */
+	
+	    public JDialog getJDialog() {
+		     return this;
+	     }
+	    
+	    public String getNombre() {
+			return txtNombre.getText();
+		}
+	    
+	    public String getApellidos() {
+			return txtApellidos.getText();
+		}
+	    
+	    public String getDni() {
+			return txtDNI.getText();
+		}
+	    
+	    public String getPoblacion() {
+	    	return txtPoblacion.getText();
+	    }
+	    
+	    public String getTelefono() {
+			return txtTelefono.getText();
+		}
+	    
+	    public String getTitulacion() {
+	    	return txtTitulacion.getText();
+	    }
+	    
+	    public String getCentro() {
+	    	return txtCentro.getText();
+	    }
+	    
+	    public String getAño() {
+	    	return txtAño.getText();
+	    }
+	    
+	    public String getCuentaBancaria() {
+	    	return txtCuentaBancaria.getText();
+	    }
+	    
+	    
+	    public void mostrarError() {
+			JOptionPane.showMessageDialog(null, "Los campos no se han rellenado "
+					+ "correctamente");
+		}
+	    
+	    public void mostrarErrorTelefono() {
+			JOptionPane.showMessageDialog(null, "Error al procesar el número de teléfono,"
+					+ " revíselo por favor");
+		}
+	    
+	    public void mostrarErrorColegiadoExistente() {
+			JOptionPane.showMessageDialog(null, "Ya existe un trabajador con ese "
+					+ "nombre de usuario");
+		}
+	    
+	    public void completado() {
+			JOptionPane.showMessageDialog(null, "Se ha registrado correctamente");
+		}
+
 }
