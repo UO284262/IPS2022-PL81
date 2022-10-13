@@ -1,15 +1,25 @@
 package abel.vista;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
 
 public class VisualizarInscritosCurso extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JLabel lbTitulo;
 
 	/**
 	 * Launch the application.
@@ -32,11 +42,23 @@ public class VisualizarInscritosCurso extends JFrame {
 	 */
 	public VisualizarInscritosCurso() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 465, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		contentPane.add(getLbTitulo());
 	}
 
+	private JLabel getLbTitulo() {
+		if (lbTitulo == null) {
+			lbTitulo = new JLabel("Visualizar inscritos a un curso formativo");
+			lbTitulo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+			lbTitulo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+			lbTitulo.setBackground(Color.WHITE);
+			lbTitulo.setBounds(10, 10, 436, 36);
+		}
+		return lbTitulo;
+	}
 }
