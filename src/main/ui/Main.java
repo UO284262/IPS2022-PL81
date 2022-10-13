@@ -14,7 +14,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
-import kike.gui.SelectorCurso;
+import kike.gui.colegiado.PreInscribeColegiado;
+import kike.gui.secretaria.SelectorCurso;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
 
@@ -25,7 +26,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
-import java.util.Properties;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -38,9 +38,10 @@ public class Main {
 	private JLabel lblSecretaria;
 	private JLabel lblColegiado;
 	private JPanel panelColBotones;
-	private JPanel panel;
+	//private JPanel panel;
 	private JButton btnAbrirCurso;
 	private JButton btAñadirCurso;
+	private JButton btnInscribirColegiado;
 
 	/**
 	 * Launch the application.
@@ -158,6 +159,7 @@ public class Main {
 	private JPanel getPanelColBotones() {
 		if (panelColBotones == null) {
 			panelColBotones = new JPanel();
+			panelColBotones.add(getBtnInscribirColegiado());
 		}
 		return panelColBotones;
 	}
@@ -188,5 +190,18 @@ public class Main {
 			});
 		}
 		return btAñadirCurso;
+	}
+	private JButton getBtnInscribirColegiado() {
+		if (btnInscribirColegiado == null) {
+			btnInscribirColegiado = new JButton("Inscribirse a un curso");
+			btnInscribirColegiado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					PreInscribeColegiado dialog = new PreInscribeColegiado();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btnInscribirColegiado;
 	}
 }

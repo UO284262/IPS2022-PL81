@@ -1,5 +1,7 @@
 package kike.modelo.curso;
 
+import javax.swing.DefaultListModel;
+
 import kike.persistence.CursoDataBase;
 
 public class CursoManager {
@@ -16,7 +18,7 @@ public class CursoManager {
 	}
 	
 		
-	public void ocuparPlaza() {
+	private void ocuparPlaza() {
 		if(hayPlazasDisponibles())
 			curosDTO.plazasDisponibles--;
 	}
@@ -31,6 +33,17 @@ public class CursoManager {
 	@Override
 	public String toString() {
 		return curosDTO.title + " - Precio: " + curosDTO.price;
+	}
+
+	public static DefaultListModel<CursoDTOForColegiados> getModeloCursosAbiertos() {
+		DefaultListModel<CursoDTOForColegiados> modelo = new DefaultListModel<CursoDTOForColegiados>();
+		modelo.addAll(CursoDataBase.getCursosAbiertos());
+		return modelo;
+	}
+
+	public void inscribirse() {
+		ocuparPlaza();
+		
 	}
 }
 

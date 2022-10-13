@@ -1,4 +1,4 @@
-package kike.gui;
+package kike.gui.secretaria;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
