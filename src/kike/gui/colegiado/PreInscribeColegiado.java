@@ -114,7 +114,7 @@ public class PreInscribeColegiado extends JDialog {
 					} else {
 						getLblError().setText("");
 						CursoManager cm = new CursoManager(cc.cdto);
-						cm.inscribirse();
+						cm.inscribirse(colm.dto.id_colegiado);
 						mostrarPreincripcion();
 					}
 				}
@@ -194,7 +194,7 @@ public class PreInscribeColegiado extends JDialog {
 	}
 
 	private void mostrarPreincripcion() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

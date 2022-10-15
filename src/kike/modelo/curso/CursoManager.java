@@ -1,8 +1,13 @@
 package kike.modelo.curso;
 
+import java.sql.Date;
+
 import javax.swing.DefaultListModel;
 
 import kike.persistence.CursoDataBase;
+import kike.persistence.InscripcionDataBase;
+import kike.persistence.dto.InscripcionDTO;
+import kike.persistence.dto.InscripcionDTO.TipoInscripcion;
 
 public class CursoManager {
 	
@@ -41,9 +46,18 @@ public class CursoManager {
 		return modelo;
 	}
 
-	public void inscribirse() {
+	public void inscribirse(String idSocio) {
 		ocuparPlaza();
+		InscripcionDTO idto = new InscripcionDTO();
 		
+		idto.id_socio = idSocio;
+		idto.nombre_curso = curosDTO.title;
+		idto.fecha_Inscripcion = new Date(System.currentTimeMillis());
+		idto.pagado = false;
+		idto.estado = TipoInscripcion.PRE_INSCRITO;
+		
+		CursoDataBase.actualizarCurso(curosDTO);
+		InscripcionDataBase.createPreInscripcion(idto);	
 	}
 }
 

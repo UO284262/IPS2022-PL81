@@ -15,6 +15,7 @@ public class CursoDataBase {
 
 	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false";
 	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre = ?";
+	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre = ?";
 	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true";
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre = ?";
 	
@@ -94,8 +95,43 @@ public class CursoDataBase {
 			} catch (SQLException e) {
 				throw new RuntimeException(e);				
 			}			
-		}
+		}		
+	}
+	
+	public static void inscribirCurso(CursoDTO curosDTO) {
+		Connection conn = null;
+		PreparedStatement st = null;
 		
+		try
+		{
+			conn = DatabaseConnection.getConnection();			
+			conn.setAutoCommit(false);
+			
+			st = conn.prepareStatement(CURSOS_INSCRIBIR);
+			
+			st.setInt(1, curosDTO.plazasDisponibles);
+			st.setString(2, curosDTO.title);
+			
+			st.executeUpdate();	
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}	
 	}
 	
 	public static List<CursoDTOForColegiados> getCursosAbiertos() {
@@ -201,6 +237,11 @@ public class CursoDataBase {
 			res.add(new  CursoDTOForColegiados(toCursoDto( rs )));
 		}
 		return res;
+	}
+
+	public static void actualizarCurso(CursoDTO curosDTO) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
