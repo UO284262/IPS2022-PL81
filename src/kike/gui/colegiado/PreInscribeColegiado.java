@@ -109,10 +109,8 @@ public class PreInscribeColegiado extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
 					ColegiadoManager colm = new ColegiadoManager(getTextField().getText());
-					if(!colm.validaID()) {
+					if(!colm.validaID()) { //getTextField().getText().isBlank() || 
 						getLblError().setText("Error: id invalido.");
-					} else if(cc == null) {
-						getLblError().setText("Error: Seleccione un curso.");
 					} else {
 						getLblError().setText("");
 						CursoManager cm = new CursoManager(cc.cdto);
@@ -138,6 +136,7 @@ public class PreInscribeColegiado extends JDialog {
 			list = new JList<CursoDTOForColegiados>();
 			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			list.setModel(modeloCursos);
+			list.setSelectedIndex(0);
 		}
 		return list;
 	}
