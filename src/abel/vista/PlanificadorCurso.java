@@ -34,7 +34,7 @@ public class PlanificadorCurso extends JDialog {
 	 */
 	public PlanificadorCurso() {
 		setTitle("Planificador de cursos");
-		setBounds(100, 100, 465, 335);
+		setBounds(100, 100, 505, 335);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
