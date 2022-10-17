@@ -1,6 +1,6 @@
 package kike.modelo.colegiado;
 
-import rodro.modelo.NuevosColegiadosModel;
+import kike.persistence.ColegiadoDataBase;
 
 public class ColegiadoManager {
 	
@@ -12,7 +12,11 @@ public class ColegiadoManager {
 	}
 
 	public boolean validaID() {
-		return new NuevosColegiadosModel().isTrueWorker(dto.id_colegiado);
+		return ColegiadoDataBase.isValidId(dto.id_colegiado);
+	}
+
+	public void getInfo() {
+		dto = ColegiadoDataBase.findById(dto.id_colegiado);
 	}
 
 }

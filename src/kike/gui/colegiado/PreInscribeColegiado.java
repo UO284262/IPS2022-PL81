@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import kike.modelo.colegiado.ColegiadoDTO;
 import kike.modelo.colegiado.ColegiadoManager;
 import kike.modelo.curso.CursoDTOForColegiados;
 import kike.modelo.curso.CursoManager;
@@ -42,6 +43,10 @@ public class PreInscribeColegiado extends JDialog {
 	private JLabel lblID;
 	private JTextField textField;
 	private JLabel lblError;
+
+	private ColegiadoManager colm;
+	private double precio;
+	public CursoManager cm;
 
 	/**
 	 * Launch the application.
@@ -107,16 +112,7 @@ public class PreInscribeColegiado extends JDialog {
 			btnInscribeme = new JButton("Inscribeme");
 			btnInscribeme.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
-					ColegiadoManager colm = new ColegiadoManager(getTextField().getText());
-					if(!colm.validaID()) { //getTextField().getText().isBlank() || 
-						getLblError().setText("Error: id invalido.");
-					} else {
-						getLblError().setText("");
-						CursoManager cm = new CursoManager(cc.cdto);
-						cm.inscribirse(colm.dto.id_colegiado);
-						mostrarPreincripcion();
-					}
+					mostrarPreincripcion();
 				}
 			});
 			btnInscribeme.setForeground(Color.WHITE);
@@ -194,7 +190,30 @@ public class PreInscribeColegiado extends JDialog {
 	}
 
 	private void mostrarPreincripcion() {
+		CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
+		colm = new ColegiadoManager(getTextField().getText());
+		if(!colm.validaID()) { //getTextField().getText().isBlank() || 
+			getLblError().setText("Error: id invalido.");
+		} else {
+			getLblError().setText("");
+			cm = new CursoManager(cc.cdto);			
+			colm.getInfo();
+			precio = cc.cdto.price;
+			
+			MostrarDatosInscripcion ventana = new MostrarDatosInscripcion(this);
+			ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			ventana.setModal(true);
+			ventana.setVisible(true);
+			
+		}		
 		
-		
+	}
+
+	public ColegiadoDTO getColegiadoDTO() {
+		return colm.dto;
+	}
+
+	public String getPrecio() {
+		return "" + precio;
 	}
 }
