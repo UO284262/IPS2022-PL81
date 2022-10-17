@@ -13,9 +13,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import abel.controlador.ActividadFormativaControler;
-import abel.vista.AñadirActividadFormativa;
 import abel.vista.PlanificadorCurso;
+import abel.vista.VisualizadorInscritos;
 import kike.gui.SelectorCurso;
 
 import java.awt.Font;
@@ -23,7 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
-import java.util.Properties;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -36,9 +34,9 @@ public class Main {
 	private JLabel lblSecretaria;
 	private JLabel lblColegiado;
 	private JPanel panelColBotones;
-	private JPanel panel;
 	private JButton btnAbrirCurso;
 	private JButton btAñadirCurso;
+	private JButton btVisualizarInscritos;
 
 	/**
 	 * Launch the application.
@@ -133,6 +131,7 @@ public class Main {
 			panelSecBotones = new JPanel();
 			panelSecBotones.setLayout(new GridLayout(0, 1, 5, 5));
 			panelSecBotones.add(getBtnAbrirCurso());
+			panelSecBotones.add(getBtVisualizarInscritos());
 			panelSecBotones.add(getBtAñadirCurso());
 		}
 		return panelSecBotones;
@@ -184,5 +183,18 @@ public class Main {
 			});
 		}
 		return btAñadirCurso;
+	}
+	private JButton getBtVisualizarInscritos() {
+		if (btVisualizarInscritos == null) {
+			btVisualizarInscritos = new JButton("VisualizarInscritos");
+			btVisualizarInscritos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VisualizadorInscritos dialog = new VisualizadorInscritos();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btVisualizarInscritos;
 	}
 }

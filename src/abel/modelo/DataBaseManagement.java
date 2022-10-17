@@ -17,10 +17,12 @@ public class DataBaseManagement
 	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre,precio) VALUES(\"%s\",%s);";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
-																	+ "ON a.nombre = f.nombre_curso WHERE f.fecha >= \"%s\";";
+																	+ "ON a.nombre = f.nombre WHERE f.fecha >= \"%s\";";
 	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
-																			+ "FROM apuntado a NATURAL JOIN "
-																			+ "Colegiado c WHERE a.nombre_curso = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
+																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.id_colegiado = c.id_colegiado"
+																			+ " WHERE a.nombre = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
+	
+	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre = \"%s\";";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -70,7 +72,6 @@ public class DataBaseManagement
 	
 	public static List<String> getInscritosEn(String actividadFormativa)
 	{
-		System.out.println(actividadFormativa);
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{	
 			conn.setAutoCommit(false);
@@ -99,5 +100,25 @@ public class DataBaseManagement
 			apuntados.add(String.format("%s, %s (%s) -- %s -- %s €",apellidos,nombre,fecha,estado,pagado));
 		}
 		return apuntados;
+	}
+	
+	public static double getIngresosFor(String actividadFormativa)
+	{
+		double d = 0;
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA,actividadFormativa));
+			ResultSet rs = st.executeQuery();
+			if(rs.next())
+			{
+				d = rs.getDouble(1);
+			}
+			conn.commit();
+			st.close();
+			rs.close();
+			
+		} catch (SQLException e) { e.printStackTrace();}
+		return d;
 	}
 }

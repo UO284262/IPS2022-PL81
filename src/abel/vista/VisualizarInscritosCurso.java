@@ -22,7 +22,7 @@ import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
-import javax.swing.JButton;
+import javax.swing.JTextField;
 
 public class VisualizarInscritosCurso extends JPanel {
 
@@ -39,6 +39,8 @@ public class VisualizarInscritosCurso extends JPanel {
 	private JLabel lbAvisoNadieApuntado;
 	private VisualizarInscritosCursoControler controler;
 	private JLabel lbAvisoActividades;
+	private JLabel lbTotalInscripcion;
+	private JTextField tfIngresos;
 
 	/**
 	 * Create the frame.
@@ -52,6 +54,8 @@ public class VisualizarInscritosCurso extends JPanel {
 		add(getSpActividades());
 		add(getLbAvisoNadieApuntado());
 		add(getLbAvisoActividades());
+		add(getLbTotalInscripcion());
+		add(getTfIngresos());
 	}
 
 	private void setModelActividades() {
@@ -82,21 +86,29 @@ public class VisualizarInscritosCurso extends JPanel {
 			cbActividades = new JComboBox<String>();
 			cbActividades.setModel(modeloActividades);
 			setModelActividades();
-			cbActividades.setSelectedIndex(0);
 			cbActividades.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					getLbAvisoNadieApuntado().setVisible(false);
 					cargarApuntadosA(getComboBox().getSelectedItem());
+					cargarIngresosPara(getComboBox().getSelectedItem());
 				}
 			});
 			cbActividades.setBounds(10, 70, 224, 21);
+			cbActividades.setSelectedIndex(0);
 		}
 		return cbActividades;
+	}
+	
+	private void cargarIngresosPara(Object actividad)
+	{
+		String nombre = (String) actividad;
+		getTfIngresos().setText(DataBaseManagement.getIngresosFor(nombre) + "");
 	}
 	
 	private void cargarApuntadosA(Object actividad)
 	{
 		String nombre = (String) actividad;
+		
 		List<String> apuntados = DataBaseManagement.getInscritosEn(nombre);
 		if(apuntados == null)
 		{
@@ -104,13 +116,14 @@ public class VisualizarInscritosCurso extends JPanel {
 		}
 		else
 		{
+			modeloApuntados.removeAllElements();
 			modeloApuntados.addAll(apuntados);
 		}
 	}
 	
 	private JScrollPane getSpActividades() {
 		if (spApuntados == null) {
-			spApuntados = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			spApuntados = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			spApuntados.setBounds(244, 70, 346, 183);
 			spApuntados.setViewportView(getLtApuntados());
 		}
@@ -123,7 +136,6 @@ public class VisualizarInscritosCurso extends JPanel {
 			ltApuntados.setFocusable(false);
 			ltApuntados.setVisibleRowCount(4);
 			ltApuntados.setModel(modeloApuntados);
-			ltApuntados.setLayoutOrientation(JList.VERTICAL_WRAP);
 		}
 		return ltApuntados;
 	}
@@ -143,5 +155,21 @@ public class VisualizarInscritosCurso extends JPanel {
 			lbAvisoActividades.setBounds(10, 101, 144, 13);
 		}
 		return lbAvisoActividades;
+	}
+	private JLabel getLbTotalInscripcion() {
+		if (lbTotalInscripcion == null) {
+			lbTotalInscripcion = new JLabel("Total de ingresos (\u20AC):");
+			lbTotalInscripcion.setBounds(10, 180, 111, 13);
+		}
+		return lbTotalInscripcion;
+	}
+	private JTextField getTfIngresos() {
+		if (tfIngresos == null) {
+			tfIngresos = new JTextField();
+			tfIngresos.setEditable(false);
+			tfIngresos.setBounds(130, 177, 104, 19);
+			tfIngresos.setColumns(10);
+		}
+		return tfIngresos;
 	}
 }
