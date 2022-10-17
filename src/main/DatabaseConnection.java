@@ -10,7 +10,7 @@ public class DatabaseConnection {
 	
 	private static String usr = "root";
 	
-	private static String pasw = "ipsg1";
+	private static String pasw = "Ipsg1";
 	
 	
 	public static Connection getConnection() throws SQLException
