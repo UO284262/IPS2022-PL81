@@ -190,6 +190,7 @@ public class PreInscribeColegiado extends JDialog {
 	}
 
 	private void mostrarPreincripcion() {
+		getLblError().setText("");
 		CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
 		colm = new ColegiadoManager(getTextField().getText());
 		if(!colm.validaID()) { 
@@ -198,8 +199,7 @@ public class PreInscribeColegiado extends JDialog {
 		} else if(colm.isInscrito(cc.cdto.title)) {  
 			getLblError().setText("Error: Este usuario ya ha sido preinscrito.");
 		
-		} else {
-			getLblError().setText("");
+		} else {			
 			cm = new CursoManager(cc.cdto);			
 			colm.getInfo();
 			precio = cc.cdto.price;
