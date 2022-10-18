@@ -1,6 +1,8 @@
 package kike.modelo.curso;
 
 import java.sql.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 
@@ -42,8 +44,24 @@ public class CursoManager {
 
 	public static DefaultListModel<CursoDTOForColegiados> getModeloCursosAbiertos() {
 		DefaultListModel<CursoDTOForColegiados> modelo = new DefaultListModel<CursoDTOForColegiados>();
-		modelo.addAll(CursoDataBase.getCursosAbiertos());
+		
+		modelo.addAll(getCursosDisponibles(CursoDataBase.getCursosAbiertos()));
 		return modelo;
+	}
+
+	private static List<CursoDTOForColegiados> getCursosDisponibles(List<CursoDTOForColegiados> cursosAbiertos) {
+		Iterator<CursoDTOForColegiados> it = cursosAbiertos.iterator();
+		
+		while(it.hasNext()) {
+			CursoDTOForColegiados dto = it.next();
+			if(dto.cdto.plazasDisponibles <= 0 || 
+					dto.cdto.fechaInicioInscipcion.compareTo(new Date(System.currentTimeMillis())) > 0 ||
+					dto.cdto.fechaFinInscipcion.compareTo(new Date(System.currentTimeMillis())) < 0) {
+				it.remove();
+			}
+		}
+		
+		return cursosAbiertos;
 	}
 
 	public void inscribirse(String idSocio) {
