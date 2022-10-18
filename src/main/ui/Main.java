@@ -14,8 +14,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
+import kike.gui.colegiado.PreInscribeColegiado;
+import kike.gui.secretaria.SelectorCurso;
 import abel.vista.VisualizadorInscritos;
-import kike.gui.SelectorCurso;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
 
@@ -40,6 +41,7 @@ public class Main {
 	private JPanel panelColBotones;
 	private JButton btnAbrirCurso;
 	private JButton btAñadirCurso;
+	private JButton btnInscribirColegiado;
 	private JButton btVisualizarInscritos;
 
 	/**
@@ -101,6 +103,7 @@ public class Main {
 		frame.setBounds(100, 100, 450, 560);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(getPanelPrincipal(), BorderLayout.CENTER);
+		frame.setLocationRelativeTo(null);
 	}
 
 	private JPanel getPanelPrincipal() {
@@ -134,9 +137,9 @@ public class Main {
 		if (panelSecBotones == null) {
 			panelSecBotones = new JPanel();
 			panelSecBotones.setLayout(new GridLayout(0, 1, 5, 5));
+			panelSecBotones.add(getBtAñadirCurso());
 			panelSecBotones.add(getBtnAbrirCurso());
 			panelSecBotones.add(getBtVisualizarInscritos());
-			panelSecBotones.add(getBtAñadirCurso());
 		}
 		return panelSecBotones;
 	}
@@ -159,6 +162,7 @@ public class Main {
 	private JPanel getPanelColBotones() {
 		if (panelColBotones == null) {
 			panelColBotones = new JPanel();
+			panelColBotones.add(getBtnInscribirColegiado());
 		}
 		return panelColBotones;
 	}
@@ -190,6 +194,21 @@ public class Main {
 		}
 		return btAñadirCurso;
 	}
+
+	private JButton getBtnInscribirColegiado() {
+		if (btnInscribirColegiado == null) {
+			btnInscribirColegiado = new JButton("Inscribirse a un curso");
+			btnInscribirColegiado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					PreInscribeColegiado dialog = new PreInscribeColegiado();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btnInscribirColegiado;
+	}
+
 	private JButton getBtVisualizarInscritos() {
 		if (btVisualizarInscritos == null) {
 			btVisualizarInscritos = new JButton("VisualizarInscritos");
@@ -202,5 +221,6 @@ public class Main {
 			});
 		}
 		return btVisualizarInscritos;
+
 	}
 }

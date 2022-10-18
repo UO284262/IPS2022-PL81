@@ -1,4 +1,4 @@
-package kike.gui;
+package kike.gui.secretaria;
 
 import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
