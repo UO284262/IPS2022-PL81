@@ -103,6 +103,7 @@ public class Main {
 		frame.setBounds(100, 100, 450, 560);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(getPanelPrincipal(), BorderLayout.CENTER);
+		frame.setLocationRelativeTo(null);
 	}
 
 	private JPanel getPanelPrincipal() {
