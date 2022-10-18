@@ -11,7 +11,7 @@ import main.DatabaseConnection;
 
 public class InscripcionDataBase {
 
-	private static final String CREAR_INSCRIPCION = "INSERT INTO apuntado(id_colegiado, nombre_curso, fecha_inscripcion, pagado, tipo_inscripcion) VALUES(?, ?, ?, ?, ?)";
+	private static final String CREAR_INSCRIPCION = "INSERT INTO apuntado(id_colegiado, nombre_curso, fecha_inscripcion, pagado, estado, cantidad_abonada) VALUES(?, ?, ?, ?, ?, ?)";
 	private static final String EXISTS_INSCRIPCION = "Select * from apuntado where id_colegiado = ? and nombre_curso = ?";
 
 	public static void createPreInscripcion(InscripcionDTO idto) {
@@ -29,7 +29,8 @@ public class InscripcionDataBase {
 			st.setString(2, idto.nombre_curso);
 			st.setDate(3, idto.fecha_Inscripcion);
 			st.setBoolean(4, idto.pagado);
-			st.setInt(5, parseToDatabase(idto.estado));
+			st.setString(5, parseToDatabase(idto.estado));
+			st.setDouble(6, idto.cantidad_abonada);
 			
 			st.executeUpdate();
 			
@@ -54,31 +55,31 @@ public class InscripcionDataBase {
 		}
 	}
 
-	private static int parseToDatabase(TipoInscripcion estado) {
+	private static String parseToDatabase(TipoInscripcion estado) {
 		switch (estado) {
 		case PRE_INSCRITO: {
-			return 1;
+			return "PRE-INSCRITO";
 		}
 		case INSCRITO: {
-			return 2;
+			return "INSCRITO";
 		}
 		case CANCELADO: {
-			return 0;
+			return "CANCELADO";
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + estado);
 		}
 	}
 	
-	private static TipoInscripcion parseFromDatabase(int estado) {
+	private static TipoInscripcion parseFromDatabase(String estado) {
 		switch (estado) {
-		case 1: {
+		case "PRE-INSCRITO": {
 			return TipoInscripcion.PRE_INSCRITO;
 		}
-		case 2: {
+		case "INSCRITO": {
 			return TipoInscripcion.INSCRITO;
 		}
-		case 0: {
+		case "CANCELADO": {
 			return TipoInscripcion.CANCELADO;
 		}
 		default:

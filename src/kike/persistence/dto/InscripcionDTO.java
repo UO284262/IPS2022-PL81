@@ -10,5 +10,6 @@ public class InscripcionDTO {
 	public String nombre_curso;
 	public Date fecha_Inscripcion;
 	public boolean pagado;
-	public TipoInscripcion estado; 
+	public TipoInscripcion estado;
+	public double cantidad_abonada; 
 }

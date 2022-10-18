@@ -14,10 +14,10 @@ import main.DatabaseConnection;
 public class CursoDataBase {
 
 	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false";
-	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre = ?";
-	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre = ?";
+	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre_curso = ?";
+	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ?";
 	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true";
-	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre = ?";
+	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
 	
 	public static List<CursoDTO> getCursosSinAbrir() {
 		List<CursoDTO> cursos = null;
@@ -218,7 +218,7 @@ public class CursoDataBase {
 	
 	private static CursoDTO toCursoDto(ResultSet m) throws SQLException {
 		CursoDTO dto = new CursoDTO();
-		dto.title = m.getString("nombre");
+		dto.title = m.getString("nombre_curso");
 		dto.price = m.getDouble("precio");
 		
 		dto.fechaInicioInscipcion = m.getDate("inicio_inscripcion");

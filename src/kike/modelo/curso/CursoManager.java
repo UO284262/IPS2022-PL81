@@ -55,6 +55,7 @@ public class CursoManager {
 		idto.fecha_Inscripcion = new Date(System.currentTimeMillis());
 		idto.pagado = false;
 		idto.estado = TipoInscripcion.PRE_INSCRITO;
+		idto.cantidad_abonada = 0;
 		
 		CursoDataBase.actualizarCurso(curosDTO);
 		InscripcionDataBase.createPreInscripcion(idto);	
