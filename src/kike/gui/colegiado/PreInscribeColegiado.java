@@ -192,8 +192,12 @@ public class PreInscribeColegiado extends JDialog {
 	private void mostrarPreincripcion() {
 		CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
 		colm = new ColegiadoManager(getTextField().getText());
-		if(!colm.validaID()) { //getTextField().getText().isBlank() || 
+		if(!colm.validaID()) { 
 			getLblError().setText("Error: id invalido.");
+
+		} else if(colm.isInscrito(cc.cdto.title)) {  
+			getLblError().setText("Error: Este usuario ya ha sido preinscrito.");
+		
 		} else {
 			getLblError().setText("");
 			cm = new CursoManager(cc.cdto);			
