@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 import abel.controlador.ActividadFormativaControler;
+import abel.controlador.VisualizarInscritosCursoControler;
 
 public class app {
 
@@ -43,7 +44,7 @@ public class app {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 615, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.getContentPane().add(getPanel(), BorderLayout.CENTER);
@@ -51,7 +52,7 @@ public class app {
 
 	private JPanel getPanel() {
 		if (panel == null) {
-			panel = new AñadirActividadFormativa(new ActividadFormativaControler());
+			panel = new VisualizarInscritosCurso(new VisualizarInscritosCursoControler());
 		}
 		return panel;
 	}

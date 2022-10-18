@@ -7,9 +7,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import abel.controlador.ActividadFormativaControler;
+import abel.controlador.VisualizarInscritosCursoControler;
 
-public class PlanificadorCurso extends JDialog {
+public class VisualizadorInscritos extends JDialog {
 
 	/**
 	 * 
@@ -33,14 +33,14 @@ public class PlanificadorCurso extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public PlanificadorCurso() {
+	public VisualizadorInscritos() {
 		setTitle("Planificador de cursos");
-		setBounds(100, 100, 505, 335);
+		setBounds(100, 100, 617, 335);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(new AñadirActividadFormativa(new ActividadFormativaControler()));
+		getContentPane().add(new VisualizarInscritosCurso(new VisualizarInscritosCursoControler()));
 	}
 
 }

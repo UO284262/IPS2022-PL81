@@ -16,6 +16,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import abel.vista.PlanificadorCurso;
 import kike.gui.colegiado.PreInscribeColegiado;
 import kike.gui.secretaria.SelectorCurso;
+import abel.vista.VisualizadorInscritos;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
 
@@ -38,10 +39,10 @@ public class Main {
 	private JLabel lblSecretaria;
 	private JLabel lblColegiado;
 	private JPanel panelColBotones;
-	//private JPanel panel;
 	private JButton btnAbrirCurso;
 	private JButton btAñadirCurso;
 	private JButton btnInscribirColegiado;
+	private JButton btVisualizarInscritos;
 
 	/**
 	 * Launch the application.
@@ -135,8 +136,9 @@ public class Main {
 		if (panelSecBotones == null) {
 			panelSecBotones = new JPanel();
 			panelSecBotones.setLayout(new GridLayout(0, 1, 5, 5));
-			panelSecBotones.add(getBtnAbrirCurso());
 			panelSecBotones.add(getBtAñadirCurso());
+			panelSecBotones.add(getBtnAbrirCurso());
+			panelSecBotones.add(getBtVisualizarInscritos());
 		}
 		return panelSecBotones;
 	}
@@ -191,6 +193,7 @@ public class Main {
 		}
 		return btAñadirCurso;
 	}
+
 	private JButton getBtnInscribirColegiado() {
 		if (btnInscribirColegiado == null) {
 			btnInscribirColegiado = new JButton("Inscribirse a un curso");
@@ -203,5 +206,20 @@ public class Main {
 			});
 		}
 		return btnInscribirColegiado;
+	}
+
+	private JButton getBtVisualizarInscritos() {
+		if (btVisualizarInscritos == null) {
+			btVisualizarInscritos = new JButton("VisualizarInscritos");
+			btVisualizarInscritos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VisualizadorInscritos dialog = new VisualizadorInscritos();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btVisualizarInscritos;
+
 	}
 }
