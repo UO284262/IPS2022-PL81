@@ -11,15 +11,16 @@ import main.DatabaseConnection;
 
 public class NuevosColegiadosModel {
 	
-	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO TRABAJADOR (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
+	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO COLEGIADO (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
 			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private final static String QUERY_FIND_COLEGIADO_BY_DNI = "SELECT * FROM COLEGIADO WHERE dni = ?";
 	
 	
 	/**
 	 * Añadimos un nuevo colegiado a la base de datos
 	 * @param colegiado, colegiado que deseamos añadir
 	 */
-	public void addWorker(ColegiadoDto colegiado) {
+	public void addColegiado(ColegiadoDto colegiado) {
 		addColegiadoToDataBase(colegiado);
 	}
 	
@@ -29,7 +30,7 @@ public class NuevosColegiadosModel {
 	 * @param id, identificador del colegiado
 	 * @return true si existe, false en caso contrario
 	 */
-	public boolean isTrueWorker(String id){
+	public boolean isTrueColegiado(String id){
 		if (isTrueColegiadoInDataBase(id)) {
 			return true;
 		}
@@ -69,7 +70,7 @@ public class NuevosColegiadosModel {
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{
 			conn.setAutoCommit(false);
-			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_NUEVO_COLEGIADO);
+			PreparedStatement st = conn.prepareStatement(QUERY_FIND_COLEGIADO_BY_DNI);
 			st.setString(1, id);
 		    rs = st.executeQuery();
 

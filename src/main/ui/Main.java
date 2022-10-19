@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -14,10 +15,14 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
+import kike.gui.colegiado.PreInscribeColegiado;
+import kike.gui.secretaria.SelectorCurso;
 import abel.vista.VisualizadorInscritos;
-import kike.gui.SelectorCurso;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
+import rodro.controlador.EmitirRecibosControler;
+import rodro.controlador.SolicitudControler;
+import rodro.vista.VentanaSolicitud;
 
 import java.awt.Font;
 
@@ -40,7 +45,10 @@ public class Main {
 	private JPanel panelColBotones;
 	private JButton btnAbrirCurso;
 	private JButton btAñadirCurso;
+	private JButton btnInscribirColegiado;
 	private JButton btVisualizarInscritos;
+	private JButton btEmitirRecibos;
+	private JButton btSolicitudColegiado;
 
 	/**
 	 * Launch the application.
@@ -101,6 +109,7 @@ public class Main {
 		frame.setBounds(100, 100, 450, 560);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(getPanelPrincipal(), BorderLayout.CENTER);
+		frame.setLocationRelativeTo(null);
 	}
 
 	private JPanel getPanelPrincipal() {
@@ -134,9 +143,10 @@ public class Main {
 		if (panelSecBotones == null) {
 			panelSecBotones = new JPanel();
 			panelSecBotones.setLayout(new GridLayout(0, 1, 5, 5));
+			panelSecBotones.add(getBtAñadirCurso());
 			panelSecBotones.add(getBtnAbrirCurso());
 			panelSecBotones.add(getBtVisualizarInscritos());
-			panelSecBotones.add(getBtAñadirCurso());
+			panelSecBotones.add(getBtEmitirRecibos());
 		}
 		return panelSecBotones;
 	}
@@ -159,6 +169,9 @@ public class Main {
 	private JPanel getPanelColBotones() {
 		if (panelColBotones == null) {
 			panelColBotones = new JPanel();
+			panelColBotones.setLayout(new GridLayout(0, 1, 0, 0));
+			panelColBotones.add(getBtSolicitudColegiado());
+			panelColBotones.add(getBtnInscribirColegiado());
 		}
 		return panelColBotones;
 	}
@@ -190,6 +203,21 @@ public class Main {
 		}
 		return btAñadirCurso;
 	}
+
+	private JButton getBtnInscribirColegiado() {
+		if (btnInscribirColegiado == null) {
+			btnInscribirColegiado = new JButton("Inscribirse a un curso");
+			btnInscribirColegiado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					PreInscribeColegiado dialog = new PreInscribeColegiado();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btnInscribirColegiado;
+	}
+
 	private JButton getBtVisualizarInscritos() {
 		if (btVisualizarInscritos == null) {
 			btVisualizarInscritos = new JButton("VisualizarInscritos");
@@ -202,5 +230,38 @@ public class Main {
 			});
 		}
 		return btVisualizarInscritos;
+
+	}
+	private JButton getBtEmitirRecibos() {
+		if (btEmitirRecibos == null) {
+			btEmitirRecibos = new JButton("EmitirRecibos");
+			btEmitirRecibos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					enviarRecibos();
+				}
+			});
+		}
+		return btEmitirRecibos;
+	}
+	private void enviarRecibos() {
+		EmitirRecibosControler con = new EmitirRecibosControler();
+		if(con.validarRecibos())
+			JOptionPane.showMessageDialog(null, "Se han enviado los recibos");
+		else
+			JOptionPane.showMessageDialog(null, "No se han podido enviar recibos ya que no hay disponibles");
+	}
+	private JButton getBtSolicitudColegiado() {
+		if (btSolicitudColegiado == null) {
+			btSolicitudColegiado = new JButton("SolicitudColegiado");
+			btSolicitudColegiado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					SolicitudControler con = new SolicitudControler();
+					VentanaSolicitud dialog = new VentanaSolicitud(con);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btSolicitudColegiado;
 	}
 }
