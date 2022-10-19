@@ -14,15 +14,15 @@ import main.DatabaseConnection;
 public class DataBaseManagement 
 {
 	
-	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre,precio) VALUES(\"%s\",%s);";
+	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio) VALUES(\"%s\",%s);";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
-	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
-																	+ "ON a.nombre = f.nombre WHERE f.fecha >= \"%s\";";
+	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre_curso FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
+																	+ "ON a.nombre_curso = f.nombre_curso WHERE f.fecha >= \"%s\";";
 	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
 																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.id_colegiado = c.id_colegiado"
-																			+ " WHERE a.nombre = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
+																			+ " WHERE a.nombre_curso = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
-	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre = \"%s\";";
+	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre_curso = \"%s\";";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -65,7 +65,7 @@ public class DataBaseManagement
 		List<String> nombres = new ArrayList<String>();
 		while(rs.next())
 		{
-			nombres.add(rs.getString("nombre"));
+			nombres.add(rs.getString("nombre_curso"));
 		}
 		return nombres;
 	}
