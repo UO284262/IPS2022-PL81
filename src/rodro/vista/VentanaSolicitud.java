@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
 import rodro.controlador.SolicitudControler;
+import rodro.modelo.ColegiadoDto;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,6 +14,7 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.awt.event.ActionEvent;
 
 public class VentanaSolicitud extends JDialog {
@@ -45,17 +47,19 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField txtCuentaBancaria;
 	private SolicitudControler controler;
 
-	/**
-	 * Create the panel.
-	 */
+	
 	public VentanaSolicitud(SolicitudControler con) {
+		setModal(true);
+		setTitle("Ventana Solicitud");
+		setBounds(200, 200, 414, 451);
+		setResizable(false);
 		this.controler = con;
 		setBackground(Color.WHITE);
-		setLayout(null);
-		add(getBtnFinalizar());
-		add(getPnDatosPersonales());
-		add(getPnDatosAcadmicos());
-		add(getPnDatosBancarios());
+		getContentPane().setLayout(null);
+		getContentPane().add(getBtnFinalizar());
+		getContentPane().add(getPnDatosPersonales());
+		getContentPane().add(getPnDatosAcadmicos());
+		getContentPane().add(getPnDatosBancarios());
 
 	}
 	private JLabel getLblNombre() {
@@ -115,7 +119,9 @@ public class VentanaSolicitud extends JDialog {
 			btnFinalizar = new JButton("Finalizar");
 			btnFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					if(camposCorrectos())
 					añadirColegiado();
+					mostrarError();
 				}
 			});
 			btnFinalizar.setBounds(287, 384, 85, 21);
@@ -123,9 +129,75 @@ public class VentanaSolicitud extends JDialog {
 		return btnFinalizar;
 	}
 	
+
+	/**
+	 * Se comprueba que todos los campos no están vacíos
+	 */
+	private boolean camposCorrectos() {
+		if (!txtNombre.getText().trim().isEmpty()) {
+			if (!txtApellidos.getText().trim().isEmpty()) {
+				if (!txtDNI.getText().trim().isEmpty()) {
+					if (!txtPoblacion.getText().isEmpty()) {
+						if (!txtTitulacion.getText().isEmpty()) {
+							if (!txtAño.getText().isEmpty()) {
+								if (!txtCentro.getText().isEmpty()) {
+									if (!txtCuentaBancaria.getText().isEmpty()) {
+										if(dniCorrecto())
+										   if(telefonoCorrecto())
+											  return true;
+										   mostrarErrorTelefono();
+									}
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+	return false;
+
+	}
+	
+	private boolean telefonoCorrecto() {
+			if (txtTelefono.getText().length() == 9) {
+				return true;
+			}
+			return false;
+	}
+	
+	private boolean dniCorrecto() {
+		if(txtDNI.getText().length()==9)
+			return true;
+		else
+			return false;
+	}
+	
 	private void añadirColegiado() {
+		if (controler.colegiadoExistente(txtDNI.getText())){
+			controler.validarSolicitud(txtDNI.getText(),newColegiado());
+		}
+		mostrarErrorColegiadoExistente();
 		
 	}
+	
+	private ColegiadoDto newColegiado() {
+		ColegiadoDto dto = new ColegiadoDto();
+		dto.apellidos = txtApellidos.getText();
+		dto.dni = txtDNI.getText();
+		dto.nombre = txtNombre.getText();
+		dto.tlfn = Integer.parseInt(txtTelefono.getText());
+		dto.poblacion = txtPoblacion.getText();
+		dto.titulacion = txtTitulacion.getText();
+		dto.año = Integer.parseInt(txtAño.getText());
+		dto.cuentaBancaria = txtCuentaBancaria.getText();
+		dto.fecha = LocalDateTime.now();
+		dto.isValid = false;
+		
+		return dto;
+	}
+		
+		
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
 			txtNombre = new JTextField();
@@ -260,49 +332,7 @@ public class VentanaSolicitud extends JDialog {
 		return txtCuentaBancaria;
 	}
 	
-//-------------------GETTERS--DE-AYUDA-------------------------------
 
-     /* Getters de los que extraer la información del usuario */
-	
-	    public JDialog getJDialog() {
-		     return this;
-	     }
-	    
-	    public String getNombre() {
-			return txtNombre.getText();
-		}
-	    
-	    public String getApellidos() {
-			return txtApellidos.getText();
-		}
-	    
-	    public String getDni() {
-			return txtDNI.getText();
-		}
-	    
-	    public String getPoblacion() {
-	    	return txtPoblacion.getText();
-	    }
-	    
-	    public String getTelefono() {
-			return txtTelefono.getText();
-		}
-	    
-	    public String getTitulacion() {
-	    	return txtTitulacion.getText();
-	    }
-	    
-	    public String getCentro() {
-	    	return txtCentro.getText();
-	    }
-	    
-	    public String getAño() {
-	    	return txtAño.getText();
-	    }
-	    
-	    public String getCuentaBancaria() {
-	    	return txtCuentaBancaria.getText();
-	    }
 	    
 	    
 	    public void mostrarError() {
@@ -316,8 +346,8 @@ public class VentanaSolicitud extends JDialog {
 		}
 	    
 	    public void mostrarErrorColegiadoExistente() {
-			JOptionPane.showMessageDialog(null, "Ya existe un trabajador con ese "
-					+ "nombre de usuario");
+			JOptionPane.showMessageDialog(null, "Ya existe un colegiado con ese "
+					+ "dni");
 		}
 	    
 	    public void completado() {

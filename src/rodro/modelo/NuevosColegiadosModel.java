@@ -11,8 +11,9 @@ import main.DatabaseConnection;
 
 public class NuevosColegiadosModel {
 	
-	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO TRABAJADOR (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
+	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO COLEGIADO (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
 			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private final static String QUERY_FIND_COLEGIADO_BY_DNI = "SELECT * FROM COLEGIADO WHERE dni = ?";
 	
 	
 	/**
@@ -69,7 +70,7 @@ public class NuevosColegiadosModel {
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{
 			conn.setAutoCommit(false);
-			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_NUEVO_COLEGIADO);
+			PreparedStatement st = conn.prepareStatement(QUERY_FIND_COLEGIADO_BY_DNI);
 			st.setString(1, id);
 		    rs = st.executeQuery();
 

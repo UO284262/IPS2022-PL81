@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -19,6 +20,9 @@ import kike.gui.secretaria.SelectorCurso;
 import abel.vista.VisualizadorInscritos;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
+import rodro.controlador.EmitirRecibosControler;
+import rodro.controlador.SolicitudControler;
+import rodro.vista.VentanaSolicitud;
 
 import java.awt.Font;
 
@@ -43,6 +47,8 @@ public class Main {
 	private JButton btAñadirCurso;
 	private JButton btnInscribirColegiado;
 	private JButton btVisualizarInscritos;
+	private JButton btEmitirRecibos;
+	private JButton btSolicitudColegiado;
 
 	/**
 	 * Launch the application.
@@ -140,6 +146,7 @@ public class Main {
 			panelSecBotones.add(getBtAñadirCurso());
 			panelSecBotones.add(getBtnAbrirCurso());
 			panelSecBotones.add(getBtVisualizarInscritos());
+			panelSecBotones.add(getBtEmitirRecibos());
 		}
 		return panelSecBotones;
 	}
@@ -162,6 +169,8 @@ public class Main {
 	private JPanel getPanelColBotones() {
 		if (panelColBotones == null) {
 			panelColBotones = new JPanel();
+			panelColBotones.setLayout(new GridLayout(0, 1, 0, 0));
+			panelColBotones.add(getBtSolicitudColegiado());
 			panelColBotones.add(getBtnInscribirColegiado());
 		}
 		return panelColBotones;
@@ -222,5 +231,37 @@ public class Main {
 		}
 		return btVisualizarInscritos;
 
+	}
+	private JButton getBtEmitirRecibos() {
+		if (btEmitirRecibos == null) {
+			btEmitirRecibos = new JButton("EmitirRecibos");
+			btEmitirRecibos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					enviarRecibos();
+				}
+			});
+		}
+		return btEmitirRecibos;
+	}
+	private void enviarRecibos() {
+		EmitirRecibosControler con = new EmitirRecibosControler();
+		if(con.validarRecibos())
+			JOptionPane.showMessageDialog(null, "Se han enviado los recibos");
+		else
+			JOptionPane.showMessageDialog(null, "No se han podido enviar recibos ya que no hay disponibles");
+	}
+	private JButton getBtSolicitudColegiado() {
+		if (btSolicitudColegiado == null) {
+			btSolicitudColegiado = new JButton("SolicitudColegiado");
+			btSolicitudColegiado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					SolicitudControler con = new SolicitudControler();
+					VentanaSolicitud dialog = new VentanaSolicitud(con);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btSolicitudColegiado;
 	}
 }
