@@ -1,6 +1,6 @@
 package rodro.modelo;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class ReciboDto {
 	
@@ -12,13 +12,7 @@ public class ReciboDto {
 	
 	
 	
-	public ReciboDto(String numRecibo, Date fecha, String dni, String numCuenta, double cantidad2) {
-		this.idRecibo = numRecibo;
-		this.dniColegiado = dni;
-		this.emision  = fecha;
-		this.iban = numCuenta;
-		this.cantidad = cantidad2;
-	}
+	
 	public String getIdRecibo() {
 		return idRecibo;
 	}

@@ -5,31 +5,52 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
 import main.DatabaseConnection;
 
 public class EmitirRecibosModel {
 	
-	private final static String QUERY_OBTENER_RECIBOS = "SELECT * FROM RECIBOS "; 
+	private final static String QUERY_OBTENER_RECIBOS = "SELECT * FROM RECIBO "; 
 	
 	public static List<ReciboDto> getRecibos()
 	{
-		try (Connection conn = DatabaseConnection.getConnection();)
-		{	
-			conn.setAutoCommit(false);
-			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_RECIBOS));
-			ResultSet rs = st.executeQuery();
-			conn.commit();
-			List<ReciboDto> recibos = toReciboList(rs);
-			st.close();
-			rs.close();
-			return recibos;
-			
-		} catch (SQLException e) { }
+		List<ReciboDto> recibos = null;
 		
-		return  null ;
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try
+		{	
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+		    st = conn.prepareStatement(QUERY_OBTENER_RECIBOS);
+		    rs = st.executeQuery();
+			
+			recibos = toReciboList(rs);
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		    throw new RuntimeException(e);	 
+		}finally {
+			try {
+				rs.close();
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}
+		
+		return  recibos ;
 	}
 	
 	private static List<ReciboDto> toReciboList(ResultSet rs) throws SQLException
@@ -37,12 +58,13 @@ public class EmitirRecibosModel {
 		List<ReciboDto> recibos = new ArrayList<ReciboDto>();
 		while(rs.next())
 		{
-			String numRecibo = rs.getString(1);
-			Date fecha = rs.getDate(2);
-			String dni = rs.getString(3);
-			String numCuenta = rs.getString(4);
-			double cantidad = rs.getDouble(5);
-			recibos.add(new ReciboDto(numRecibo,fecha,dni,numCuenta,cantidad));
+			ReciboDto dto = new ReciboDto();
+			dto.idRecibo= rs.getString("id_recibo");
+			dto.emision = rs.getDate("emision");
+			dto.dniColegiado = rs.getString("dni");
+			dto.iban = rs.getString("iban");
+			dto.cantidad = rs.getDouble("cantidad");
+			recibos.add(dto);
 		}
 		return recibos;
 	}
