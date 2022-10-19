@@ -29,6 +29,7 @@ public class DataBaseManagement
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{	
 			conn.setAutoCommit(false);
+			
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_FORMATIVA,actividad.title,actividad.price));
 			st.executeUpdate();
 				for(Date day : actividad.days)
