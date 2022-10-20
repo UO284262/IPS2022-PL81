@@ -65,6 +65,7 @@ public class PreInscribeColegiado extends JDialog {
 	 * Create the dialog.
 	 */
 	public PreInscribeColegiado() {
+		setModal(true);
 		modeloCursos = CursoManager.getModeloCursosAbiertos();
 		setMinimumSize(new Dimension(500, 400));
 		setBounds(100, 100, 500, 450);
@@ -207,6 +208,7 @@ public class PreInscribeColegiado extends JDialog {
 			MostrarDatosInscripcion ventana = new MostrarDatosInscripcion(this);
 			ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			ventana.setModal(true);
+			ventana.setLocationRelativeTo(this);
 			ventana.setVisible(true);
 			
 		}		

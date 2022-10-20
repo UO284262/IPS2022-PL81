@@ -46,7 +46,7 @@ public class ReciboDto {
 	
 	
 	public String toString() {
-		return getIdRecibo() + ", " + getEmision() + ", " + getDniColegiado() + ", " + getIban()+ ", " + getCantidad() +"€"; 
+		return getIdRecibo() + ", " + getEmision() + ", " + getDniColegiado() + ", " + getIban()+ ", " + getCantidad() +"€ \n"; 
 	}
 	
 	

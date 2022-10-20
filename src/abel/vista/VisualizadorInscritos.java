@@ -34,6 +34,7 @@ public class VisualizadorInscritos extends JDialog {
 	 * Create the dialog.
 	 */
 	public VisualizadorInscritos() {
+		setModal(true);
 		setTitle("Planificador de cursos");
 		setBounds(100, 100, 617, 335);
 		setResizable(false);

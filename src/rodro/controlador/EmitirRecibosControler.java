@@ -17,8 +17,8 @@ public class EmitirRecibosControler {
 	@SuppressWarnings("deprecation")
 	public boolean validarRecibos() {
 		List<ReciboDto> recibosEsteAño  =  new ArrayList<ReciboDto>();
-		Date d = new Date(LocalDate.now().getYear() -1901 ,1,1);
-		Date d2 = new Date(LocalDate.now().getYear() -1901 ,12,31);
+		Date d = new Date(LocalDate.now().getYear() -1900 ,1,1);
+		Date d2 = new Date(LocalDate.now().getYear() -1900 ,12,31);
 		for(ReciboDto r : recibos) {
 			if( r.getEmision().after(d) && r.getEmision().before(d2) ) {
 				recibosEsteAño.add(r);

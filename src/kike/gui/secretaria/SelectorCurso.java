@@ -57,6 +57,7 @@ public class SelectorCurso extends JDialog {
 	 * Create the dialog.
 	 */
 	public SelectorCurso(DefaultComboBoxModel<CursoDTO> modeloCursos) {
+		setModal(true);
 		this.modeloCursos = modeloCursos;
 		setTitle("Selector de cursos");
 		setResizable(false);
@@ -149,6 +150,7 @@ public class SelectorCurso extends JDialog {
 			AperturaCursos ac = new AperturaCursos(this);
 			ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			ac.setModal(true);
+			ac.setLocationRelativeTo(this);
 			ac.setVisible(true);
 		}		
 	}

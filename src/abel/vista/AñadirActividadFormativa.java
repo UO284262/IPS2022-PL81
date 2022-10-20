@@ -92,7 +92,7 @@ public class AñadirActividadFormativa extends JPanel {
 	}
 	private JButton getBtCancelar() {
 		if (btCancelar == null) {
-			btCancelar = new JButton("Cancelar");
+			btCancelar = new JButton("Reiniciar");
 			btCancelar.setFocusPainted(false);
 			btCancelar.setBackground(Color.RED);
 			btCancelar.setForeground(Color.BLACK);

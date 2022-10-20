@@ -184,6 +184,7 @@ public class Main {
 					cursosSinAbrir.addAll(CursoDataBase.getCursosSinAbrir());
 					SelectorCurso dialog = new SelectorCurso(cursosSinAbrir);
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
 				}				
 			});
@@ -197,6 +198,7 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					PlanificadorCurso dialog = new PlanificadorCurso();
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
 				}
 			});
@@ -211,6 +213,7 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					PreInscribeColegiado dialog = new PreInscribeColegiado();
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
 				}
 			});
@@ -225,6 +228,7 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					VisualizadorInscritos dialog = new VisualizadorInscritos();
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
 				}
 			});
@@ -258,6 +262,7 @@ public class Main {
 					SolicitudControler con = new SolicitudControler();
 					VentanaSolicitud dialog = new VentanaSolicitud(con);
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
 				}
 			});

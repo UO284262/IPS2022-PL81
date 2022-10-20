@@ -52,6 +52,7 @@ public class AperturaCursos extends JDialog {
 	 * Create the panel.
 	 */
 	public AperturaCursos(SelectorCurso sc) {
+		setModal(true);
 		this.sc = sc;
 		
 		setResizable(false);
