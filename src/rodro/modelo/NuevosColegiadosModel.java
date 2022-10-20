@@ -11,9 +11,9 @@ import main.DatabaseConnection;
 
 public class NuevosColegiadosModel {
 	
-	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO COLEGIADO (DNI, NOMBRE, APELLIDOS, POBLACION, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
-			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private final static String QUERY_FIND_COLEGIADO_BY_DNI = "SELECT * FROM COLEGIADO WHERE dni = ?";
+	private final static String QUERY_INSERT_NUEVO_COLEGIADO = "INSERT INTO COLEGIADO (id_colegiado,DNI, NOMBRE, APELLIDOS, CIUDAD, TITULACION, AÑO, IBAN, CENTRO, TELEFONO) VALUES "
+			+ "(?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private final static String QUERY_FIND_COLEGIADO_BY_DNI = "SELECT dni FROM COLEGIADO WHERE dni = ?";
 	
 	
 	/**
@@ -44,15 +44,18 @@ public class NuevosColegiadosModel {
 			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_NUEVO_COLEGIADO);
 			st.setString(1, colegiado.dni);
-			st.setString(2, colegiado.nombre);
-			st.setString(3, colegiado.apellidos);
-			st.setString(4, colegiado.poblacion);
-			st.setString(5, colegiado.titulacion);
-			st.setString(6, colegiado.cuentaBancaria);
+			st.setString(2, colegiado.dni);
+			st.setString(3, colegiado.nombre);
+			st.setString(4, colegiado.apellidos);
+			st.setString(5, colegiado.poblacion);
+			st.setString(6, colegiado.titulacion);
+			st.setString(8, colegiado.cuentaBancaria);
 			st.setInt(7, colegiado.año);
-			st.setString(8, colegiado.centro);
-			st.setInt(9, colegiado.tlfn);
+			st.setString(9, colegiado.centro);
+			st.setInt(10, colegiado.tlfn);
 			st.executeUpdate();
+			
+			conn.commit();
 				
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -63,36 +66,44 @@ public class NuevosColegiadosModel {
 	/**
 	 * Conexión a la base de datos para conseguir un colegiado
 	 * @param id, identificador del colegiado
-	 * @return null si no existe o el colegiado
+	 * @return false si no existe o true si existe
 	 */
 	private boolean isTrueColegiadoInDataBase(String id){
 		ResultSet rs = null;
-		try (Connection conn = DatabaseConnection.getConnection();)
+		Connection conn = null;
+		PreparedStatement st = null;
+		boolean existe;
+		try 
 		{
+			conn = DatabaseConnection.getConnection();
 			conn.setAutoCommit(false);
-			PreparedStatement st = conn.prepareStatement(QUERY_FIND_COLEGIADO_BY_DNI);
+			st = conn.prepareStatement(QUERY_FIND_COLEGIADO_BY_DNI);
 			st.setString(1, id);
 		    rs = st.executeQuery();
 
-			if (rs.next()) {
-				return true;
-			}
-			return false;
+			existe = rs.next();
+			conn.commit();
+
 		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			throw new RuntimeException(e);
 		} finally {
-			close(rs);
+			try {
+				rs.close();
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}
 		}
+		return existe;
 	}
 		
-		protected static void close(ResultSet rs) {
-			if (rs != null)
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					/* ignore */}
-		}
-	
+		
 	
 	
 

@@ -11,18 +11,17 @@ public class SolicitudControler {
 	private NuevosColegiadosModel model = new NuevosColegiadosModel();
 	
 
-	public void validarSolicitud(String dni, ColegiadoDto colegiado) {
-					if (!colegiadoExistente(dni)){
+	public void validarSolicitud( ColegiadoDto colegiado) {
+					
 						model.addColegiado(colegiado);
-						}
+						
 			
 	}
 	
 	public boolean colegiadoExistente(String dni) {
-		if (!model.isTrueColegiado(dni))
-			return false;
-		return true;
+		return model.isTrueColegiado(dni);
 	}
+			
 	
 	
 	
