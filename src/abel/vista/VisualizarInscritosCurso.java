@@ -14,21 +14,16 @@ import javax.swing.table.DefaultTableModel;
 
 import abel.controlador.VisualizarInscritosCursoControler;
 import abel.modelo.ActividadFormativaDTO;
+import abel.modelo.ColegiadoInscritoDTO;
 import abel.modelo.DataBaseManagement;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class VisualizarInscritosCurso extends JPanel {
 
@@ -97,7 +92,7 @@ public class VisualizarInscritosCurso extends JPanel {
 			lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 			lbTitulo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			lbTitulo.setBackground(Color.WHITE);
-			lbTitulo.setBounds(10, 10, 819, 36);
+			lbTitulo.setBounds(10, 10, 969, 36);
 		}
 		return lbTitulo;
 	}
@@ -112,8 +107,7 @@ public class VisualizarInscritosCurso extends JPanel {
 	{
 		String nombre = (String) actividad;
 		
-		List<String> apuntados = controler.getListaApuntados(nombre);
-		System.out.println(apuntados);
+		List<ColegiadoInscritoDTO> apuntados = controler.getListaApuntados(nombre);
 		if(apuntados == null)
 		{
 			mostrarMensajeNoActividad();
@@ -125,29 +119,42 @@ public class VisualizarInscritosCurso extends JPanel {
 		else
 		{
 			modeloApuntados = new DefaultTableModel();
+			cargarTablaApuntados(apuntados);
 			cargarIngresosPara(actividad);
+			this.getTable_1().setModel(modeloApuntados);
+		}
+	}
+	
+	private void cargarTablaApuntados(List<ColegiadoInscritoDTO> colegiados)
+	{
+		Object[] columns = {"Nombre","Apellidos","Fecha inscripción","Estado", "Abonado (€)"};
+		modeloApuntados.setColumnIdentifiers(columns);
+		for(ColegiadoInscritoDTO ci : colegiados)
+		{
+			Object[] data = {ci.nombre, ci.apellidos, ci.fecha_inscripcion.toString() , ci.estado , ci.cantidad_abonada};
+			modeloApuntados.addRow(data);
 		}
 	}
 	
 	private void mostrarMensajeNadieApuntado()
 	{
-		JOptionPane.showConfirmDialog(null,new String("No hay nadie inscrito a esta actividad formativa."),"Aviso de no inscritos",JOptionPane.OK_CANCEL_OPTION,JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showConfirmDialog(this,new String("No hay nadie inscrito a esta actividad formativa."),"Aviso de no inscritos",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	private void mostrarMensajeNoActividad()
 	{
-		JOptionPane.showConfirmDialog(null,new String("No existe esa actividad formativa."),"Aviso actividad formativa",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showConfirmDialog(this,new String("No existe esa actividad formativa."),"Aviso actividad formativa",JOptionPane.OK_CANCEL_OPTION,JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private void mostrarMensajeNoActividades()
 	{
-		JOptionPane.showConfirmDialog(null,new String("No hay ninguna actividad formativa planificada."),"Aviso de falta de actividades",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showConfirmDialog(this,new String("No hay ninguna actividad formativa planificada."),"Aviso de falta de actividades",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	private JScrollPane getSpActividades() {
 		if (spApuntados == null) {
 			spApuntados = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			spApuntados.setBounds(479, 93, 346, 302);
+			spApuntados.setBounds(479, 93, 500, 302);
 			spApuntados.setViewportView(getTable_1());
 		}
 		return spApuntados;
@@ -173,13 +180,6 @@ public class VisualizarInscritosCurso extends JPanel {
 			table = new JTable();
 			table.setFocusable(false);
 			table.setDefaultEditor(Object.class, null);
-			table.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					Object o = table.getValueAt(table.getSelectedColumn(), table.getSelectedRow());
-					cargarApuntadosA(o);
-				}
-			});
 		}
 		return table;
 	}
@@ -215,6 +215,8 @@ public class VisualizarInscritosCurso extends JPanel {
 	private JTable getTable_1() {
 		if (table_1 == null) {
 			table_1 = new JTable();
+			table_1.setFocusable(false);
+			table_1.setDefaultEditor(Object.class, null);
 		}
 		return table_1;
 	}

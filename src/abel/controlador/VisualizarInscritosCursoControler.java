@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import abel.modelo.ActividadFormativaDTO;
+import abel.modelo.ColegiadoInscritoDTO;
 import abel.modelo.DataBaseManagement;
 
 public class VisualizarInscritosCursoControler {
@@ -16,7 +17,7 @@ public class VisualizarInscritosCursoControler {
 		return DataBaseManagement.getActividadesFormativasFrom(LocalDate.now().getYear());
 	}
 	
-	public List<String> getListaApuntados(String nombre)
+	public List<ColegiadoInscritoDTO> getListaApuntados(String nombre)
 	{
 		return DataBaseManagement.getInscritosEn(nombre);
 	}
@@ -38,5 +39,21 @@ public class VisualizarInscritosCursoControler {
 			e.printStackTrace();
 		}
 		return lista;
+	}
+	
+	public static List<ColegiadoInscritoDTO> toApuntadoList(ResultSet rs) throws SQLException
+	{
+		List<ColegiadoInscritoDTO> apuntados = new ArrayList<ColegiadoInscritoDTO>();
+		while(rs.next())
+		{
+			ColegiadoInscritoDTO colegiado = new ColegiadoInscritoDTO();
+			colegiado.apellidos = rs.getString(2);
+			colegiado.nombre = rs.getString(1);
+			colegiado.fecha_inscripcion = LocalDate.parse(rs.getString(3));
+			colegiado.estado = rs.getString(4);
+			colegiado.cantidad_abonada = rs.getDouble(5);
+			apuntados.add(colegiado);
+		}
+		return apuntados;
 	}
 }
