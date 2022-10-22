@@ -15,6 +15,8 @@ public class DataBaseManagement
 {
 	
 	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre,precio) VALUES(\"%s\",%s);";
+	private final static String QUERY_INSERT_ACTIVIDAD_PERICIAL = "INSERT INTO Actividad_Pericial(numero, tipo_pericial, prioridad, nombre_solicitante, mail_solicitante, telefono_solicitante, descripcion, estado) "
+																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
 																	+ "ON a.nombre = f.nombre WHERE f.fecha >= \"%s\";";
@@ -23,6 +25,8 @@ public class DataBaseManagement
 																			+ " WHERE a.nombre = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
 	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre = \"%s\";";
+	
+	private final static String QUERY_NEXT_FORMULARIO_NUM = "SELECT MAX(numero) from Actividad_Pericial;";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -120,5 +124,40 @@ public class DataBaseManagement
 			
 		} catch (SQLException e) { e.printStackTrace();}
 		return d;
+	}
+
+	public static int getNextNumeroFormulario() {
+		int d = 0;
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_NEXT_FORMULARIO_NUM));
+			ResultSet rs = st.executeQuery();
+			if(rs.next())
+			{
+				d = rs.getInt(1) + 1;
+			}
+			conn.commit();
+			st.close();
+			rs.close();
+			
+		} catch (SQLException e) { e.printStackTrace();}
+		return d;
+	}
+	
+	public static boolean addFormulario(FormularioPericialDTO actividad)
+	{
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_PERICIAL,actividad.numero,actividad.tipo_pericial,actividad.prioridad,
+					actividad.nombre_solicitante,actividad.mail_solicitante,actividad.telefono_solicitante,actividad.descripcion,actividad.estado));
+			st.executeUpdate();
+			
+			conn.commit();
+		} catch (SQLException e) {
+			return false;
+		}
+		return true;
 	}
 }
