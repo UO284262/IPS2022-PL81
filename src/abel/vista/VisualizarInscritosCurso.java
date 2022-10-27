@@ -24,6 +24,8 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class VisualizarInscritosCurso extends JPanel {
 
@@ -103,7 +105,7 @@ public class VisualizarInscritosCurso extends JPanel {
 		getTfIngresos().setText(DataBaseManagement.getIngresosFor(nombre) + "");
 	}
 	
-	private void cargarApuntadosA(Object actividad)
+	private boolean cargarApuntadosA(Object actividad)
 	{
 		String nombre = (String) actividad;
 		
@@ -111,10 +113,12 @@ public class VisualizarInscritosCurso extends JPanel {
 		if(apuntados == null)
 		{
 			mostrarMensajeNoActividad();
+			return false;
 		}
 		else if(apuntados.size() == 0)
 		{
 			mostrarMensajeNadieApuntado();
+			return false;
 		}
 		else
 		{
@@ -122,6 +126,7 @@ public class VisualizarInscritosCurso extends JPanel {
 			cargarTablaApuntados(apuntados);
 			cargarIngresosPara(actividad);
 			this.getTable_1().setModel(modeloApuntados);
+			return true;
 		}
 	}
 	
@@ -178,6 +183,14 @@ public class VisualizarInscritosCurso extends JPanel {
 	private JTable getTable() {
 		if (table == null) {
 			table = new JTable();
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Object acf = table.getValueAt(table.getSelectedRow(),0);
+					boolean bool = cargarApuntadosA(table.getValueAt(table.getSelectedRow(),0));
+					if(bool) getTfActividadFormativa().setText((String) acf);
+				}
+			});
 			table.setFocusable(false);
 			table.setDefaultEditor(Object.class, null);
 		}
@@ -202,11 +215,7 @@ public class VisualizarInscritosCurso extends JPanel {
 	private JTextField getTfActividadFormativa() {
 		if (tfActividadFormativa == null) {
 			tfActividadFormativa = new JTextField();
-			tfActividadFormativa.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					cargarApuntadosA(tfActividadFormativa.getText());
-				}
-			});
+			tfActividadFormativa.setEditable(false);
 			tfActividadFormativa.setBounds(143, 56, 96, 19);
 			tfActividadFormativa.setColumns(10);
 		}
