@@ -1,10 +1,10 @@
 package rodro.modelo;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class ReciboDto {
 	
-	public int idRecibo;
+	public String idRecibo;
 	public String dniColegiado;
 	public Date emision;
 	public String iban;
@@ -12,10 +12,11 @@ public class ReciboDto {
 	
 	
 	
-	public int getIdRecibo() {
+	
+	public String getIdRecibo() {
 		return idRecibo;
 	}
-	public void setIdRecibo(int idRecibo) {
+	public void setIdRecibo(String idRecibo) {
 		this.idRecibo = idRecibo;
 	}
 	public String getDniColegiado() {
@@ -41,6 +42,11 @@ public class ReciboDto {
 	}
 	public void setCantidad(double cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	
+	public String toString() {
+		return getIdRecibo() + ", " + getEmision() + ", " + getDniColegiado() + ", " + getIban()+ ", " + getCantidad() +"€ \n"; 
 	}
 	
 	

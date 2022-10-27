@@ -2,9 +2,11 @@ package rodro.vista;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
 import rodro.controlador.SolicitudControler;
+import rodro.modelo.ColegiadoDto;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -12,6 +14,7 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.awt.event.ActionEvent;
 
 public class VentanaSolicitud extends JDialog {
@@ -43,18 +46,22 @@ public class VentanaSolicitud extends JDialog {
 	private JLabel lblCuentaBancaria;
 	private JTextField txtCuentaBancaria;
 	private SolicitudControler controler;
+	private JButton btCancelar;
 
-	/**
-	 * Create the panel.
-	 */
+	
 	public VentanaSolicitud(SolicitudControler con) {
+		setModal(true);
+		setTitle("Ventana Solicitud");
+		setBounds(200, 200, 414, 451);
+		setResizable(false);
 		this.controler = con;
 		setBackground(Color.WHITE);
-		setLayout(null);
-		add(getBtnFinalizar());
-		add(getPnDatosPersonales());
-		add(getPnDatosAcadmicos());
-		add(getPnDatosBancarios());
+		getContentPane().setLayout(null);
+		getContentPane().add(getBtnFinalizar());
+		getContentPane().add(getPnDatosPersonales());
+		getContentPane().add(getPnDatosAcadmicos());
+		getContentPane().add(getPnDatosBancarios());
+		getContentPane().add(getBtCancelar());
 
 	}
 	private JLabel getLblNombre() {
@@ -67,7 +74,7 @@ public class VentanaSolicitud extends JDialog {
 	private JLabel getLblApellidos() {
 		if (lblApellidos == null) {
 			lblApellidos = new JLabel("Apellidos:");
-			lblApellidos.setBounds(10, 63, 52, 13);
+			lblApellidos.setBounds(10, 63, 59, 13);
 		}
 		return lblApellidos;
 	}
@@ -82,14 +89,14 @@ public class VentanaSolicitud extends JDialog {
 	private JLabel getLblTelefono() {
 		if (lblTelefono == null) {
 			lblTelefono = new JLabel("Telefono:");
-			lblTelefono.setBounds(10, 141, 45, 13);
+			lblTelefono.setBounds(10, 151, 59, 13);
 		}
 		return lblTelefono;
 	}
 	private JLabel getLblPoblacion() {
 		if (lblPoblacion == null) {
 			lblPoblacion = new JLabel("Poblacion:");
-			lblPoblacion.setBounds(10, 118, 52, 13);
+			lblPoblacion.setBounds(5, 121, 64, 13);
 		}
 		return lblPoblacion;
 	}
@@ -97,7 +104,7 @@ public class VentanaSolicitud extends JDialog {
 		if (lblTitulacion == null) {
 			lblTitulacion = new JLabel("Titulacion:");
 			lblTitulacion.setHorizontalAlignment(SwingConstants.CENTER);
-			lblTitulacion.setBounds(10, 25, 55, 13);
+			lblTitulacion.setBounds(10, 29, 55, 13);
 		}
 		return lblTitulacion;
 	}
@@ -105,16 +112,20 @@ public class VentanaSolicitud extends JDialog {
 		if (lblCentro == null) {
 			lblCentro = new JLabel("Centro:");
 			lblCentro.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCentro.setBounds(10, 47, 45, 13);
+			lblCentro.setBounds(10, 59, 45, 13);
 		}
 		return lblCentro;
 	}
-	private JButton getBtnFinalizar() {
+	public JButton getBtnFinalizar() {
 		if (btnFinalizar == null) {
 			btnFinalizar = new JButton("Finalizar");
+			btnFinalizar.setBackground(Color.GREEN);
 			btnFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					añadirColegiado();
+					if(camposCorrectos())
+					   añadirColegiado();
+					else
+					   mostrarError();
 				}
 			});
 			btnFinalizar.setBounds(287, 384, 85, 21);
@@ -122,13 +133,82 @@ public class VentanaSolicitud extends JDialog {
 		return btnFinalizar;
 	}
 	
+
+	/**
+	 * Se comprueba que todos los campos no están vacíos
+	 */
+	private boolean camposCorrectos() {
+		if (!txtNombre.getText().trim().isEmpty()) {
+			if (!txtApellidos.getText().trim().isEmpty()) {
+				if (!txtDNI.getText().trim().isEmpty()) {
+					if (!txtPoblacion.getText().isEmpty()) {
+						if (!txtTitulacion.getText().isEmpty()) {
+							if (!txtAño.getText().isEmpty()) {
+								if (!txtCentro.getText().isEmpty()) {
+									if (!txtCuentaBancaria.getText().isEmpty()) {
+										   if(telefonoCorrecto())
+											  return true;
+										   mostrarErrorTelefono();
+									}
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+	return false;
+
+	}
+	
+	private boolean telefonoCorrecto() {
+			if (txtTelefono.getText().length() == 9) {
+				return true;
+			}
+			return false;
+	}
+	
+//	private boolean dniCorrecto() {
+//		if(txtDNI.getText().length()<=9)
+//			return true;
+//		else
+//			return false;
+//	}
+	
 	private void añadirColegiado() {
+		if (!controler.colegiadoExistente(txtDNI.getText())){
+			controler.validarSolicitud(newColegiado());
+			dispose();
+			completado();
+		}else
+		   mostrarErrorColegiadoExistente();
 		
 	}
+	
+	private ColegiadoDto newColegiado() {
+		
+		ColegiadoDto dto = new ColegiadoDto();
+		dto.apellidos = txtApellidos.getText();
+		dto.dni = txtDNI.getText();
+		dto.nombre = txtNombre.getText();
+		dto.tlfn = Integer.parseInt(txtTelefono.getText());
+		dto.poblacion = txtPoblacion.getText();
+		dto.titulacion = txtTitulacion.getText();
+		dto.año = Integer.parseInt(txtAño.getText());
+		dto.centro = txtCentro.getText();
+		dto.cuentaBancaria = txtCuentaBancaria.getText();
+		dto.fecha = LocalDateTime.now();
+		dto.isValid = 0;
+		
+		return dto;
+	}
+		
+		
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
 			txtNombre = new JTextField();
-			txtNombre.setBounds(72, 28, 248, 19);
+			txtNombre.setBounds(72, 28, 248, 25);
 			txtNombre.setColumns(10);
 		}
 		return txtNombre;
@@ -136,7 +216,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtApellidos() {
 		if (txtApellidos == null) {
 			txtApellidos = new JTextField();
-			txtApellidos.setBounds(72, 57, 247, 19);
+			txtApellidos.setBounds(72, 57, 247, 25);
 			txtApellidos.setColumns(10);
 		}
 		return txtApellidos;
@@ -144,7 +224,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtDNI() {
 		if (txtDNI == null) {
 			txtDNI = new JTextField();
-			txtDNI.setBounds(72, 86, 248, 19);
+			txtDNI.setBounds(72, 86, 248, 25);
 			txtDNI.setColumns(10);
 		}
 		return txtDNI;
@@ -152,7 +232,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtPoblacion() {
 		if (txtPoblacion == null) {
 			txtPoblacion = new JTextField();
-			txtPoblacion.setBounds(72, 115, 248, 19);
+			txtPoblacion.setBounds(72, 115, 248, 25);
 			txtPoblacion.setColumns(10);
 		}
 		return txtPoblacion;
@@ -160,7 +240,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtTelefono() {
 		if (txtTelefono == null) {
 			txtTelefono = new JTextField();
-			txtTelefono.setBounds(72, 138, 248, 19);
+			txtTelefono.setBounds(72, 142, 248, 25);
 			txtTelefono.setColumns(10);
 		}
 		return txtTelefono;
@@ -169,7 +249,7 @@ public class VentanaSolicitud extends JDialog {
 		if (pnDatosPersonales == null) {
 			pnDatosPersonales = new JPanel();
 			pnDatosPersonales.setBorder(new TitledBorder(null, "Datos Personales", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnDatosPersonales.setBounds(10, 27, 368, 167);
+			pnDatosPersonales.setBounds(10, 27, 368, 177);
 			pnDatosPersonales.setLayout(null);
 			pnDatosPersonales.add(getTxtNombre());
 			pnDatosPersonales.add(getTxtApellidos());
@@ -188,7 +268,7 @@ public class VentanaSolicitud extends JDialog {
 		if (pnDatosAcadmicos == null) {
 			pnDatosAcadmicos = new JPanel();
 			pnDatosAcadmicos.setBorder(new TitledBorder(null, "Datos Academicos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnDatosAcadmicos.setBounds(10, 204, 368, 96);
+			pnDatosAcadmicos.setBounds(10, 204, 368, 105);
 			pnDatosAcadmicos.setLayout(null);
 			pnDatosAcadmicos.add(getLblTitulacion());
 			pnDatosAcadmicos.add(getLblCentro());
@@ -203,14 +283,14 @@ public class VentanaSolicitud extends JDialog {
 		if (lblAño == null) {
 			lblAño = new JLabel("A\u00F1o");
 			lblAño.setHorizontalAlignment(SwingConstants.CENTER);
-			lblAño.setBounds(10, 70, 45, 13);
+			lblAño.setBounds(10, 82, 45, 13);
 		}
 		return lblAño;
 	}
 	private JTextField getTxtTitulacion() {
 		if (txtTitulacion == null) {
 			txtTitulacion = new JTextField();
-			txtTitulacion.setBounds(75, 22, 247, 19);
+			txtTitulacion.setBounds(75, 25, 247, 22);
 			txtTitulacion.setColumns(10);
 		}
 		return txtTitulacion;
@@ -218,7 +298,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtAño() {
 		if (txtAño == null) {
 			txtAño = new JTextField();
-			txtAño.setBounds(73, 67, 249, 19);
+			txtAño.setBounds(73, 73, 249, 22);
 			txtAño.setColumns(10);
 		}
 		return txtAño;
@@ -226,7 +306,7 @@ public class VentanaSolicitud extends JDialog {
 	private JTextField getTxtCentro() {
 		if (txtCentro == null) {
 			txtCentro = new JTextField();
-			txtCentro.setBounds(73, 44, 249, 19);
+			txtCentro.setBounds(73, 51, 249, 21);
 			txtCentro.setColumns(10);
 		}
 		return txtCentro;
@@ -257,5 +337,40 @@ public class VentanaSolicitud extends JDialog {
 			txtCuentaBancaria.setColumns(10);
 		}
 		return txtCuentaBancaria;
+	}
+	
+
+	    
+	    
+	    public void mostrarError() {
+			JOptionPane.showMessageDialog(null, "Los campos no se han rellenado "
+					+ "correctamente");
+		}
+	    
+	    public void mostrarErrorTelefono() {
+			JOptionPane.showMessageDialog(null, "Error al procesar el número de teléfono,"
+					+ " revíselo por favor");
+		}
+	    
+	    public void mostrarErrorColegiadoExistente() {
+			JOptionPane.showMessageDialog(null, "Ya existe un colegiado con ese "
+					+ "dni");
+		}
+	    
+	    public void completado() {
+			JOptionPane.showMessageDialog(null, "Se ha registrado correctamente");
+		}
+	private JButton getBtCancelar() {
+		if (btCancelar == null) {
+			btCancelar = new JButton("Cancelar");
+			btCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
+			btCancelar.setBackground(Color.RED);
+			btCancelar.setBounds(192, 384, 85, 21);
+		}
+		return btCancelar;
 	}
 }

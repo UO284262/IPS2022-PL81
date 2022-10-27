@@ -1,4 +1,4 @@
-package kike.gui;
+package kike.gui.secretaria;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -8,7 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import kike.modelo.curso.Curso;
+import kike.modelo.curso.CursoDTO;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -28,32 +28,36 @@ public class SelectorCurso extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JPanel panel;
 	private JLabel lblSelectCurso;
-	private JComboBox<Curso> comboBox;
+	private JComboBox<CursoDTO> comboBox;
 	private JPanel panelFinalizar;
 	private JButton btnCancelar;
 	private JButton btnSiguiente;
-	private DefaultComboBoxModel<Curso> modeloCursos;
+	private DefaultComboBoxModel<CursoDTO> modeloCursos;
+
+	private CursoDTO curso;
+	private JLabel lblError;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			DefaultComboBoxModel<Curso> modeloCursos = new DefaultComboBoxModel<>();
-			modeloCursos.addElement(new Curso("curso1", 1000));
-			modeloCursos.addElement(new Curso("curso2", 2000));
-			SelectorCurso dialog = new SelectorCurso(modeloCursos);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * Launch the application.
+//	 */
+//	public static void main(String[] args) {
+//		try {
+//			DefaultComboBoxModel<CursoManager> modeloCursos = new DefaultComboBoxModel<>();
+//			modeloCursos.addElement(new CursoManager("curso1", 1000));
+//			modeloCursos.addElement(new CursoManager("curso2", 2000));
+//			SelectorCurso dialog = new SelectorCurso(modeloCursos);
+//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public SelectorCurso(DefaultComboBoxModel<Curso> modeloCursos) {
+	public SelectorCurso(DefaultComboBoxModel<CursoDTO> modeloCursos) {
+		setModal(true);
 		this.modeloCursos = modeloCursos;
 		setTitle("Selector de cursos");
 		setResizable(false);
@@ -77,6 +81,7 @@ public class SelectorCurso extends JDialog {
 			panel.setLayout(null);
 			panel.add(getLblSelectCurso());
 			panel.add(getComboBox());
+			panel.add(getLblError());
 		}
 		return panel;
 	}
@@ -88,9 +93,9 @@ public class SelectorCurso extends JDialog {
 		}
 		return lblSelectCurso;
 	}
-	private JComboBox<Curso> getComboBox() {
+	private JComboBox<CursoDTO> getComboBox() {
 		if (comboBox == null) {
-			comboBox = new JComboBox<Curso>();
+			comboBox = new JComboBox<CursoDTO>();
 			comboBox.setModel(modeloCursos);
 			comboBox.setBounds(37, 145, 399, 39);
 		}
@@ -124,12 +129,10 @@ public class SelectorCurso extends JDialog {
 			btnSiguiente = new JButton("Siguiente");
 			btnSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
-					AperturaCursos ac = new AperturaCursos(modeloCursos.getElementAt(getComboBox().getSelectedIndex()));
-					ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					ac.setModal(true);
-					ac.setVisible(true);
+					accionSiguiente();
 				}
+
+				
 			});
 			btnSiguiente.setForeground(Color.WHITE);
 			btnSiguiente.setBackground(Color.GREEN);
@@ -137,5 +140,31 @@ public class SelectorCurso extends JDialog {
 		return btnSiguiente;
 	}
 	
+	private void accionSiguiente() {
+		this.curso = modeloCursos.getElementAt(getComboBox().getSelectedIndex());
+		
+		if(curso == null) {
+			getLblError().setText("Error, seleccione un curso");
+		} else {
+			getLblError().setText("");
+			AperturaCursos ac = new AperturaCursos(this);
+			ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			ac.setModal(true);
+			ac.setLocationRelativeTo(this);
+			ac.setVisible(true);
+		}		
+	}
 	
+	public CursoDTO getCurso() {
+		return curso;
+	}
+	private JLabel getLblError() {
+		if (lblError == null) {
+			lblError = new JLabel("");
+			lblError.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblError.setForeground(Color.RED);
+			lblError.setBounds(37, 215, 399, 39);
+		}
+		return lblError;
+	}
 }

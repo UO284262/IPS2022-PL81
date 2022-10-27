@@ -7,24 +7,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import abel.controlador.VisualizarInscritosCursoControler;
+
 import java.sql.Date;
 
 import main.DatabaseConnection;
 
 public class DataBaseManagement 
 {
-	
-	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre,precio) VALUES(\"%s\",%s);";
 	private final static String QUERY_INSERT_ACTIVIDAD_PERICIAL = "INSERT INTO Actividad_Pericial(numero, tipo_pericial, prioridad, nombre_solicitante, mail_solicitante, telefono_solicitante, descripcion, estado) "
 																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
+	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa) VALUES(\"%s\",%s,%s);";
+	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\";";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
-	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT DISTINCT a.nombre FROM Actividad_Formativa a INNER JOIN Fecha_Imparticion f "
-																	+ "ON a.nombre = f.nombre WHERE f.fecha >= \"%s\";";
+	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open  FROM Actividad_Formativa a "
+																	+ " WHERE a.fecha_orientativa >= \"%s\" ORDER BY a.nombre_curso;";
 	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
 																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.id_colegiado = c.id_colegiado"
-																			+ " WHERE a.nombre = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
+																			+ " WHERE a.nombre_curso = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
-	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre = \"%s\";";
+	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre_curso = \"%s\";";
 	
 	private final static String QUERY_NEXT_FORMULARIO_NUM = "SELECT MAX(numero) from Actividad_Pericial;";
 	
@@ -33,7 +36,8 @@ public class DataBaseManagement
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{	
 			conn.setAutoCommit(false);
-			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_FORMATIVA,actividad.title,actividad.price));
+			
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_FORMATIVA,actividad.title,actividad.price,actividad.days.get(0).toLocalDate().toString()));
 			st.executeUpdate();
 				for(Date day : actividad.days)
 				{
@@ -47,7 +51,7 @@ public class DataBaseManagement
 		return true;
 	}
 	
-	public static List<String> getActividadesFormativasFrom(Integer año)
+	public static List<ActividadFormativaDTO> getActividadesFormativasFrom(Integer año)
 	{
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{	
@@ -55,55 +59,37 @@ public class DataBaseManagement
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_ACTIVIDADES_FORMATIVAS,año.toString() + "-1-1"));
 			ResultSet rs = st.executeQuery();
 			conn.commit();
-			List<String> nombres = toNombreList(rs);
+			List<ActividadFormativaDTO> lista = VisualizarInscritosCursoControler.toDTOList(rs);
 			st.close();
 			rs.close();
-			return nombres;
+			return lista;
 			
 		} catch (SQLException e) { }
 		return null;
 	}
 	
-	private static List<String> toNombreList(ResultSet rs) throws SQLException
+	public static List<ColegiadoInscritoDTO> getInscritosEn(String actividadFormativa)
 	{
-		List<String> nombres = new ArrayList<String>();
-		while(rs.next())
-		{
-			nombres.add(rs.getString("nombre"));
-		}
-		return nombres;
-	}
-	
-	public static List<String> getInscritosEn(String actividadFormativa)
-	{
+		List<ColegiadoInscritoDTO> nombres = new ArrayList<ColegiadoInscritoDTO>();
 		try (Connection conn = DatabaseConnection.getConnection();)
 		{	
 			conn.setAutoCommit(false);
+			PreparedStatement st2 = conn.prepareStatement(String.format(QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID,actividadFormativa));
+			ResultSet rs2 = st2.executeQuery();
+			if(!rs2.next())
+			{
+				return null;
+			}
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA,actividadFormativa));
 			ResultSet rs = st.executeQuery();
 			conn.commit();
-			List<String> nombres = toApuntadoList(rs);
+			nombres = VisualizarInscritosCursoControler.toApuntadoList(rs);
 			st.close();
 			rs.close();
 			return nombres;
 			
 		} catch (SQLException e) { e.printStackTrace();}
-		return null;
-	}
-	
-	private static List<String> toApuntadoList(ResultSet rs) throws SQLException
-	{
-		List<String> apuntados = new ArrayList<String>();
-		while(rs.next())
-		{
-			String apellidos = rs.getString(2);
-			String nombre = rs.getString(1);
-			String fecha = rs.getString(3);
-			String estado = rs.getString(4);
-			String pagado = rs.getString(5);
-			apuntados.add(String.format("%s, %s (%s) -- %s -- %s €",apellidos,nombre,fecha,estado,pagado));
-		}
-		return apuntados;
+		return nombres;
 	}
 	
 	public static double getIngresosFor(String actividadFormativa)

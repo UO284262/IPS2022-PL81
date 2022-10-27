@@ -11,4 +11,9 @@ public class CursoDTO {
 	public Date fechaInicioInscipcion;
 	public Date fechaFinInscipcion;
 	public int plazasDisponibles;
+	
+	@Override
+	public String toString() {
+		return title + " - Precio: " + price;
+	}
 }

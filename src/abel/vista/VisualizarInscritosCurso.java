@@ -10,19 +10,22 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import abel.controlador.VisualizarInscritosCursoControler;
+import abel.modelo.ActividadFormativaDTO;
+import abel.modelo.ColegiadoInscritoDTO;
 import abel.modelo.DataBaseManagement;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.JTable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class VisualizarInscritosCurso extends JPanel {
 
@@ -31,16 +34,17 @@ public class VisualizarInscritosCurso extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel lbTitulo;
-	private JComboBox<String> cbActividades;
-	private JList<String> ltApuntados;
 	private JScrollPane spApuntados;
-	private DefaultComboBoxModel<String> modeloActividades = new DefaultComboBoxModel<String>();
-	private DefaultListModel<String> modeloApuntados = new DefaultListModel<String>();
-	private JLabel lbAvisoNadieApuntado;
 	private VisualizarInscritosCursoControler controler;
-	private JLabel lbAvisoActividades;
 	private JLabel lbTotalInscripcion;
 	private JTextField tfIngresos;
+	private JTable table;
+	private DefaultTableModel modeloActividades = new DefaultTableModel();
+	private JScrollPane scrollPane;
+	private JLabel lbActividadFormativa;
+	private JTextField tfActividadFormativa;
+	private JTable table_1;
+	private DefaultTableModel modeloApuntados = new DefaultTableModel();
 
 	/**
 	 * Create the frame.
@@ -50,23 +54,36 @@ public class VisualizarInscritosCurso extends JPanel {
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(null);
 		add(getLbTitulo());
-		add(getComboBox());
 		add(getSpActividades());
-		add(getLbAvisoNadieApuntado());
-		add(getLbAvisoActividades());
 		add(getLbTotalInscripcion());
 		add(getTfIngresos());
+		add(getScrollPane());
+		add(getLbActividadFormativa());
+		add(getTfActividadFormativa());
+		setModelActividades();
 	}
 
 	private void setModelActividades() {
-		List<String> actividades = controler.getModeloActividades();
-		if(actividades == null)
+		List<ActividadFormativaDTO> actividades = controler.getModeloActividades();
+		if(actividades == null || actividades.size() == 0)
 		{
-			this.getLbAvisoActividades().setVisible(true);
+			mostrarMensajeNoActividades();
 		}
 		else
 		{
-			this.modeloActividades.addAll(actividades);
+			cargarTablaActividades(actividades);
+			this.getTable().setModel(modeloActividades);
+		}
+	}
+	
+	private void cargarTablaActividades(List<ActividadFormativaDTO> actividades)
+	{
+		Object[] columns = {"Nombre","Precio (€)","Fecha orientativa","Está abierto"};
+		modeloActividades.setColumnIdentifiers(columns);
+		for(ActividadFormativaDTO af : actividades)
+		{
+			Object[] data = {af.title, af.price, af.fecha_orientativa.toString() , af.is_open ? "SI" : "NO"};
+			modeloActividades.addRow(data);
 		}
 	}
 
@@ -77,26 +94,9 @@ public class VisualizarInscritosCurso extends JPanel {
 			lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 			lbTitulo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			lbTitulo.setBackground(Color.WHITE);
-			lbTitulo.setBounds(10, 10, 580, 36);
+			lbTitulo.setBounds(10, 10, 969, 36);
 		}
 		return lbTitulo;
-	}
-	private JComboBox<String> getComboBox() {
-		if (cbActividades == null) {
-			cbActividades = new JComboBox<String>();
-			cbActividades.setModel(modeloActividades);
-			setModelActividades();
-			cbActividades.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					getLbAvisoNadieApuntado().setVisible(false);
-					cargarApuntadosA(getComboBox().getSelectedItem());
-					cargarIngresosPara(getComboBox().getSelectedItem());
-				}
-			});
-			cbActividades.setBounds(10, 70, 224, 21);
-			cbActividades.setSelectedIndex(0);
-		}
-		return cbActividades;
 	}
 	
 	private void cargarIngresosPara(Object actividad)
@@ -105,61 +105,69 @@ public class VisualizarInscritosCurso extends JPanel {
 		getTfIngresos().setText(DataBaseManagement.getIngresosFor(nombre) + "");
 	}
 	
-	private void cargarApuntadosA(Object actividad)
+	private boolean cargarApuntadosA(Object actividad)
 	{
 		String nombre = (String) actividad;
 		
-		List<String> apuntados = DataBaseManagement.getInscritosEn(nombre);
+		List<ColegiadoInscritoDTO> apuntados = controler.getListaApuntados(nombre);
 		if(apuntados == null)
 		{
-			this.getLbAvisoNadieApuntado().setVisible(true);
+			mostrarMensajeNoActividad();
+			return false;
+		}
+		else if(apuntados.size() == 0)
+		{
+			mostrarMensajeNadieApuntado();
+			return false;
 		}
 		else
 		{
-			modeloApuntados.removeAllElements();
-			modeloApuntados.addAll(apuntados);
+			modeloApuntados = new DefaultTableModel();
+			cargarTablaApuntados(apuntados);
+			cargarIngresosPara(actividad);
+			this.getTable_1().setModel(modeloApuntados);
+			return true;
 		}
+	}
+	
+	private void cargarTablaApuntados(List<ColegiadoInscritoDTO> colegiados)
+	{
+		Object[] columns = {"Nombre","Apellidos","Fecha inscripción","Estado", "Abonado (€)"};
+		modeloApuntados.setColumnIdentifiers(columns);
+		for(ColegiadoInscritoDTO ci : colegiados)
+		{
+			Object[] data = {ci.nombre, ci.apellidos, ci.fecha_inscripcion.toString() , ci.estado , ci.cantidad_abonada};
+			modeloApuntados.addRow(data);
+		}
+	}
+	
+	private void mostrarMensajeNadieApuntado()
+	{
+		JOptionPane.showConfirmDialog(this,new String("No hay nadie inscrito a esta actividad formativa."),"Aviso de no inscritos",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	private void mostrarMensajeNoActividad()
+	{
+		JOptionPane.showConfirmDialog(this,new String("No existe esa actividad formativa."),"Aviso actividad formativa",JOptionPane.OK_CANCEL_OPTION,JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void mostrarMensajeNoActividades()
+	{
+		JOptionPane.showConfirmDialog(this,new String("No hay ninguna actividad formativa planificada."),"Aviso de falta de actividades",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	private JScrollPane getSpActividades() {
 		if (spApuntados == null) {
 			spApuntados = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			spApuntados.setBounds(244, 70, 346, 183);
-			spApuntados.setViewportView(getLtApuntados());
+			spApuntados.setBounds(479, 93, 500, 302);
+			spApuntados.setViewportView(getTable_1());
 		}
 		return spApuntados;
-	}
-	
-	private JList<String> getLtApuntados() {
-		if (ltApuntados == null) {
-			ltApuntados = new JList<String>();
-			ltApuntados.setFocusable(false);
-			ltApuntados.setVisibleRowCount(4);
-			ltApuntados.setModel(modeloApuntados);
-		}
-		return ltApuntados;
-	}
-	private JLabel getLbAvisoNadieApuntado() {
-		if (lbAvisoNadieApuntado == null) {
-			lbAvisoNadieApuntado = new JLabel("No hay nadie apuntado");
-			lbAvisoNadieApuntado.setVisible(false);
-			lbAvisoNadieApuntado.setHorizontalAlignment(SwingConstants.CENTER);
-			lbAvisoNadieApuntado.setBounds(10, 240, 144, 13);
-		}
-		return lbAvisoNadieApuntado;
-	}
-	private JLabel getLbAvisoActividades() {
-		if (lbAvisoActividades == null) {
-			lbAvisoActividades = new JLabel("No hay actividades todav\u00EDa");
-			lbAvisoActividades.setVisible(false);
-			lbAvisoActividades.setBounds(10, 101, 144, 13);
-		}
-		return lbAvisoActividades;
 	}
 	private JLabel getLbTotalInscripcion() {
 		if (lbTotalInscripcion == null) {
 			lbTotalInscripcion = new JLabel("Total de ingresos (\u20AC):");
-			lbTotalInscripcion.setBounds(10, 180, 111, 13);
+			lbTotalInscripcion.setBounds(479, 59, 149, 13);
 		}
 		return lbTotalInscripcion;
 	}
@@ -167,9 +175,58 @@ public class VisualizarInscritosCurso extends JPanel {
 		if (tfIngresos == null) {
 			tfIngresos = new JTextField();
 			tfIngresos.setEditable(false);
-			tfIngresos.setBounds(130, 177, 104, 19);
+			tfIngresos.setBounds(610, 56, 104, 19);
 			tfIngresos.setColumns(10);
 		}
 		return tfIngresos;
+	}
+	private JTable getTable() {
+		if (table == null) {
+			table = new JTable();
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Object acf = table.getValueAt(table.getSelectedRow(),0);
+					boolean bool = cargarApuntadosA(table.getValueAt(table.getSelectedRow(),0));
+					if(bool) getTfActividadFormativa().setText((String) acf);
+				}
+			});
+			table.setFocusable(false);
+			table.setDefaultEditor(Object.class, null);
+		}
+		return table;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollPane.setBounds(10, 93, 433, 302);
+			scrollPane.setViewportView(getTable());
+		}
+		return scrollPane;
+	}
+	private JLabel getLbActividadFormativa() {
+		if (lbActividadFormativa == null) {
+			lbActividadFormativa = new JLabel("Actividad formativa:");
+			lbActividadFormativa.setBounds(10, 59, 125, 13);
+		}
+		return lbActividadFormativa;
+	}
+	private JTextField getTfActividadFormativa() {
+		if (tfActividadFormativa == null) {
+			tfActividadFormativa = new JTextField();
+			tfActividadFormativa.setEditable(false);
+			tfActividadFormativa.setBounds(143, 56, 96, 19);
+			tfActividadFormativa.setColumns(10);
+		}
+		return tfActividadFormativa;
+	}
+	private JTable getTable_1() {
+		if (table_1 == null) {
+			table_1 = new JTable();
+			table_1.setFocusable(false);
+			table_1.setDefaultEditor(Object.class, null);
+		}
+		return table_1;
 	}
 }

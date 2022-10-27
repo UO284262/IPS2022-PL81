@@ -1,10 +1,9 @@
-package kike.gui;
+package kike.gui.secretaria;
 
 import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
 
-import kike.modelo.curso.Curso;
-import kike.modelo.curso.CursoDTO;
+import kike.modelo.curso.CursoManager;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -46,13 +45,15 @@ public class AperturaCursos extends JDialog {
 	private JButton btnFinalizar;
 	private JButton btnCancelar;
 	
-	private Curso curso;
+	private SelectorCurso sc;
+	private JLabel lblErrores;
 
 	/**
 	 * Create the panel.
 	 */
-	public AperturaCursos(Curso curso) {
-		this.curso = curso;
+	public AperturaCursos(SelectorCurso sc) {
+		setModal(true);
+		this.sc = sc;
 		
 		setResizable(false);
 		setUndecorated(true);
@@ -121,6 +122,7 @@ public class AperturaCursos extends JDialog {
 			panelPlazar.setLayout(null);
 			panelPlazar.add(getLblChooseEndDate_1_1());
 			panelPlazar.add(getSpinner());
+			panelPlazar.add(getLblErrores());
 		}
 		return panelPlazar;
 	}
@@ -136,7 +138,7 @@ public class AperturaCursos extends JDialog {
 	private JLabel getLblNombreCurso() {
 		if (lblNombreCurso == null) {
 			lblNombreCurso = new JLabel();
-			lblNombreCurso.setText(curso.getName());
+			lblNombreCurso.setText(sc.getCurso().title);
 			lblNombreCurso.setHorizontalTextPosition(SwingConstants.CENTER);
 			lblNombreCurso.setHorizontalAlignment(SwingConstants.CENTER);
 		}
@@ -177,6 +179,7 @@ public class AperturaCursos extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					if(fechasValidads()) {
 						abrirCurso();
+						sc.dispose();
 						dispose();
 					}
 				}
@@ -201,21 +204,39 @@ public class AperturaCursos extends JDialog {
 	}
 	
 	private boolean fechasValidads() {
+		if(getFechaInicio_1().getDate() == null || getFechaFin_1().getDate() == null) {
+			
+			getLblErrores().setText("Por favor, introduzca una fecha de inicio y otra de fin");
+			return false;
+		}
+		
 		Date inicio = new Date(getFechaInicio_1().getDate().getTime());
 		Date fin = new Date(getFechaFin_1().getDate().getTime());
-		if(inicio == null || fin == null)
-			return false;
-		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date(System.currentTimeMillis())) >= 0)
+		
+		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date(System.currentTimeMillis())) >= 0) {
+			getLblErrores().setText("");
 			return true;
+		}
+		
+		getLblErrores().setText("<html>Las fechas han de ser posteriores al día actual. <br>La fecha de fin ha de ser posterior o igual a la de inicio.</html>");
 		return false;
 	}
 
 	private void abrirCurso() {
-		CursoDTO dto = new CursoDTO();
-		dto.plazasDisponibles = (int) getSpinner().getValue();
-		dto.fechaInicioInscipcion = new Date(getFechaInicio_1().getDate().getTime());
-		dto.fechaFinInscipcion = new Date(getFechaFin_1().getDate().getTime());
-		curso.abrirCurso(dto);
+		sc.getCurso().plazasDisponibles = (int) getSpinner().getValue();
+		sc.getCurso().fechaInicioInscipcion = new Date(getFechaInicio_1().getDate().getTime());
+		sc.getCurso().fechaFinInscipcion = new Date(getFechaFin_1().getDate().getTime());
+		
+		new CursoManager(sc.getCurso()).abrirCurso();
 	}
-	
+	private JLabel getLblErrores() {
+		if (lblErrores == null) {
+			lblErrores = new JLabel("");
+			lblErrores.setHorizontalAlignment(SwingConstants.CENTER);
+			lblErrores.setForeground(Color.RED);
+			lblErrores.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblErrores.setBounds(10, 73, 420, 73);
+		}
+		return lblErrores;
+	}
 }

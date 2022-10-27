@@ -34,6 +34,7 @@ public class PlanificadorCurso extends JDialog {
 	 * Create the dialog.
 	 */
 	public PlanificadorCurso() {
+		setModal(true);
 		setTitle("Planificador de cursos");
 		setBounds(100, 100, 505, 335);
 		setResizable(false);

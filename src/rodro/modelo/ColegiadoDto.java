@@ -1,7 +1,7 @@
 package rodro.modelo;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+
 
 public class ColegiadoDto {
 	
@@ -14,7 +14,7 @@ public class ColegiadoDto {
 	public int año;
 	public String cuentaBancaria;
 	public int tlfn;
-	public boolean isValid = false;
+	public int isValid = 0;
 	public LocalDateTime fecha; // = LocalDateTime.now();
 	
 	
@@ -47,21 +47,7 @@ public class ColegiadoDto {
 	public String toString() {
 		return nombre + "-" + apellidos + "-" + dni ;
 	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(dni);
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ColegiadoDto other = (ColegiadoDto) obj;
-		return Objects.equals(dni, other.dni);
-	}
+	
 	
 
 }
