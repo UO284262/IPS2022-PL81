@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 import abel.controlador.ActividadFormativaControler;
+import abel.controlador.FormularioPericialControler;
 import abel.controlador.VisualizarInscritosCursoControler;
 
 public class app {
@@ -52,7 +53,7 @@ public class app {
 
 	private JPanel getPanel() {
 		if (panel == null) {
-			panel = new VisualizarInscritosCurso(new VisualizarInscritosCursoControler());
+			panel = new AñadirFormularioPericial(new FormularioPericialControler());
 		}
 		return panel;
 	}

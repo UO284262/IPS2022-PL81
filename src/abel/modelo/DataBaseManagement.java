@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import abel.controlador.SolicitarTitulacionControler;
 import abel.controlador.VisualizarInscritosCursoControler;
 
 import java.sql.Date;
@@ -30,6 +31,10 @@ public class DataBaseManagement
 	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre_curso = \"%s\";";
 	
 	private final static String QUERY_NEXT_FORMULARIO_NUM = "SELECT MAX(numero) from Actividad_Pericial;";
+	
+	private final static String QUERY_SELECT_PENDING_REQUEST = "SELECT * FROM Colegiado WHERE tipoSolicitud = 0;";
+	
+	private final static String QUERY_SELECT_PENDING_REQUEST_BY_DNI = "SELECT dni, nombre FROM Colegiado WHERE dni = ?";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -145,5 +150,41 @@ public class DataBaseManagement
 			return false;
 		}
 		return true;
+	}
+	
+	public static List<String[]> getColegiadosPendientes(List<String> colegiados)
+	{
+		List<String[]> pendientes = new ArrayList<String[]>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST_BY_DNI);
+			for(String dni : colegiados)
+			{
+				st.setString(1, dni);
+				ResultSet rs = st.executeQuery();
+				String[] elemento = SolicitarTitulacionControler.toStringElement(rs);
+				if(elemento != null) pendientes.add(elemento);
+			}
+			
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return pendientes;
+	}
+
+	public static List<ColegiadoInscritoDTO> getAllColegiadosPendientes() {
+		List<ColegiadoInscritoDTO> pendientes = new ArrayList<ColegiadoInscritoDTO>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST);
+			ResultSet rs = st.executeQuery();
+			pendientes = SolicitarTitulacionControler.toApuntadoList(rs);
+			
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return pendientes;
 	}
 }
