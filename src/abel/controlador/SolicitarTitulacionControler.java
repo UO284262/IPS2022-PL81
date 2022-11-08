@@ -2,7 +2,6 @@ package abel.controlador;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +42,19 @@ public class SolicitarTitulacionControler {
 		return null;
 	}
 	
-	public List<ColegiadoInscritoDTO> getListaApuntados()
+	public List<ColegiadoInscritoDTO> getListaPendientes()
 	{
 		return DataBaseManagement.getAllColegiadosPendientes();
+	}
+	
+	public ColegiadoInscritoDTO getPendiente(String dni)
+	{
+		return DataBaseManagement.getColegiadoPendienteByDni(dni);
+	}
+	
+	public List<String[]> getPendientes(List<String> dnis)
+	{
+		return DataBaseManagement.getColegiadosPendientes(dnis);
 	}
 	
 	public static List<ColegiadoInscritoDTO> toApuntadoList(ResultSet rs) throws SQLException
@@ -54,13 +63,17 @@ public class SolicitarTitulacionControler {
 		while(rs.next())
 		{
 			ColegiadoInscritoDTO colegiado = new ColegiadoInscritoDTO();
-			colegiado.apellidos = rs.getString(2);
-			colegiado.nombre = rs.getString(1);
-			colegiado.fecha_inscripcion = LocalDate.parse(rs.getString(3));
-			colegiado.estado = rs.getString(4);
-			colegiado.cantidad_abonada = rs.getDouble(5);
+			colegiado.dni = rs.getString(1);
+			colegiado.nombre = rs.getString(2);
+			colegiado.apellidos = rs.getString(3);
+			colegiado.telefono = rs.getInt(4);
 			apuntados.add(colegiado);
 		}
 		return apuntados;
+	}
+	
+	public void setValidando(List<String> dnis)
+	{
+		DataBaseManagement.setValidando(dnis);
 	}
 }

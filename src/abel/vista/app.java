@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import abel.controlador.ActividadFormativaControler;
 import abel.controlador.FormularioPericialControler;
+import abel.controlador.SolicitarTitulacionControler;
 import abel.controlador.VisualizarInscritosCursoControler;
 
 public class app {
@@ -53,7 +54,7 @@ public class app {
 
 	private JPanel getPanel() {
 		if (panel == null) {
-			panel = new AñadirFormularioPericial(new FormularioPericialControler());
+			panel = new SolicitarTitulacionColegiado(new SolicitarTitulacionControler());
 		}
 		return panel;
 	}

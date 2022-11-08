@@ -1,13 +1,19 @@
 package main.ui;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -15,23 +21,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
+import abel.vista.SolicitarPericial;
+import abel.vista.SolicitarTitulacion;
+import abel.vista.VisualizadorInscritos;
 import kike.gui.colegiado.PreInscribeColegiado;
 import kike.gui.secretaria.SelectorCurso;
-import abel.vista.VisualizadorInscritos;
 import kike.modelo.curso.CursoDTO;
 import kike.persistence.CursoDataBase;
 import rodro.controlador.EmitirRecibosControler;
 import rodro.controlador.SolicitudControler;
 import rodro.vista.VentanaSolicitud;
-
-import java.awt.Font;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Main {
 
@@ -49,6 +48,11 @@ public class Main {
 	private JButton btVisualizarInscritos;
 	private JButton btEmitirRecibos;
 	private JButton btSolicitudColegiado;
+	private JButton btSolicitarTitulacion;
+	private JPanel panelExterno;
+	private JLabel lbExterno;
+	private JPanel panelExternoBotones;
+	private JButton btPericial;
 
 	/**
 	 * Launch the application.
@@ -118,6 +122,7 @@ public class Main {
 			panelPrincipal.setLayout(new GridLayout(0, 2, 0, 0));
 			panelPrincipal.add(getPanelSecretaria());
 			panelPrincipal.add(getPanelColegiado());
+			panelPrincipal.add(getPanelExterno());
 		}
 		return panelPrincipal;
 	}
@@ -145,6 +150,7 @@ public class Main {
 			panelSecBotones.setLayout(new GridLayout(0, 1, 5, 5));
 			panelSecBotones.add(getBtAñadirCurso());
 			panelSecBotones.add(getBtnAbrirCurso());
+			panelSecBotones.add(getBtSolicitarTitulacion());
 			panelSecBotones.add(getBtVisualizarInscritos());
 			panelSecBotones.add(getBtEmitirRecibos());
 		}
@@ -223,7 +229,7 @@ public class Main {
 
 	private JButton getBtVisualizarInscritos() {
 		if (btVisualizarInscritos == null) {
-			btVisualizarInscritos = new JButton("VisualizarInscritos");
+			btVisualizarInscritos = new JButton("Visualizar Inscritos");
 			btVisualizarInscritos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					VisualizadorInscritos dialog = new VisualizadorInscritos();
@@ -238,7 +244,7 @@ public class Main {
 	}
 	private JButton getBtEmitirRecibos() {
 		if (btEmitirRecibos == null) {
-			btEmitirRecibos = new JButton("EmitirRecibos");
+			btEmitirRecibos = new JButton("Emitir Recibos");
 			btEmitirRecibos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					enviarRecibos();
@@ -268,5 +274,58 @@ public class Main {
 			});
 		}
 		return btSolicitudColegiado;
+	}
+	private JButton getBtSolicitarTitulacion() {
+		if (btSolicitarTitulacion == null) {
+			btSolicitarTitulacion = new JButton("Solicitar titulacion");
+			btSolicitarTitulacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					SolicitarTitulacion dialog = new SolicitarTitulacion();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btSolicitarTitulacion;
+	}
+	private JPanel getPanelExterno() {
+		if (panelExterno == null) {
+			panelExterno = new JPanel();
+			panelExterno.setLayout(new BorderLayout(0, 0));
+			panelExterno.add(getLbExterno(), BorderLayout.NORTH);
+			panelExterno.add(getPanelExternoBotones(), BorderLayout.CENTER);
+		}
+		return panelExterno;
+	}
+	private JLabel getLbExterno() {
+		if (lbExterno == null) {
+			lbExterno = new JLabel("Externo");
+			lbExterno.setHorizontalAlignment(SwingConstants.CENTER);
+			lbExterno.setFont(new Font("Arial", Font.BOLD, 23));
+		}
+		return lbExterno;
+	}
+	private JPanel getPanelExternoBotones() {
+		if (panelExternoBotones == null) {
+			panelExternoBotones = new JPanel();
+			panelExternoBotones.setLayout(new GridLayout(0, 1, 0, 0));
+			panelExternoBotones.add(getBtPericial());
+		}
+		return panelExternoBotones;
+	}
+	private JButton getBtPericial() {
+		if (btPericial == null) {
+			btPericial = new JButton("Solicitar Pericial");
+			btPericial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					SolicitarPericial dialog = new SolicitarPericial();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btPericial;
 	}
 }

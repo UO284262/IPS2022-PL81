@@ -32,9 +32,11 @@ public class DataBaseManagement
 	
 	private final static String QUERY_NEXT_FORMULARIO_NUM = "SELECT MAX(numero) from Actividad_Pericial;";
 	
-	private final static String QUERY_SELECT_PENDING_REQUEST = "SELECT * FROM Colegiado WHERE tipoSolicitud = 0;";
+	private final static String QUERY_SELECT_PENDING_REQUEST = "SELECT dni, nombre, apellidos, telefono FROM Colegiado WHERE tipoSolicitud = \"PENDIENTE\";";
 	
-	private final static String QUERY_SELECT_PENDING_REQUEST_BY_DNI = "SELECT dni, nombre FROM Colegiado WHERE dni = ?";
+	private final static String QUERY_SELECT_PENDING_REQUEST_BY_DNI = "SELECT dni, nombre, apellidos, telefono FROM Colegiado WHERE dni = ? and tipoSolicitud = \"PENDIENTE\";";
+	
+	private final static String QUERY_SET_VALIDANDO = "UPDATE Colegiado set tipoSolicitud = \"VALIDANDO\" WHERE dni = ?";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -186,5 +188,37 @@ public class DataBaseManagement
 		} catch (SQLException e) {
 		}
 		return pendientes;
+	}
+	
+	public static ColegiadoInscritoDTO getColegiadoPendienteByDni(String dni) {
+		List<ColegiadoInscritoDTO> pendientes = new ArrayList<ColegiadoInscritoDTO>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST_BY_DNI);
+			st.setString(1, dni);
+			ResultSet rs = st.executeQuery();
+			pendientes = SolicitarTitulacionControler.toApuntadoList(rs);
+			
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return pendientes.size() == 1 ? pendientes.get(0) : null;
+	}
+
+	public static void setValidando(List<String> dnis) {
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_SET_VALIDANDO);
+			for(String dni : dnis)
+			{
+				st.setString(1, dni);
+				st.executeUpdate();
+				System.out.println(1);
+			}
+			conn.commit();
+		} catch (SQLException e) {
+		}
 	}
 }

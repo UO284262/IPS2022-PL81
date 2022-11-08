@@ -34,7 +34,6 @@ public class AñadirFormularioPericial extends JPanel {
 	private JTextField txtTelefono;
 	private JLabel lbMail;
 	private JTextField tfMail;
-	private JButton btCancelar;
 	private FormularioPericialControler controler;
 
 	/**
@@ -54,7 +53,6 @@ public class AñadirFormularioPericial extends JPanel {
 		add(getTxtTelefono());
 		add(getLbMail());
 		add(getTfMail());
-		add(getBtCancelar());
 
 	}
 	private JLabel getLbAñadirFormulario() {
@@ -196,13 +194,5 @@ public class AñadirFormularioPericial extends JPanel {
 			tfMail.setColumns(10);
 		}
 		return tfMail;
-	}
-	private JButton getBtCancelar() {
-		if (btCancelar == null) {
-			btCancelar = new JButton("Cancelar");
-			btCancelar.setBackground(Color.RED);
-			btCancelar.setBounds(248, 429, 85, 21);
-		}
-		return btCancelar;
 	}
 }
