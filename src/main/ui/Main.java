@@ -16,6 +16,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.PlanificadorCurso;
 import kike.gui.colegiado.PreInscribeColegiado;
+import kike.gui.colegiado.RegistroPericial;
 import kike.gui.secretaria.SelectorCurso;
 import abel.vista.VisualizadorInscritos;
 import kike.modelo.curso.CursoDTO;
@@ -31,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -49,6 +51,7 @@ public class Main {
 	private JButton btVisualizarInscritos;
 	private JButton btEmitirRecibos;
 	private JButton btSolicitudColegiado;
+	private JButton btnRIPerito;
 
 	/**
 	 * Launch the application.
@@ -172,6 +175,7 @@ public class Main {
 			panelColBotones.setLayout(new GridLayout(0, 1, 0, 0));
 			panelColBotones.add(getBtSolicitudColegiado());
 			panelColBotones.add(getBtnInscribirColegiado());
+			panelColBotones.add(getBtnRIPerito());
 		}
 		return panelColBotones;
 	}
@@ -180,8 +184,7 @@ public class Main {
 			btnAbrirCurso = new JButton("AbrirCurso");
 			btnAbrirCurso.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					DefaultComboBoxModel<CursoDTO> cursosSinAbrir = new DefaultComboBoxModel<CursoDTO>();
-					cursosSinAbrir.addAll(CursoDataBase.getCursosSinAbrir());
+					List<CursoDTO> cursosSinAbrir = CursoDataBase.getCursosSinAbrir();
 					SelectorCurso dialog = new SelectorCurso(cursosSinAbrir);
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.setLocationRelativeTo(frame);
@@ -268,5 +271,19 @@ public class Main {
 			});
 		}
 		return btSolicitudColegiado;
+	}
+	private JButton getBtnRIPerito() {
+		if (btnRIPerito == null) {
+			btnRIPerito = new JButton("Renovacion/inscripcion peritos");
+			btnRIPerito.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					RegistroPericial dialog = new RegistroPericial();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btnRIPerito;
 	}
 }

@@ -8,7 +8,7 @@ public class ColegiadoDTO {
 	public String nombre;
 	public String apellidos;
 	public String poblacion;
-	public int tlfn;
+	public String tlfn;
 	public String cuentaBancaria;
 	public int tipoSolicitud;
 	public LocalDateTime fecha; // = LocalDateTime.now();

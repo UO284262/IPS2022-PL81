@@ -7,16 +7,21 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import kike.modelo.curso.CursoDTO;
+import kike.modelo.curso.CursoManager;
 
 import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JComboBox;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 public class SelectorCurso extends JDialog {
 
@@ -28,14 +33,16 @@ public class SelectorCurso extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JPanel panel;
 	private JLabel lblSelectCurso;
-	private JComboBox<CursoDTO> comboBox;
 	private JPanel panelFinalizar;
 	private JButton btnCancelar;
 	private JButton btnSiguiente;
-	private DefaultComboBoxModel<CursoDTO> modeloCursos;
+	private List<CursoDTO> cursos;
+	private TableModel tm;
 
 	private CursoDTO curso;
 	private JLabel lblError;
+	private JScrollPane scrollPane;
+	private JTable table;
 	
 //	/**
 //	 * Launch the application.
@@ -56,12 +63,12 @@ public class SelectorCurso extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public SelectorCurso(DefaultComboBoxModel<CursoDTO> modeloCursos) {
+	public SelectorCurso(List<CursoDTO> cursos) {
 		setModal(true);
-		this.modeloCursos = modeloCursos;
+		this.cursos = CursoManager.removePastCursos(cursos);
 		setTitle("Selector de cursos");
 		setResizable(false);
-		setBounds(100, 100, 500, 450);
+		setBounds(100, 100, 750, 450);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -78,10 +85,10 @@ public class SelectorCurso extends JDialog {
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setLayout(null);
-			panel.add(getLblSelectCurso());
-			panel.add(getComboBox());
-			panel.add(getLblError());
+			panel.setLayout(new BorderLayout(0, 0));
+			panel.add(getLblSelectCurso(), BorderLayout.NORTH);
+			panel.add(getLblError(), BorderLayout.SOUTH);
+			panel.add(getScrollPane(), BorderLayout.CENTER);
 		}
 		return panel;
 	}
@@ -89,17 +96,8 @@ public class SelectorCurso extends JDialog {
 		if (lblSelectCurso == null) {
 			lblSelectCurso = new JLabel("Seleccione un curso:");
 			lblSelectCurso.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblSelectCurso.setBounds(37, 95, 151, 39);
 		}
 		return lblSelectCurso;
-	}
-	private JComboBox<CursoDTO> getComboBox() {
-		if (comboBox == null) {
-			comboBox = new JComboBox<CursoDTO>();
-			comboBox.setModel(modeloCursos);
-			comboBox.setBounds(37, 145, 399, 39);
-		}
-		return comboBox;
 	}
 	private JPanel getPanelFinalizar() {
 		if (panelFinalizar == null) {
@@ -141,12 +139,12 @@ public class SelectorCurso extends JDialog {
 	}
 	
 	private void accionSiguiente() {
-		this.curso = modeloCursos.getElementAt(getComboBox().getSelectedIndex());
-		
-		if(curso == null) {
+		int index = getTable().getSelectedRow();		
+		if(index < 0) {
 			getLblError().setText("Error, seleccione un curso");
 		} else {
 			getLblError().setText("");
+			this.curso = cursos.get(index);
 			AperturaCursos ac = new AperturaCursos(this);
 			ac.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			ac.setModal(true);
@@ -163,8 +161,30 @@ public class SelectorCurso extends JDialog {
 			lblError = new JLabel("");
 			lblError.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			lblError.setForeground(Color.RED);
-			lblError.setBounds(37, 215, 399, 39);
 		}
 		return lblError;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getTable());
+		}
+		return scrollPane;
+	}
+	private JTable getTable() {
+		if (table == null) {
+			tm=new DefaultTableModel(new String[]{"Title", "Price", "Days"}, cursos.size()) ;
+			//carga cada uno de los valores de pojos usando PropertyUtils (de apache coommons beanutils)
+			for (int i=0; i<cursos.size(); i++) {
+				CursoDTO pojo=cursos.get(i);
+				tm.setValueAt(pojo.title, i, 0);
+				tm.setValueAt(pojo.price, i, 1);
+				tm.setValueAt(pojo.days, i, 2);
+			}
+			table = new JTable();
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setModel(tm);
+		}
+		return table;
 	}
 }

@@ -12,6 +12,8 @@ import kike.modelo.colegiado.ColegiadoDTO;
 
 import java.awt.Dimension;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.SwingConstants;
@@ -273,6 +275,7 @@ public class MostrarDatosInscripcion extends JDialog {
 
 	private void inscribirCurso() {
 		pic.cm.inscribirse(getLblNumColData().getText());
+		JOptionPane.showConfirmDialog(null, "Se le ha enscrito al curso correctamente", "Confirmacion", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
 		pic.dispose();
 		this.dispose();
 	}

@@ -100,7 +100,8 @@ public class ColegiadoDataBase {
 	}
 
 	private static ColegiadoDTO toColegiadoDTO(ResultSet rs) throws SQLException {
-		rs.next();
+		if(!rs.next())
+			return null;
 		
 		ColegiadoDTO cdto = new ColegiadoDTO();
 		
@@ -108,6 +109,8 @@ public class ColegiadoDataBase {
 		cdto.nombre = rs.getString("nombre");
 		cdto.apellidos = rs.getString("apellidos");
 		cdto.dni = rs.getString("dni");
+		cdto.cuentaBancaria = rs.getString("iban");
+		cdto.tlfn = rs.getString("telefono");
 		
 		return cdto;
 	}

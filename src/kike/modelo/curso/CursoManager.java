@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-
 import kike.persistence.CursoDataBase;
 import kike.persistence.InscripcionDataBase;
 import kike.persistence.dto.InscripcionDTO;
@@ -42,21 +40,18 @@ public class CursoManager {
 		return curosDTO.title + " - Precio: " + curosDTO.price;
 	}
 
-	public static DefaultListModel<CursoDTOForColegiados> getModeloCursosAbiertos() {
-		DefaultListModel<CursoDTOForColegiados> modelo = new DefaultListModel<CursoDTOForColegiados>();
-		
-		modelo.addAll(getCursosDisponibles(CursoDataBase.getCursosAbiertos()));
-		return modelo;
+	public static List<CursoDTO> getModeloCursosAbiertos() {			
+		return getCursosDisponibles(CursoDataBase.getCursosAbiertos());
 	}
 
-	private static List<CursoDTOForColegiados> getCursosDisponibles(List<CursoDTOForColegiados> cursosAbiertos) {
-		Iterator<CursoDTOForColegiados> it = cursosAbiertos.iterator();
+	private static List<CursoDTO> getCursosDisponibles(List<CursoDTO> cursosAbiertos) {
+		Iterator<CursoDTO> it = cursosAbiertos.iterator();
 		
 		while(it.hasNext()) {
-			CursoDTOForColegiados dto = it.next();
-			if(dto.cdto.plazasDisponibles <= 0 || 
-					dto.cdto.fechaInicioInscipcion.compareTo(new Date(System.currentTimeMillis())) > 0 ||
-					dto.cdto.fechaFinInscipcion.compareTo(new Date(System.currentTimeMillis())) < 0) {
+			CursoDTO dto = it.next();
+			if(dto.plazasDisponibles <= 0 || 
+					dto.fechaInicioInscipcion.compareTo(new Date(System.currentTimeMillis())) > 0 ||
+					dto.fechaFinInscipcion.compareTo(new Date(System.currentTimeMillis())) < 0) {
 				it.remove();
 			}
 		}
@@ -77,6 +72,29 @@ public class CursoManager {
 		
 		CursoDataBase.actualizarCurso(curosDTO);
 		InscripcionDataBase.createPreInscripcion(idto);	
+	}
+
+	public static Date getPrimerDiaCurso(CursoDTO dto) {
+		Date minDay = null;
+		for(Date d : dto.days) {
+			if(minDay == null || minDay.compareTo(d)>0) {
+				minDay = d;
+			}
+		}
+		return minDay;
+	}
+
+	public static List<CursoDTO> removePastCursos(List<CursoDTO> cursos) {
+		Iterator<CursoDTO> it = cursos.iterator();
+		
+		while(it.hasNext()) {
+			CursoDTO dto = it.next();
+			if(getPrimerDiaCurso(dto).compareTo(new Date(System.currentTimeMillis())) < 0) {
+				it.remove();
+			}
+		}
+		
+		return cursos;
 	}
 }
 

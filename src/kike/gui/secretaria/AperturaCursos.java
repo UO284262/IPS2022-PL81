@@ -8,6 +8,7 @@ import kike.modelo.curso.CursoManager;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -213,6 +214,11 @@ public class AperturaCursos extends JDialog {
 		Date inicio = new Date(getFechaInicio_1().getDate().getTime());
 		Date fin = new Date(getFechaFin_1().getDate().getTime());
 		
+		if(fin.compareTo(CursoManager.getPrimerDiaCurso(sc.getCurso())) > 0) {
+			getLblErrores().setText("<html>Por favor, introduzca una fecha de fin anterior <br> a la del primer día del curso</html>");
+			return false;
+		}
+		
 		if(inicio.compareTo(fin) < 0 && inicio.compareTo(new Date(System.currentTimeMillis())) >= 0) {
 			getLblErrores().setText("");
 			return true;
@@ -228,6 +234,9 @@ public class AperturaCursos extends JDialog {
 		sc.getCurso().fechaFinInscipcion = new Date(getFechaFin_1().getDate().getTime());
 		
 		new CursoManager(sc.getCurso()).abrirCurso();
+		
+		JOptionPane.showConfirmDialog(null, "Se ha abierto el curso correctamente", "Confirmacion", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
 	}
 	private JLabel getLblErrores() {
 		if (lblErrores == null) {

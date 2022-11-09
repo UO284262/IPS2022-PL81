@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kike.modelo.curso.CursoDTO;
-import kike.modelo.curso.CursoDTOForColegiados;
 import main.DatabaseConnection;
 
 public class CursoDataBase {
@@ -35,6 +34,10 @@ public class CursoDataBase {
 			rs = st.executeQuery();			
 			
 			cursos = toCursoDTOList(rs);
+			
+			for(CursoDTO c : cursos) {
+				rellenarFechas(c, conn);
+			}
 			
 			conn.commit();
 			
@@ -134,8 +137,8 @@ public class CursoDataBase {
 		}	
 	}
 	
-	public static List<CursoDTOForColegiados> getCursosAbiertos() {
-		List<CursoDTOForColegiados> cursos = null;
+	public static List<CursoDTO> getCursosAbiertos() {
+		List<CursoDTO> cursos = null;
 		
 		Connection conn = null;
 		PreparedStatement st = null;
@@ -149,10 +152,10 @@ public class CursoDataBase {
 			st = conn.prepareStatement(CURSOS_ABIERTOS);
 			rs = st.executeQuery();			
 			
-			cursos = toCursoDTOForColegiadosList(rs);
+			cursos = toCursoDTOList(rs);
 			
-			for(CursoDTOForColegiados c : cursos) {
-				rellenarFechas(c.cdto, conn);
+			for(CursoDTO c : cursos) {
+				rellenarFechas(c, conn);
 			}
 			
 			conn.commit();
@@ -229,14 +232,6 @@ public class CursoDataBase {
 		dto.days = new ArrayList<>();
 		
 		return dto;
-	}
-
-	private static List<CursoDTOForColegiados> toCursoDTOForColegiadosList(ResultSet rs) throws SQLException {
-		List<CursoDTOForColegiados> res = new ArrayList<>();
-		while(rs.next()) {
-			res.add(new  CursoDTOForColegiados(toCursoDto( rs )));
-		}
-		return res;
 	}
 
 	public static void actualizarCurso(CursoDTO curosDTO) {

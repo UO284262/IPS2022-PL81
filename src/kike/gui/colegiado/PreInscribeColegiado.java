@@ -9,22 +9,24 @@ import javax.swing.JPanel;
 
 import kike.modelo.colegiado.ColegiadoDTO;
 import kike.modelo.colegiado.ColegiadoManager;
-import kike.modelo.curso.CursoDTOForColegiados;
+import kike.modelo.curso.CursoDTO;
 import kike.modelo.curso.CursoManager;
 
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.Font;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
-import javax.swing.JList;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.JTable;
 
 public class PreInscribeColegiado extends JDialog {
 
@@ -35,8 +37,7 @@ public class PreInscribeColegiado extends JDialog {
 	private JButton btnCancelar;
 	private JButton btnInscribeme;
 	private JScrollPane scrollPane;
-	private JList<CursoDTOForColegiados> list;
-	private ListModel<CursoDTOForColegiados> modeloCursos;
+	private List<CursoDTO> cursos;
 	private JPanel panelSuperior;
 	private JLabel lblTitulo;
 	private JPanel panelSelectorId;
@@ -47,6 +48,9 @@ public class PreInscribeColegiado extends JDialog {
 	private ColegiadoManager colm;
 	private double precio;
 	public CursoManager cm;
+	private JTable table;
+
+	private DefaultTableModel tm;
 
 	/**
 	 * Launch the application.
@@ -66,7 +70,7 @@ public class PreInscribeColegiado extends JDialog {
 	 */
 	public PreInscribeColegiado() {
 		setModal(true);
-		modeloCursos = CursoManager.getModeloCursosAbiertos();
+		cursos = CursoManager.getModeloCursosAbiertos();
 		setMinimumSize(new Dimension(500, 400));
 		setBounds(100, 100, 500, 450);
 		getContentPane().setLayout(new BorderLayout());
@@ -124,18 +128,9 @@ public class PreInscribeColegiado extends JDialog {
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setViewportView(getList());
+			scrollPane.setViewportView(getTable());
 		}
 		return scrollPane;
-	}
-	private JList<CursoDTOForColegiados> getList() {
-		if (list == null) {
-			list = new JList<CursoDTOForColegiados>();
-			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			list.setModel(modeloCursos);
-			list.setSelectedIndex(0);
-		}
-		return list;
 	}
 	private JPanel getPanelSuperior() {
 		if (panelSuperior == null) {
@@ -192,18 +187,23 @@ public class PreInscribeColegiado extends JDialog {
 
 	private void mostrarPreincripcion() {
 		getLblError().setText("");
-		CursoDTOForColegiados cc = modeloCursos.getElementAt(getList().getSelectedIndex());
+		int index = getTable().getSelectedRow();
+		if(index < 0) {
+			getLblError().setText("Error: seleccione un curso.");
+			return;
+		}
+		CursoDTO cc = cursos.get(index);
 		colm = new ColegiadoManager(getTextField().getText());
 		if(!colm.validaID()) { 
 			getLblError().setText("Error: id invalido.");
 
-		} else if(colm.isInscrito(cc.cdto.title)) {  
+		} else if(colm.isInscrito(cc.title)) {  
 			getLblError().setText("Error: Este usuario ya ha sido preinscrito.");
 		
 		} else {			
-			cm = new CursoManager(cc.cdto);			
+			cm = new CursoManager(cc);			
 			colm.getInfo();
-			precio = cc.cdto.price;
+			precio = cc.price;
 			
 			MostrarDatosInscripcion ventana = new MostrarDatosInscripcion(this);
 			ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -221,5 +221,24 @@ public class PreInscribeColegiado extends JDialog {
 
 	public String getPrecio() {
 		return "" + precio;
+	}
+	private JTable getTable() {
+		if (table == null) {
+			tm=new DefaultTableModel(new String[]{"Title", "Price", "Days", "Fecha de inicio de inscipcion", "Fecha de fin de inscipcion", "Plazas Disponibles"}, cursos.size()) ;
+			//carga cada uno de los valores de pojos usando PropertyUtils (de apache coommons beanutils)
+			for (int i=0; i<cursos.size(); i++) {
+				CursoDTO pojo=cursos.get(i);
+				tm.setValueAt(pojo.title, i, 0);
+				tm.setValueAt(pojo.price, i, 1);
+				tm.setValueAt(pojo.days, i, 2);
+				tm.setValueAt(pojo.fechaInicioInscipcion, i, 3);
+				tm.setValueAt(pojo.fechaFinInscipcion, i, 4);
+				tm.setValueAt(pojo.plazasDisponibles, i, 5);
+			}
+			table = new JTable();
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setModel(tm);
+		}
+		return table;
 	}
 }
