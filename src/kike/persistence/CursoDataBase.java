@@ -288,7 +288,11 @@ public class CursoDataBase {
 		return cols;
 	}
 	
-	public static void inscribirColectivo(List<ColectivoCursoDTO> colectivos) {
+	public static void inscribirColectivos(List<ColectivoCursoDTO> colectivos) {
+		if(colectivos.isEmpty()) {
+			return;
+		}
+		
 		Connection conn = null;
 		PreparedStatement st = null;
 		

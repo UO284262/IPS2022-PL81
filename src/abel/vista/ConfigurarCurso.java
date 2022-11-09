@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -26,6 +27,10 @@ import javax.swing.table.DefaultTableModel;
 
 import abel.controlador.ConfigurarActividadControler;
 import abel.modelo.ProfesorDTO;
+import kike.persistence.ColectivoDataBase;
+import kike.persistence.CursoDataBase;
+import kike.persistence.dto.ColectivoCursoDTO;
+
 import javax.swing.JComboBox;
 
 public class ConfigurarCurso extends JPanel {
@@ -52,9 +57,10 @@ public class ConfigurarCurso extends JPanel {
 	private JButton btFinalizar;
 	private JDialog d;
 	private JSpinner spDescuento;
-	private JComboBox cbColectivo;
+	private JComboBox<String> cbColectivo;
 	private JButton btAñadirDescuento;
 	private DefaultComboBoxModel<String> modeloColectivos;
+	private List<ColectivoCursoDTO> colectivos;
 
 	/**
 	 * Create the panel.
@@ -125,9 +131,10 @@ public class ConfigurarCurso extends JPanel {
 	private void cargarColectivos()
 	{
 		this.modeloColectivos = new DefaultComboBoxModel<String>();
-		//METELE AQUI LOS DATOS AL MODELO HU4
+		this.modeloColectivos.addAll(ColectivoDataBase.getColectivos());
 		this.getCbColectivo().setModel(modeloColectivos);
 		this.getCbColectivo().setSelectedIndex(0);
+		this.colectivos = new ArrayList<>();
 	}
 	private void cargarProfesores()
 	{
@@ -260,29 +267,30 @@ public class ConfigurarCurso extends JPanel {
 	}
 	private void cerrar()
 	{
-		if(modeloFechas.getRowCount() == 0)
+		if(modeloFechas.getRowCount() == 0) {
+			CursoDataBase.inscribirColectivos(colectivos);
 			d.dispose();
-		else
+		} else
 			mostrarMensajeFaltanDatos();
 	}
 	private JSpinner getSpDescuento() {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
-			spDescuento.setModel(new SpinnerNumberModel(0, 0, 100, 5));
+			spDescuento.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
 			spDescuento.setBounds(131, 201, 50, 20);
 		}
 		return spDescuento;
 	}
-	private JComboBox getCbColectivo() {
+	private JComboBox<String> getCbColectivo() {
 		if (cbColectivo == null) {
-			cbColectivo = new JComboBox();
+			cbColectivo = new JComboBox<String>();
 			cbColectivo.setBounds(184, 200, 163, 21);
 		}
 		return cbColectivo;
 	}
 	private JButton getBtAñadirDescuento() {
 		if (btAñadirDescuento == null) {
-			btAñadirDescuento = new JButton("Asignar descuento");
+			btAñadirDescuento = new JButton("Asignar descuento por colectivo");
 			btAñadirDescuento.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añadirDescuento();
@@ -295,8 +303,14 @@ public class ConfigurarCurso extends JPanel {
 	}
 	private void añadirDescuento()
 	{
-		String colectivo = (String) this.getCbColectivo().getSelectedItem();
-		int descuento = (int) this.getSpDescuento().getValue();
-		//AQUI AÑADELO A LA TABLA HU4
+		if(this.getCbColectivo().getSelectedIndex() >= 0) {
+			ColectivoCursoDTO c = new ColectivoCursoDTO();
+			c.nombre_colectivo = (String) this.getCbColectivo().getSelectedItem();
+			c.descuento = (double) this.getSpDescuento().getValue();
+			c.nombre_curso = nombre_curso;
+			colectivos.add(c);
+			this.modeloColectivos.removeElement(c.nombre_colectivo);
+		}
+		
 	}
 }
