@@ -5,9 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kike.modelo.curso.CursoDTO;
+import kike.persistence.dto.ColectivoCursoDTO;
 import main.DatabaseConnection;
 
 public class CursoDataBase {
@@ -17,6 +19,9 @@ public class CursoDataBase {
 	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ?";
 	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true";
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
+	private static final String GET_COLECTIVOS = "select * from colectivos_asignados where nombre_curso = ?";
+	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,descuento) values (?,?,?)";
+
 	
 	public static List<CursoDTO> getCursosSinAbrir() {
 		List<CursoDTO> cursos = null;
@@ -234,9 +239,92 @@ public class CursoDataBase {
 		return dto;
 	}
 
-	public static void actualizarCurso(CursoDTO curosDTO) {
+	public static void actualizarCurso(CursoDTO curso) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static HashMap<String, Double> getColectivos(CursoDTO curso) {
+		HashMap<String,Double> cols = new HashMap<String, Double>();
+		
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			conn = DatabaseConnection.getConnection();			
+			conn.setAutoCommit(false);
+			
+			st = conn.prepareStatement(GET_COLECTIVOS);			
+			st.setString(1, curso.title);
+			
+			rs = st.executeQuery();			
+			
+			while(rs.next()) {
+				cols.put(rs.getString("nombre_colectivo"), rs.getDouble("descuento"));
+			}
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				rs.close();
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}
+		
+		return cols;
+	}
+	
+	public static void inscribirColectivo(List<ColectivoCursoDTO> colectivos) {
+		Connection conn = null;
+		PreparedStatement st = null;
+		
+		try
+		{
+			conn = DatabaseConnection.getConnection();			
+			conn.setAutoCommit(false);
+			
+			st = conn.prepareStatement(INSERT_COLECTIVO);
+			
+			for (ColectivoCursoDTO cc : colectivos) {			
+				st.setString(1, cc.nombre_curso);
+				st.setString(2, cc.nombre_colectivo);
+				st.setDouble(3, cc.descuento);
+				
+				st.executeUpdate();	
+			}			
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}	
 	}
 	
 }

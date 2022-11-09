@@ -7,14 +7,19 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import kike.gui.colectivo.SelectorColectivos;
 import kike.modelo.colegiado.ColegiadoDTO;
 import kike.modelo.colegiado.ColegiadoManager;
 import kike.modelo.curso.CursoDTO;
 import kike.modelo.curso.CursoManager;
+import kike.persistence.CursoDataBase;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
@@ -51,7 +56,9 @@ public class PreInscribeColegiado extends JDialog {
 	private JTable table;
 
 	private DefaultTableModel tm;
-
+	private String grupo;
+	private HashMap<String, Double> colectivos;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -193,6 +200,11 @@ public class PreInscribeColegiado extends JDialog {
 			return;
 		}
 		CursoDTO cc = cursos.get(index);
+		
+		if(!selectorCol(cc)) {
+			return;
+		}
+		
 		colm = new ColegiadoManager(getTextField().getText());
 		if(!colm.validaID()) { 
 			getLblError().setText("Error: id invalido.");
@@ -219,8 +231,8 @@ public class PreInscribeColegiado extends JDialog {
 		return colm.dto;
 	}
 
-	public String getPrecio() {
-		return "" + precio;
+	public Double getPrecio() {
+		return precio;
 	}
 	private JTable getTable() {
 		if (table == null) {
@@ -240,5 +252,47 @@ public class PreInscribeColegiado extends JDialog {
 			table.setModel(tm);
 		}
 		return table;
+	}
+
+	private boolean selectorCol(CursoDTO curso) {
+		colectivos = CursoDataBase.getColectivos(curso);
+		if(!colectivos.isEmpty()) {
+			int respuesta = JOptionPane.showConfirmDialog(null, "<html>Existend descuentos por colectivos para este curso<br>"
+					+ "¿Deseas seleccionar un colectivo para un posible descuento?<html>", "Confirmacion", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(respuesta == JOptionPane.NO_OPTION)
+				grupo = null;
+			else if(respuesta == JOptionPane.YES_OPTION) {
+				seleccionaColectivo();
+			} else {
+				return false;
+			}
+		} else {
+			grupo = null;
+		}
+		return true;
+	}
+	
+	private void seleccionaColectivo() {
+		SelectorColectivos ventana = new SelectorColectivos(this, colectivos);
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setModal(true);
+		ventana.setLocationRelativeTo(this);
+		ventana.setVisible(true);
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+	
+	public double getDescuento() {
+		if(grupo == null) {
+			return 0;
+		}
+		
+		return colectivos.get(grupo)/100;
 	}
 }

@@ -50,6 +50,9 @@ public class MostrarDatosInscripcion extends JDialog {
 	
 	
 	private PreInscribeColegiado pic;
+	private JPanel panelTotal;
+	private JLabel lblTotal;
+	private JLabel lblPrecioTotalData;
 
 
 	/**
@@ -58,10 +61,10 @@ public class MostrarDatosInscripcion extends JDialog {
 	public MostrarDatosInscripcion(PreInscribeColegiado pic) {
 		this.pic = pic;
 		inicializarDatos();
-		setMinimumSize(new Dimension(450, 450));
+		setMinimumSize(new Dimension(560, 450));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setModal(true);
-		setBounds(100, 100, 450, 450);
+		setBounds(100, 100, 560, 450);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(getPanelPrincipal(), BorderLayout.CENTER);
 	}
@@ -72,7 +75,11 @@ public class MostrarDatosInscripcion extends JDialog {
 		getLblApellidosData().setText(cdto.apellidos);
 		getLblNumColData().setText(cdto.id_colegiado);
 		getLblFechaSolData().setText(new Date(System.currentTimeMillis()).toString());
-		getLblPrecioData().setText(pic.getPrecio());
+		double precio = pic.getPrecio();
+		getLblPrecioTotalData().setText("" + precio);
+		String grupo = pic.getGrupo() != null ? pic.getGrupo() : "Sin grupo";
+		precio -= precio * pic.getDescuento();
+		getLblPrecioData().setText(precio + " *(" + grupo + ": " + pic.getDescuento()*100 + "% de descuento)");
 	}
 
 	private JPanel getPanelPrincipal() {
@@ -138,6 +145,7 @@ public class MostrarDatosInscripcion extends JDialog {
 			panelCentral.add(getPanelApellidos());
 			panelCentral.add(getPanelNumCol());
 			panelCentral.add(getPanelFechaSol());
+			panelCentral.add(getPanelTotal());
 			panelCentral.add(getPanelPrecio());
 		}
 		return panelCentral;
@@ -278,5 +286,31 @@ public class MostrarDatosInscripcion extends JDialog {
 		JOptionPane.showConfirmDialog(null, "Se le ha enscrito al curso correctamente", "Confirmacion", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
 		pic.dispose();
 		this.dispose();
+	}
+	private JPanel getPanelTotal() {
+		if (panelTotal == null) {
+			panelTotal = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) panelTotal.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			panelTotal.setBorder(new EmptyBorder(0, 30, 0, 0));
+			panelTotal.add(getLblTotal());
+			panelTotal.add(getLblPrecioTotalData());
+		}
+		return panelTotal;
+	}
+	private JLabel getLblTotal() {
+		if (lblTotal == null) {
+			lblTotal = new JLabel("Precio:");
+			lblTotal.setHorizontalAlignment(SwingConstants.TRAILING);
+			lblTotal.setFont(new Font("Arial", Font.PLAIN, 15));
+		}
+		return lblTotal;
+	}
+	private JLabel getLblPrecioTotalData() {
+		if (lblPrecioTotalData == null) {
+			lblPrecioTotalData = new JLabel((String) null);
+			lblPrecioTotalData.setFont(new Font("Arial", Font.PLAIN, 15));
+		}
+		return lblPrecioTotalData;
 	}
 }
