@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -25,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 
 import abel.controlador.ConfigurarActividadControler;
 import abel.modelo.ProfesorDTO;
+import javax.swing.JComboBox;
 
 public class ConfigurarCurso extends JPanel {
 	
@@ -49,6 +51,10 @@ public class ConfigurarCurso extends JPanel {
 	private JTable tableProfesores;
 	private JButton btFinalizar;
 	private JDialog d;
+	private JSpinner spDescuento;
+	private JComboBox cbColectivo;
+	private JButton btAñadirDescuento;
+	private DefaultComboBoxModel<String> modeloColectivos;
 
 	/**
 	 * Create the panel.
@@ -68,8 +74,12 @@ public class ConfigurarCurso extends JPanel {
 		add(getBtAñadir());
 		add(getSpProfesores());
 		add(getBtFinalizar());
+		add(getSpDescuento());
+		add(getCbColectivo());
+		add(getBtAñadirDescuento());
 		cargarFechas();
 		cargarProfesores();
+		cargarColectivos();
 	}
 	private JLabel getLbTitulo() {
 		if (lbTitulo == null) {
@@ -111,6 +121,13 @@ public class ConfigurarCurso extends JPanel {
 			modeloFechas.addRow(fecha);
 		}
 		this.getTableFechas().setModel(modeloFechas);
+	}
+	private void cargarColectivos()
+	{
+		this.modeloColectivos = new DefaultComboBoxModel<String>();
+		//METELE AQUI LOS DATOS AL MODELO HU4
+		this.getCbColectivo().setModel(modeloColectivos);
+		this.getCbColectivo().setSelectedIndex(0);
 	}
 	private void cargarProfesores()
 	{
@@ -247,5 +264,39 @@ public class ConfigurarCurso extends JPanel {
 			d.dispose();
 		else
 			mostrarMensajeFaltanDatos();
+	}
+	private JSpinner getSpDescuento() {
+		if (spDescuento == null) {
+			spDescuento = new JSpinner();
+			spDescuento.setModel(new SpinnerNumberModel(0, 0, 100, 5));
+			spDescuento.setBounds(131, 201, 50, 20);
+		}
+		return spDescuento;
+	}
+	private JComboBox getCbColectivo() {
+		if (cbColectivo == null) {
+			cbColectivo = new JComboBox();
+			cbColectivo.setBounds(184, 200, 163, 21);
+		}
+		return cbColectivo;
+	}
+	private JButton getBtAñadirDescuento() {
+		if (btAñadirDescuento == null) {
+			btAñadirDescuento = new JButton("Asignar descuento");
+			btAñadirDescuento.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añadirDescuento();
+				}
+			});
+			btAñadirDescuento.setBackground(Color.GREEN);
+			btAñadirDescuento.setBounds(131, 231, 216, 21);
+		}
+		return btAñadirDescuento;
+	}
+	private void añadirDescuento()
+	{
+		String colectivo = (String) this.getCbColectivo().getSelectedItem();
+		int descuento = (int) this.getSpDescuento().getValue();
+		//AQUI AÑADELO A LA TABLA HU4
 	}
 }
