@@ -1,16 +1,13 @@
 package abel.vista;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
-import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
-import abel.controlador.ActividadFormativaControler;
-import abel.controlador.FormularioPericialControler;
 import abel.controlador.SolicitarTitulacionControler;
-import abel.controlador.VisualizarInscritosCursoControler;
 
 public class app {
 

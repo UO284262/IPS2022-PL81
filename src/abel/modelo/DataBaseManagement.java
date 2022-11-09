@@ -2,17 +2,16 @@ package abel.modelo;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import abel.controlador.ConfigurarActividadControler;
 import abel.controlador.SolicitarTitulacionControler;
 import abel.controlador.VisualizarInscritosCursoControler;
-
-import java.sql.Date;
-
 import main.DatabaseConnection;
 
 public class DataBaseManagement 
@@ -21,7 +20,7 @@ public class DataBaseManagement
 																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
 	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa) VALUES(\"%s\",%s,%s);";
 	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\";";
-	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion VALUES(\"%s\",'%s');";
+	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion(nombre_curso,fecha) VALUES(\"%s\",'%s');";
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open  FROM Actividad_Formativa a "
 																	+ " WHERE a.fecha_orientativa >= \"%s\" ORDER BY a.nombre_curso;";
 	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
@@ -37,6 +36,16 @@ public class DataBaseManagement
 	private final static String QUERY_SELECT_PENDING_REQUEST_BY_DNI = "SELECT dni, nombre, apellidos, telefono FROM Colegiado WHERE dni = ? and tipoSolicitud = \"PENDIENTE\";";
 	
 	private final static String QUERY_SET_VALIDANDO = "UPDATE Colegiado set tipoSolicitud = \"VALIDANDO\" WHERE dni = ?";
+	
+	private final static String QUERY_IMPARTE = "insert into Imparte(profesor,nombre_curso) VALUES (?,?)";
+	
+	private final static String QUERY_FIND_PROFESORS = "select * from Profesor";
+	
+	private final static String QUERY_FIND_FECHAS_CURSO = "select fecha from Fecha_Imparticion where nombre_curso = ?";
+	
+	private final static String QUERY_FIND_CONFIGURED_IMPARTICION = "select * from Fecha_Imparticion where duracion > 0";
+	
+	private final static String QUERY_UPDATE_IMPARTICION = "update Fecha_Imparticion set hora = ?, duracion = ? where nombre_curso = ? and fecha = ?";
 	
 	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
 	{
@@ -220,5 +229,105 @@ public class DataBaseManagement
 			conn.commit();
 		} catch (SQLException e) {
 		}
+	}
+	
+	public static List<ProfesorDTO> findAllProfesor()
+	{
+		List<ProfesorDTO> profesores = new ArrayList<ProfesorDTO>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_FIND_PROFESORS);
+			ResultSet rs = st.executeQuery();
+			profesores = ConfigurarActividadControler.toProfesorList(rs);
+			
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return profesores;
+	}
+	
+	public static List<Date> findImparticionesFor(String curso)
+	{
+		List<Date> dates = new ArrayList<Date>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_FIND_FECHAS_CURSO);
+			st.setString(1, curso);
+			ResultSet rs = st.executeQuery();
+			while(rs.next())
+			{
+				dates.add(rs.getDate(1));
+			}
+			
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return dates;
+	}
+	
+	public static boolean configurarImparticion(String curso, Date fecha, String hora, int duracion)
+	{
+		if(seSolapa(fecha,hora,duracion)) return false;
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_UPDATE_IMPARTICION);
+			st.setString(1, hora);
+			st.setInt(2, duracion);
+			st.setString(3, curso);
+			st.setDate(4, fecha);
+			st.executeUpdate();
+			conn.commit();
+		} catch (SQLException e) {
+		}
+		return true;
+	}
+	
+	public static void addProfesorCurso(String curso, String profesor)
+	{
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_IMPARTE);
+			st.setString(1, profesor);
+			st.setString(2, curso);
+			st.executeUpdate();
+			conn.commit();
+		} catch (SQLException e) {
+		}
+	}
+	
+	private static boolean seSolapa(Date fecha, String hora, int duracion)
+	{
+		List<ImparticionDTO> imparticiones = new ArrayList<ImparticionDTO>();
+		try (Connection conn = DatabaseConnection.getConnection();)
+		{	
+			conn.setAutoCommit(false);
+			PreparedStatement st = conn.prepareStatement(QUERY_FIND_CONFIGURED_IMPARTICION);
+			ResultSet rs = st.executeQuery();
+			conn.commit();
+			imparticiones = ConfigurarActividadControler.toImparticionesList(rs);
+		} catch (SQLException e) {
+		}
+		for(ImparticionDTO imparticion : imparticiones)
+		{
+			int[] horaInt = {Integer.valueOf(imparticion.hora.split(":")[0]) , Integer.valueOf(imparticion.hora.split(":")[1])};
+			int minFin = horaInt[1] + imparticion.duracion;
+			int horasMas = minFin / 60;
+			int[] horaFin = {horaInt[0] + horasMas, minFin % 60};
+			if(imparticion.fecha.compareTo(fecha) == 0)
+			{
+				int[] horaInt2 = {Integer.valueOf(hora.split(":")[0]) , Integer.valueOf(hora.split(":")[1])};
+				int minFin2 = horaInt2[1] + duracion;
+				int horasMas2 = minFin2 / 60;
+				int[] horaFin2 = {horaInt2[0] + horasMas2, minFin2 % 60};
+				if(horaInt2[0] >= horaInt[0] && horaInt2[0] <= horaFin[0] || horaFin2[0] <= horaFin[0] && horaFin2[0] >= horaInt[0])
+					if(horaFin2[0] == horaInt[0] && horaFin2[1] > horaInt[1] || horaInt2[0] == horaFin[0] && horaInt2[1] < horaFin[1])
+						return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,7 +1,6 @@
 package abel.modelo;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class ColegiadoInscritoDTO {
 	public String id_colegiado;

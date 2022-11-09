@@ -20,10 +20,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import abel.vista.PlanificadorCurso;
-import abel.vista.SolicitarPericial;
-import abel.vista.SolicitarTitulacion;
-import abel.vista.VisualizadorInscritos;
+import abel.vista.dialogs.PlanificadorCurso;
+import abel.vista.dialogs.SolicitarPericial;
+import abel.vista.dialogs.SolicitarTitulacion;
+import abel.vista.dialogs.VisualizadorInscritos;
 import kike.gui.colegiado.PreInscribeColegiado;
 import kike.gui.secretaria.SelectorCurso;
 import kike.modelo.curso.CursoDTO;

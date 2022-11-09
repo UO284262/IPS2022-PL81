@@ -1,4 +1,4 @@
-package abel.vista;
+package abel.vista.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -7,9 +7,10 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import abel.controlador.VisualizarInscritosCursoControler;
+import abel.controlador.ActividadFormativaControler;
+import abel.vista.AñadirActividadFormativa;
 
-public class VisualizadorInscritos extends JDialog {
+public class PlanificadorCurso extends JDialog {
 
 	/**
 	 * 
@@ -33,15 +34,15 @@ public class VisualizadorInscritos extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public VisualizadorInscritos() {
+	public PlanificadorCurso() {
 		setModal(true);
 		setTitle("Planificador de cursos");
-		setBounds(100, 100, 1000, 446);
+		setBounds(100, 100, 505, 335);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(new VisualizarInscritosCurso(new VisualizarInscritosCursoControler()));
+		getContentPane().add(new AñadirActividadFormativa(new ActividadFormativaControler()));
 	}
 
 }
