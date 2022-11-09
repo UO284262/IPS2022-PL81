@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import abel.controlador.ConfigurarActividadControler;
 import abel.controlador.SolicitarTitulacionControler;
 import abel.controlador.VisualizarInscritosCursoControler;
