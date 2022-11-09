@@ -71,21 +71,21 @@ public class InscripcionDataBase {
 		}
 	}
 	
-	private static TipoInscripcion parseFromDatabase(String estado) {
-		switch (estado) {
-		case "PRE-INSCRITO": {
-			return TipoInscripcion.PRE_INSCRITO;
-		}
-		case "INSCRITO": {
-			return TipoInscripcion.INSCRITO;
-		}
-		case "CANCELADO": {
-			return TipoInscripcion.CANCELADO;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + estado);
-		}
-	}
+//	private static TipoInscripcion parseFromDatabase(String estado) {
+//		switch (estado) {
+//		case "PRE-INSCRITO": {
+//			return TipoInscripcion.PRE_INSCRITO;
+//		}
+//		case "INSCRITO": {
+//			return TipoInscripcion.INSCRITO;
+//		}
+//		case "CANCELADO": {
+//			return TipoInscripcion.CANCELADO;
+//		}
+//		default:
+//			throw new IllegalArgumentException("Unexpected value: " + estado);
+//		}
+//	}
 
 	public static boolean isInscrito(String id_colegiado, String title) {
 

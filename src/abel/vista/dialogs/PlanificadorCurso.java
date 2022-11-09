@@ -1,4 +1,4 @@
-package abel.vista;
+package abel.vista.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import abel.controlador.ActividadFormativaControler;
+import abel.vista.AñadirActividadFormativa;
 
 public class PlanificadorCurso extends JDialog {
 

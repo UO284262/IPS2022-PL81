@@ -1,14 +1,13 @@
 package abel.vista;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
-import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
-import abel.controlador.ActividadFormativaControler;
-import abel.controlador.VisualizarInscritosCursoControler;
+import abel.controlador.SolicitarTitulacionControler;
 
 public class app {
 
@@ -52,7 +51,7 @@ public class app {
 
 	private JPanel getPanel() {
 		if (panel == null) {
-			panel = new VisualizarInscritosCurso(new VisualizarInscritosCursoControler());
+			panel = new SolicitarTitulacionColegiado(new SolicitarTitulacionControler());
 		}
 		return panel;
 	}
