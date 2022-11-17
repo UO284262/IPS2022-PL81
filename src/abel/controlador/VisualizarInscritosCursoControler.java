@@ -12,14 +12,16 @@ import abel.modelo.DataBaseManagement;
 
 public class VisualizarInscritosCursoControler {
 	
+	private DataBaseManagement db = new DataBaseManagement();
+	
 	public List<ActividadFormativaDTO> getModeloActividades()
 	{
-		return DataBaseManagement.getActividadesFormativasFrom(LocalDate.now().getYear());
+		return db.getActividadesFormativasFrom(LocalDate.now().getYear());
 	}
 	
 	public List<ColegiadoInscritoDTO> getListaApuntados(String nombre)
 	{
-		return DataBaseManagement.getInscritosEn(nombre);
+		return db.getInscritosEn(nombre);
 	}
 	
 	public static List<ActividadFormativaDTO> toDTOList(ResultSet rs)
@@ -55,5 +57,17 @@ public class VisualizarInscritosCursoControler {
 			apuntados.add(colegiado);
 		}
 		return apuntados;
+	}
+
+	public double getIngresosFor(String nombre) {
+		return db.getIngresosFor(nombre);
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.finalizar();
 	}
 }

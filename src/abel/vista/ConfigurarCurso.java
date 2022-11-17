@@ -61,6 +61,7 @@ public class ConfigurarCurso extends JPanel {
 	private JButton btAñadirDescuento;
 	private DefaultComboBoxModel<String> modeloColectivos;
 	private List<ColectivoCursoDTO> colectivos;
+	private JButton btCancelar;
 
 	/**
 	 * Create the panel.
@@ -83,6 +84,7 @@ public class ConfigurarCurso extends JPanel {
 		add(getSpDescuento());
 		add(getCbColectivo());
 		add(getBtAñadirDescuento());
+		add(getBtCancelar());
 		cargarFechas();
 		cargarProfesores();
 		cargarColectivos();
@@ -260,6 +262,7 @@ public class ConfigurarCurso extends JPanel {
 			btFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					cerrar();
+					controler.finalizar();
 				}
 			});
 			btFinalizar.setBackground(new Color(154, 205, 50));
@@ -315,5 +318,19 @@ public class ConfigurarCurso extends JPanel {
 			this.modeloColectivos.removeElement(c.nombre_colectivo);
 		}
 		
+	}
+	private JButton getBtCancelar() {
+		if (btCancelar == null) {
+			btCancelar = new JButton("Cancelar");
+			btCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					controler.cancelar();
+				}
+			});
+			btCancelar.setBackground(Color.RED);
+			btCancelar.setForeground(Color.BLACK);
+			btCancelar.setBounds(448, 331, 85, 21);
+		}
+		return btCancelar;
 	}
 }

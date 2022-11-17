@@ -99,7 +99,7 @@ public class VisualizarInscritosCurso extends JPanel {
 	private void cargarIngresosPara(Object actividad)
 	{
 		String nombre = (String) actividad;
-		getTfIngresos().setText(DataBaseManagement.getIngresosFor(nombre) + "");
+		getTfIngresos().setText(controler.getIngresosFor(nombre) + "");
 	}
 	
 	private boolean cargarApuntadosA(Object actividad)

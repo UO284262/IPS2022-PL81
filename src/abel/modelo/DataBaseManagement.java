@@ -48,9 +48,45 @@ public class DataBaseManagement
 	
 	private final static String QUERY_UPDATE_IMPARTICION = "update Fecha_Imparticion set hora = ?, duracion = ? where nombre_curso = ? and fecha = ?";
 	
-	public static boolean addActividadToDataBase(ActividadFormativaDTO actividad)
+	private Connection conn;
+	
+	public DataBaseManagement()
 	{
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try {
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+			
+	}
+	
+	public void finalizar()
+	{
+		try
+		{
+			conn.commit();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+			
+	}
+	
+	public void cancelar()
+	{
+		try
+		{
+			conn.rollback();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean addActividadToDataBase(ActividadFormativaDTO actividad)
+	{
+		try
 		{	
 			conn.setAutoCommit(false);
 			
@@ -68,14 +104,12 @@ public class DataBaseManagement
 		return true;
 	}
 	
-	public static List<ActividadFormativaDTO> getActividadesFormativasFrom(Integer año)
+	public List<ActividadFormativaDTO> getActividadesFormativasFrom(Integer año)
 	{
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_ACTIVIDADES_FORMATIVAS,año.toString() + "-1-1"));
 			ResultSet rs = st.executeQuery();
-			conn.commit();
 			List<ActividadFormativaDTO> lista = VisualizarInscritosCursoControler.toDTOList(rs);
 			st.close();
 			rs.close();
@@ -85,12 +119,11 @@ public class DataBaseManagement
 		return null;
 	}
 	
-	public static List<ColegiadoInscritoDTO> getInscritosEn(String actividadFormativa)
+	public List<ColegiadoInscritoDTO> getInscritosEn(String actividadFormativa)
 	{
 		List<ColegiadoInscritoDTO> nombres = new ArrayList<ColegiadoInscritoDTO>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st2 = conn.prepareStatement(String.format(QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID,actividadFormativa));
 			ResultSet rs2 = st2.executeQuery();
 			if(!rs2.next())
@@ -99,7 +132,6 @@ public class DataBaseManagement
 			}
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA,actividadFormativa));
 			ResultSet rs = st.executeQuery();
-			conn.commit();
 			nombres = VisualizarInscritosCursoControler.toApuntadoList(rs);
 			st.close();
 			rs.close();
@@ -109,19 +141,17 @@ public class DataBaseManagement
 		return nombres;
 	}
 	
-	public static double getIngresosFor(String actividadFormativa)
+	public double getIngresosFor(String actividadFormativa)
 	{
 		double d = 0;
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA,actividadFormativa));
 			ResultSet rs = st.executeQuery();
 			if(rs.next())
 			{
 				d = rs.getDouble(1);
 			}
-			conn.commit();
 			st.close();
 			rs.close();
 			
@@ -129,18 +159,18 @@ public class DataBaseManagement
 		return d;
 	}
 
-	public static int getNextNumeroFormulario() {
+	public int getNextNumeroFormulario() {
 		int d = 0;
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
+
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_NEXT_FORMULARIO_NUM));
 			ResultSet rs = st.executeQuery();
 			if(rs.next())
 			{
 				d = rs.getInt(1) + 1;
 			}
-			conn.commit();
+
 			st.close();
 			rs.close();
 			
@@ -148,28 +178,27 @@ public class DataBaseManagement
 		return d;
 	}
 	
-	public static boolean addFormulario(FormularioPericialDTO actividad)
+	public boolean addFormulario(FormularioPericialDTO actividad)
 	{
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
+
 			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_PERICIAL,actividad.numero,actividad.tipo_pericial,actividad.prioridad,
 					actividad.nombre_solicitante,actividad.mail_solicitante,actividad.telefono_solicitante,actividad.descripcion,actividad.estado));
 			st.executeUpdate();
 			
-			conn.commit();
+
 		} catch (SQLException e) {
 			return false;
 		}
 		return true;
 	}
 	
-	public static List<String[]> getColegiadosPendientes(List<String> colegiados)
+	public List<String[]> getColegiadosPendientes(List<String> colegiados)
 	{
 		List<String[]> pendientes = new ArrayList<String[]>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST_BY_DNI);
 			for(String dni : colegiados)
 			{
@@ -179,81 +208,70 @@ public class DataBaseManagement
 				if(elemento != null) pendientes.add(elemento);
 			}
 			
-			conn.commit();
 		} catch (SQLException e) {
 		}
 		return pendientes;
 	}
 
-	public static List<ColegiadoInscritoDTO> getAllColegiadosPendientes() {
+	public List<ColegiadoInscritoDTO> getAllColegiadosPendientes() {
 		List<ColegiadoInscritoDTO> pendientes = new ArrayList<ColegiadoInscritoDTO>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST);
 			ResultSet rs = st.executeQuery();
 			pendientes = SolicitarTitulacionControler.toApuntadoList(rs);
 			
-			conn.commit();
 		} catch (SQLException e) {
 		}
 		return pendientes;
 	}
 	
-	public static ColegiadoInscritoDTO getColegiadoPendienteByDni(String dni) {
+	public ColegiadoInscritoDTO getColegiadoPendienteByDni(String dni) {
 		List<ColegiadoInscritoDTO> pendientes = new ArrayList<ColegiadoInscritoDTO>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_SELECT_PENDING_REQUEST_BY_DNI);
 			st.setString(1, dni);
 			ResultSet rs = st.executeQuery();
 			pendientes = SolicitarTitulacionControler.toApuntadoList(rs);
-			
-			conn.commit();
+	
 		} catch (SQLException e) {
 		}
 		return pendientes.size() == 1 ? pendientes.get(0) : null;
 	}
 
-	public static void setValidando(List<String> dnis) {
-		try (Connection conn = DatabaseConnection.getConnection();)
+	public void setValidando(List<String> dnis) {
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_SET_VALIDANDO);
 			for(String dni : dnis)
 			{
 				st.setString(1, dni);
 				st.executeUpdate();
-				System.out.println(1);
 			}
-			conn.commit();
 		} catch (SQLException e) {
 		}
 	}
 	
-	public static List<ProfesorDTO> findAllProfesor()
+	public List<ProfesorDTO> findAllProfesor()
 	{
 		List<ProfesorDTO> profesores = new ArrayList<ProfesorDTO>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_FIND_PROFESORS);
 			ResultSet rs = st.executeQuery();
 			profesores = ConfigurarActividadControler.toProfesorList(rs);
-			
-			conn.commit();
+
 		} catch (SQLException e) {
 		}
 		return profesores;
 	}
 	
-	public static List<Date> findImparticionesFor(String curso)
+	public List<Date> findImparticionesFor(String curso)
 	{
 		List<Date> dates = new ArrayList<Date>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try 
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_FIND_FECHAS_CURSO);
 			st.setString(1, curso);
 			ResultSet rs = st.executeQuery();
@@ -261,54 +279,51 @@ public class DataBaseManagement
 			{
 				dates.add(rs.getDate(1));
 			}
-			
-			conn.commit();
+
 		} catch (SQLException e) {
 		}
 		return dates;
 	}
 	
-	public static boolean configurarImparticion(String curso, Date fecha, String hora, int duracion)
+	public boolean configurarImparticion(String curso, Date fecha, String hora, int duracion)
 	{
 		if(seSolapa(fecha,hora,duracion)) return false;
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
 			PreparedStatement st = conn.prepareStatement(QUERY_UPDATE_IMPARTICION);
 			st.setString(1, hora);
 			st.setInt(2, duracion);
 			st.setString(3, curso);
 			st.setDate(4, fecha);
 			st.executeUpdate();
-			conn.commit();
 		} catch (SQLException e) {
 		}
 		return true;
 	}
 	
-	public static void addProfesorCurso(String curso, String profesor)
+	public void addProfesorCurso(String curso, String profesor)
 	{
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
+
 			PreparedStatement st = conn.prepareStatement(QUERY_IMPARTE);
 			st.setString(1, profesor);
 			st.setString(2, curso);
 			st.executeUpdate();
-			conn.commit();
+
 		} catch (SQLException e) {
 		}
 	}
 	
-	private static boolean seSolapa(Date fecha, String hora, int duracion)
+	private boolean seSolapa(Date fecha, String hora, int duracion)
 	{
 		List<ImparticionDTO> imparticiones = new ArrayList<ImparticionDTO>();
-		try (Connection conn = DatabaseConnection.getConnection();)
+		try
 		{	
-			conn.setAutoCommit(false);
+	
 			PreparedStatement st = conn.prepareStatement(QUERY_FIND_CONFIGURED_IMPARTICION);
 			ResultSet rs = st.executeQuery();
-			conn.commit();
+
 			imparticiones = ConfigurarActividadControler.toImparticionesList(rs);
 		} catch (SQLException e) {
 		}

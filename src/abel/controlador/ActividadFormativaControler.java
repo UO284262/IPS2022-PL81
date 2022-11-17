@@ -1,8 +1,8 @@
 package abel.controlador;
 
-import java.util.ArrayList;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import abel.modelo.ActividadFormativaDTO;
@@ -12,6 +12,7 @@ import exception.TypeConvertException;
 public class ActividadFormativaControler {
 	
 	private List<Date> days = new ArrayList<Date>();
+	private DataBaseManagement db = new DataBaseManagement();
 	
 	public boolean añadirDia(int dia, int mes)
 	{
@@ -42,12 +43,20 @@ public class ActividadFormativaControler {
 			af.price = precio;
 			af.days = days;
 			days = new ArrayList<Date>();
-			if(DataBaseManagement.addActividadToDataBase(af))
+			if(db.addActividadToDataBase(af))
 			{
 				return true;
 			}
 			return false;
 		}
 		return false;
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.finalizar();
 	}
 }

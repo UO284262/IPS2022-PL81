@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import abel.controlador.SolicitarTitulacionControler;
 import abel.modelo.ColegiadoInscritoDTO;
 import abel.modelo.FileUtil;
+import abel.vista.dialogs.JustificanteLote;
 
 public class SolicitarTitulacionColegiado extends JPanel {
 	
@@ -127,25 +129,38 @@ public class SolicitarTitulacionColegiado extends JPanel {
 		}
 		return false;
 	}
-	private boolean cargarAFichero()
+	public boolean cargarAFichero()
+	{
+		List<String> colegiados = getColegiados();
+		if(colegiados.size() == 0)
+		{
+			return false;
+		}
+		String toFichero = getJustificante();
+		FileUtil.appendToFile("consultaTitulacion.csv", toFichero);
+		controler.setValidando(colegiados);
+		return true;
+	}
+	public String getJustificante()
 	{
 		String toFichero = "";
-		List<String> colegiados = new ArrayList<String>();
-		for(int i = 0; i < modeloSeleccionados.getRowCount(); i++)
-		{
-			colegiados.add((String) modeloSeleccionados.getValueAt(i, 0));
-		}
+		List<String> colegiados = getColegiados();
 		if(colegiados.size() > 0)
 		{
 			for(String[] c : controler.getPendientes(colegiados))
 			{
 				toFichero += String.format("%s,%s\n", c[0],c[1]);
 			}
-			FileUtil.appendToFile("consultaTitulacion.csv", toFichero);
-			controler.setValidando(colegiados);
-			return true;
 		}
-		return false;
+		return toFichero;
+	}
+	private List<String> getColegiados() {
+		List<String> colegiados = new ArrayList<String>();
+		for(int i = 0; i < modeloSeleccionados.getRowCount(); i++)
+		{
+			colegiados.add((String) modeloSeleccionados.getValueAt(i, 0));
+		}
+		return colegiados;
 	}
 	private JLabel getLbTitulo() {
 		if (lbTitulo == null) {
@@ -163,12 +178,10 @@ public class SolicitarTitulacionColegiado extends JPanel {
 			btSolicitar = new JButton("Solicitar");
 			btSolicitar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(cargarAFichero())
+					if(getColegiados().size() > 0)
 					{
-						mostrarMensajeFicheroCreado();
+						mostrarJustificante();
 					}
-					cargarPendientes();
-					cargarTablaSeleccionados();
 				}
 			});
 			btSolicitar.setBackground(Color.GREEN);
@@ -176,6 +189,19 @@ public class SolicitarTitulacionColegiado extends JPanel {
 			btSolicitar.setBounds(857, 426, 85, 21);
 		}
 		return btSolicitar;
+	}
+	private void mostrarJustificante()
+	{
+		JustificanteLote lote = new JustificanteLote(this);
+		lote.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		lote.setLocationRelativeTo(this);
+		lote.setModal(true);
+		lote.setVisible(true);
+	}
+	public void resetear()
+	{
+		cargarPendientes();
+		cargarTablaSeleccionados();
 	}
 	private JScrollPane getSpPendientes() {
 		if (spPendientes == null) {
@@ -209,11 +235,6 @@ public class SolicitarTitulacionColegiado extends JPanel {
 	{
 		JOptionPane.showConfirmDialog(this,new String("Ya se ha añadido esa solicitud."),"Aviso de ya añadido",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
-	private void mostrarMensajeFicheroCreado()
-	{
-		JOptionPane.showConfirmDialog(this,new String("Se ha creado un fichero llamado consultaTitulacion.csv en la carpeta files."),"Fichero creado",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
-	}
-	
 	private JScrollPane getSpSeleccionados() {
 		if (spSeleccionados == null) {
 			spSeleccionados = new JScrollPane();
