@@ -183,6 +183,8 @@ public class SelectorCurso extends JDialog {
 			}
 			table = new JTable();
 			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setFocusable(false);
+			table.setDefaultEditor(Object.class, null);
 			table.setModel(tm);
 		}
 		return table;

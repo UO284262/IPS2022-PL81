@@ -36,7 +36,7 @@ public class SolicitarTitulacion extends JDialog {
 	 */
 	public SolicitarTitulacion() {
 		setModal(true);
-		setTitle("Planificador de cursos");
+		setTitle("Solicitador de titulaciones");
 		setBounds(100, 100, 970, 495);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());

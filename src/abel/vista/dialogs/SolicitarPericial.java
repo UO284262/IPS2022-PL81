@@ -36,7 +36,7 @@ public class SolicitarPericial extends JDialog {
 	 */
 	public SolicitarPericial() {
 		setModal(true);
-		setTitle("Planificador de cursos");
+		setTitle("Solicitador de periciales");
 		setBounds(100, 100, 450, 500);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());

@@ -36,7 +36,7 @@ public class VisualizadorInscritos extends JDialog {
 	 */
 	public VisualizadorInscritos() {
 		setModal(true);
-		setTitle("Planificador de cursos");
+		setTitle("Visualizador de inscritos");
 		setBounds(100, 100, 1000, 446);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());

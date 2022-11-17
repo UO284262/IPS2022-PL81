@@ -167,7 +167,7 @@ public class ConfigurarCurso extends JPanel {
 	private JSpinner getSpMinutos() {
 		if (spMinutos == null) {
 			spMinutos = new JSpinner();
-			spMinutos.setModel(new SpinnerNumberModel(0, 0, 60, 5));
+			spMinutos.setModel(new SpinnerNumberModel(0, 0, 59, 5));
 			spMinutos.setBounds(276, 88, 71, 20);
 		}
 		return spMinutos;
@@ -190,6 +190,7 @@ public class ConfigurarCurso extends JPanel {
 	private JButton getBtAñadir() {
 		if (btAñadir == null) {
 			btAñadir = new JButton("A\u00F1adir sesi\u00F3n");
+			btAñadir.setForeground(Color.WHITE);
 			btAñadir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int row = getTableFechas().getSelectedRow();
@@ -197,7 +198,7 @@ public class ConfigurarCurso extends JPanel {
 					else añadirSesion(row);
 				}
 			});
-			btAñadir.setBackground(Color.GREEN);
+			btAñadir.setBackground(new Color(154, 205, 50));
 			btAñadir.setBounds(128, 167, 219, 20);
 		}
 		return btAñadir;
@@ -254,13 +255,14 @@ public class ConfigurarCurso extends JPanel {
 	private JButton getBtFinalizar() {
 		if (btFinalizar == null) {
 			btFinalizar = new JButton("Finalizar configuraci\u00F3n");
+			btFinalizar.setForeground(Color.WHITE);
 			btFinalizar.setEnabled(false);
 			btFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					cerrar();
 				}
 			});
-			btFinalizar.setBackground(Color.GREEN);
+			btFinalizar.setBackground(new Color(154, 205, 50));
 			btFinalizar.setBounds(543, 331, 189, 21);
 		}
 		return btFinalizar;
@@ -277,26 +279,27 @@ public class ConfigurarCurso extends JPanel {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
 			spDescuento.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
-			spDescuento.setBounds(131, 201, 50, 20);
+			spDescuento.setBounds(131, 201, 62, 20);
 		}
 		return spDescuento;
 	}
 	private JComboBox<String> getCbColectivo() {
 		if (cbColectivo == null) {
 			cbColectivo = new JComboBox<String>();
-			cbColectivo.setBounds(184, 200, 163, 21);
+			cbColectivo.setBounds(203, 200, 144, 21);
 		}
 		return cbColectivo;
 	}
 	private JButton getBtAñadirDescuento() {
 		if (btAñadirDescuento == null) {
 			btAñadirDescuento = new JButton("Asignar descuento por colectivo");
+			btAñadirDescuento.setForeground(Color.WHITE);
 			btAñadirDescuento.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añadirDescuento();
 				}
 			});
-			btAñadirDescuento.setBackground(Color.GREEN);
+			btAñadirDescuento.setBackground(new Color(154, 205, 50));
 			btAñadirDescuento.setBounds(131, 231, 216, 21);
 		}
 		return btAñadirDescuento;
