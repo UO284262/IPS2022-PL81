@@ -8,6 +8,7 @@ public class FileUtil {
 	{
 		FileWriter fichero;
 		try {
+			
 
 			fichero = new FileWriter("files/" + file, true);
 
