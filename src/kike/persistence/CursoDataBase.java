@@ -306,7 +306,7 @@ public class CursoDataBase {
 			for (ColectivoCursoDTO cc : colectivos) {			
 				st.setString(1, cc.nombre_curso);
 				st.setString(2, cc.nombre_colectivo);
-				st.setDouble(3, cc.descuento);
+				st.setDouble(3, cc.precio);
 				
 				st.executeUpdate();	
 			}			

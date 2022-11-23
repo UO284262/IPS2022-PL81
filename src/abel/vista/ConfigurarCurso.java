@@ -11,14 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -30,8 +34,6 @@ import abel.modelo.ProfesorDTO;
 import kike.persistence.ColectivoDataBase;
 import kike.persistence.CursoDataBase;
 import kike.persistence.dto.ColectivoCursoDTO;
-
-import javax.swing.JComboBox;
 
 public class ConfigurarCurso extends JPanel {
 	
@@ -62,6 +64,15 @@ public class ConfigurarCurso extends JPanel {
 	private DefaultComboBoxModel<String> modeloColectivos;
 	private List<ColectivoCursoDTO> colectivos;
 	private JButton btCancelar;
+	private JScrollPane spFechasAsignadas;
+	private JScrollPane spColectivosAsignados;
+	private DefaultListModel<String> modeloFechasAsignadas = new DefaultListModel<String>();
+	private DefaultListModel<String> modeloColectivosAsignadas = new DefaultListModel<String>();
+	private JList<String> ltFechasAsignadas;
+	private JList<String> ltColectivosAsignados;
+	private JScrollPane spProfesoresAsignados;
+	private DefaultListModel<String> modeloProfesoresAsignados = new DefaultListModel<String>();
+	private JList<String> ltProfesoresAsignados;
 
 	/**
 	 * Create the panel.
@@ -85,6 +96,9 @@ public class ConfigurarCurso extends JPanel {
 		add(getCbColectivo());
 		add(getBtAñadirDescuento());
 		add(getBtCancelar());
+		add(getSpFechasAsignadas());
+		add(getSpColectivosAsignados());
+		add(getSpProfesoresAsignados());
 		cargarFechas();
 		cargarProfesores();
 		cargarColectivos();
@@ -104,7 +118,7 @@ public class ConfigurarCurso extends JPanel {
 			spFechas = new JScrollPane();
 			spFechas.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			spFechas.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			spFechas.setBounds(10, 89, 111, 263);
+			spFechas.setBounds(10, 89, 111, 132);
 			spFechas.setViewportView(getTableFechas());
 		}
 		return spFechas;
@@ -214,6 +228,7 @@ public class ConfigurarCurso extends JPanel {
 		else
 		{
 			modeloFechas.removeRow(row);
+			modeloFechasAsignadas.addElement(String.format("%s - %s:%s - %s(min)",(Date) date,this.getSpHora().getValue(), this.getSpMinutos().getValue(),(int) this.getSpDuracion().getValue()));
 		}
 	}
 	
@@ -233,7 +248,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpProfesores() {
 		if (spProfesores == null) {
 			spProfesores = new JScrollPane();
-			spProfesores.setBounds(357, 89, 375, 224);
+			spProfesores.setBounds(357, 89, 375, 115);
 			spProfesores.setViewportView(getTableProfesores());
 		}
 		return spProfesores;
@@ -248,6 +263,7 @@ public class ConfigurarCurso extends JPanel {
 				public void mouseClicked(MouseEvent e) {
 					Object profesor = tableProfesores.getValueAt(tableProfesores.getSelectedRow(),0);
 					controler.asignarProfesor(nombre_curso,(String) profesor);
+					modeloProfesoresAsignados.addElement(String.format("%s - %s",(String) profesor, tableProfesores.getValueAt(tableProfesores.getSelectedRow(),1)));
 					getBtFinalizar().setEnabled(true);
 				}
 			});
@@ -278,10 +294,13 @@ public class ConfigurarCurso extends JPanel {
 		} else
 			mostrarMensajeFaltanDatos();
 	}
+	private void cerrarSioSi() {
+		d.dispose();
+	}
 	private JSpinner getSpDescuento() {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
-			spDescuento.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
+			spDescuento.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
 			spDescuento.setBounds(131, 201, 62, 20);
 		}
 		return spDescuento;
@@ -312,10 +331,11 @@ public class ConfigurarCurso extends JPanel {
 		if(this.getCbColectivo().getSelectedIndex() >= 0) {
 			ColectivoCursoDTO c = new ColectivoCursoDTO();
 			c.nombre_colectivo = (String) this.getCbColectivo().getSelectedItem();
-			c.descuento = (double) this.getSpDescuento().getValue();
+			c.precio = (double) this.getSpDescuento().getValue();
 			c.nombre_curso = nombre_curso;
 			colectivos.add(c);
 			this.modeloColectivos.removeElement(c.nombre_colectivo);
+			this.modeloColectivosAsignadas.addElement(String.format("%s - %s€",c.nombre_colectivo,c.precio));
 		}
 		
 	}
@@ -325,6 +345,7 @@ public class ConfigurarCurso extends JPanel {
 			btCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					controler.cancelar();
+					cerrarSioSi();
 				}
 			});
 			btCancelar.setBackground(Color.RED);
@@ -332,5 +353,50 @@ public class ConfigurarCurso extends JPanel {
 			btCancelar.setBounds(448, 331, 85, 21);
 		}
 		return btCancelar;
+	}
+	private JScrollPane getSpFechasAsignadas() {
+		if (spFechasAsignadas == null) {
+			spFechasAsignadas = new JScrollPane();
+			spFechasAsignadas.setBounds(10, 231, 111, 121);
+			spFechasAsignadas.setViewportView(getLtFechasAsignadas());
+		}
+		return spFechasAsignadas;
+	}
+	private JScrollPane getSpColectivosAsignados() {
+		if (spColectivosAsignados == null) {
+			spColectivosAsignados = new JScrollPane();
+			spColectivosAsignados.setBounds(133, 262, 214, 90);
+			spColectivosAsignados.setViewportView(getLtColectivosAsignados());
+		}
+		return spColectivosAsignados;
+	}
+	private JList<String> getLtFechasAsignadas() {
+		if (ltFechasAsignadas == null) {
+			ltFechasAsignadas = new JList<String>();
+			ltFechasAsignadas.setModel(modeloFechasAsignadas);
+		}
+		return ltFechasAsignadas;
+	}
+	private JList<String> getLtColectivosAsignados() {
+		if (ltColectivosAsignados == null) {
+			ltColectivosAsignados = new JList<String>();
+			ltColectivosAsignados.setModel(modeloColectivosAsignadas);
+		}
+		return ltColectivosAsignados;
+	}
+	private JScrollPane getSpProfesoresAsignados() {
+		if (spProfesoresAsignados == null) {
+			spProfesoresAsignados = new JScrollPane();
+			spProfesoresAsignados.setBounds(357, 214, 375, 107);
+			spProfesoresAsignados.setViewportView(getLtProfesoresAsignados());
+		}
+		return spProfesoresAsignados;
+	}
+	private JList<String> getLtProfesoresAsignados() {
+		if (ltProfesoresAsignados == null) {
+			ltProfesoresAsignados = new JList<String>();
+			ltProfesoresAsignados.setModel(modeloProfesoresAsignados);
+		}
+		return ltProfesoresAsignados;
 	}
 }

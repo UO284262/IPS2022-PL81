@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,12 +20,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
+import abel.vista.dialogs.CanceladorCurso;
 import abel.vista.dialogs.PlanificadorCurso;
 import abel.vista.dialogs.SolicitarPericial;
 import abel.vista.dialogs.SolicitarTitulacion;
 import abel.vista.dialogs.VisualizadorInscritos;
 import kike.gui.colegiado.PreInscribeColegiado;
-
 import kike.gui.colegiado.RegistroPericial;
 import kike.gui.secretaria.SelectorCurso;
 import kike.modelo.curso.CursoDTO;
@@ -32,8 +33,6 @@ import kike.persistence.CursoDataBase;
 import rodro.controlador.EmitirRecibosControler;
 import rodro.controlador.SolicitudControler;
 import rodro.vista.VentanaSolicitud;
-
-import java.util.List;
 
 public class Main {
 
@@ -57,6 +56,7 @@ public class Main {
 	private JLabel lbExterno;
 	private JPanel panelExternoBotones;
 	private JButton btPericial;
+	private JButton btCancelarCurso;
 
 	/**
 	 * Launch the application.
@@ -157,6 +157,7 @@ public class Main {
 			panelSecBotones.add(getBtSolicitarTitulacion());
 			panelSecBotones.add(getBtVisualizarInscritos());
 			panelSecBotones.add(getBtEmitirRecibos());
+			panelSecBotones.add(getBtCancelarCurso());
 		}
 		return panelSecBotones;
 	}
@@ -347,5 +348,19 @@ public class Main {
 			});
 		}
 		return btPericial;
+	}
+	private JButton getBtCancelarCurso() {
+		if (btCancelarCurso == null) {
+			btCancelarCurso = new JButton("CancelarCurso");
+			btCancelarCurso.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					CanceladorCurso dialog = new CanceladorCurso();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btCancelarCurso;
 	}
 }

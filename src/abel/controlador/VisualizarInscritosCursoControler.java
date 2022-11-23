@@ -51,6 +51,7 @@ public class VisualizarInscritosCursoControler {
 			ColegiadoInscritoDTO colegiado = new ColegiadoInscritoDTO();
 			colegiado.apellidos = rs.getString(2);
 			colegiado.nombre = rs.getString(1);
+			colegiado.id_colegiado = rs.getString(6);
 			colegiado.fecha_inscripcion = LocalDate.parse(rs.getString(3));
 			colegiado.estado = rs.getString(4);
 			colegiado.cantidad_abonada = rs.getDouble(5);

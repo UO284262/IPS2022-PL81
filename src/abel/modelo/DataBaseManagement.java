@@ -6,10 +6,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import abel.controlador.CanceladorCursoControler;
 import abel.controlador.ConfigurarActividadControler;
 import abel.controlador.SolicitarTitulacionControler;
 import abel.controlador.VisualizarInscritosCursoControler;
@@ -19,14 +20,14 @@ public class DataBaseManagement
 {
 	private final static String QUERY_INSERT_ACTIVIDAD_PERICIAL = "INSERT INTO Actividad_Pericial(numero, tipo_pericial, prioridad, nombre_solicitante, mail_solicitante, telefono_solicitante, descripcion, estado) "
 																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
-	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa) VALUES(\"%s\",%s,%s);";
-	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\";";
+	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa,estado) VALUES(\"%s\",%s,%s,\"VIGENTE\");";
+	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\" and estado != \"CANCELADA\";";
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion(nombre_curso,fecha) VALUES(\"%s\",'%s');";
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open  FROM Actividad_Formativa a "
-																	+ " WHERE a.fecha_orientativa >= \"%s\" ORDER BY a.nombre_curso;";
-	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada "
+																	+ " WHERE a.fecha_orientativa >= \"%s\" and a.estado != \"CANCELADA\" ORDER BY a.nombre_curso;";
+	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada, c.id_colegiado "
 																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.id_colegiado = c.id_colegiado"
-																			+ " WHERE a.nombre_curso = \"%s\" ORDER BY c.apellidos ASC, c.nombre ASC;";
+																			+ " WHERE a.nombre_curso = \"%s\" and a.estado != \"CANCELADA\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
 	private final static String QUERY_INGRESOS_FOR_ACTIVIDAD_FORMATIVA = "SELECT SUM(cantidad_abonada) from apuntado where nombre_curso = \"%s\";";
 	
@@ -44,9 +45,16 @@ public class DataBaseManagement
 	
 	private final static String QUERY_FIND_FECHAS_CURSO = "select fecha from Fecha_Imparticion where nombre_curso = ?";
 	
+	private final static String QUERY_CANCELAR_CURSO = "update Actividad_Formativa set estado = \"CANCELADA\" where nombre_curso = ?";
+	
+	private final static String QUERY_CANCELAR_INSCRITO = "update apuntado set estado = \"CANCELADO\", cantidad_devolver = cantidad_abonada where nombre_curso = ? and id_colegiado = ?";
+	
 	private final static String QUERY_FIND_CONFIGURED_IMPARTICION = "select * from Fecha_Imparticion where duracion > 0";
 	
 	private final static String QUERY_UPDATE_IMPARTICION = "update Fecha_Imparticion set hora = ?, duracion = ? where nombre_curso = ? and fecha = ?";
+	
+	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS_CURRENT = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open, a.fin_inscripcion, a.numero_plazas, a.estado FROM Actividad_Formativa a "
+			+ " WHERE a.fin_inscripcion >= \"%s\" and a.estado != \"CANCELADA\";";
 	
 	private Connection conn;
 	
@@ -345,5 +353,48 @@ public class DataBaseManagement
 			}
 		}
 		return false;
+	}
+	
+	public void cancelarCurso(String nombre_curso) {
+		try 
+		{	
+			PreparedStatement st = conn.prepareStatement(QUERY_CANCELAR_CURSO);
+			st.setString(1, nombre_curso);
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+		}
+	}
+	
+	public void cancelarApuntados(String nombre_curso) {
+		try 
+		{	
+			List<ColegiadoInscritoDTO> colegiados = this.getInscritosEn(nombre_curso);
+			PreparedStatement st = conn.prepareStatement(QUERY_CANCELAR_INSCRITO);
+			st.setString(1, nombre_curso);
+			for(ColegiadoInscritoDTO c : colegiados) {
+				st.setString(2, c.id_colegiado);
+				st.executeUpdate();
+			}
+
+		} catch (SQLException e) {
+		}
+	}
+	
+	public List<ActividadFormativaDTO> getAllCurrentCursos() {
+		try
+		{	
+			PreparedStatement st = conn.prepareStatement(String.format(QUERY_OBTENER_ACTIVIDADES_FORMATIVAS_CURRENT,LocalDate.now().toString()));
+			ResultSet rs = st.executeQuery();
+			List<ActividadFormativaDTO> lista = CanceladorCursoControler.toDTOList(rs);
+			for(ActividadFormativaDTO af : lista) {
+				af.numeroInscritos = this.getInscritosEn(af.title).size();
+			}
+			st.close();
+			rs.close();
+			return lista;
+			
+		} catch (SQLException e) { }
+		return null;
 	}
 }
