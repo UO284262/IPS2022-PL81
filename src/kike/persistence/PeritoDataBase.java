@@ -69,6 +69,7 @@ public class PeritoDataBase {
 		perito.id_colegiado = rs.getString("id_colegiado");
 		perito.pos_Lista = rs.getInt("posicion_lista");
 		perito.fecha_Tope = rs.getDate("fecha_tope_renovacion");
+		perito.activo = rs.getBoolean("activo");
 		
 		return perito;
 	}
