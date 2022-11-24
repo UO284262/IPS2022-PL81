@@ -22,7 +22,6 @@ import javax.swing.table.DefaultTableModel;
 import abel.controlador.VisualizarInscritosCursoControler;
 import abel.modelo.ActividadFormativaDTO;
 import abel.modelo.ColegiadoInscritoDTO;
-import abel.modelo.DataBaseManagement;
 
 public class VisualizarInscritosCurso extends JPanel {
 

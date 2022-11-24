@@ -33,6 +33,9 @@ import kike.persistence.CursoDataBase;
 import rodro.controlador.EmitirRecibosControler;
 import rodro.controlador.SolicitudControler;
 import rodro.vista.VentanaSolicitud;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class Main {
 
@@ -123,10 +126,30 @@ public class Main {
 	private JPanel getPanelPrincipal() {
 		if (panelPrincipal == null) {
 			panelPrincipal = new JPanel();
-			panelPrincipal.setLayout(new GridLayout(0, 2, 0, 0));
-			panelPrincipal.add(getPanelSecretaria());
-			panelPrincipal.add(getPanelColegiado());
-			panelPrincipal.add(getPanelExterno());
+			GridBagLayout gbl_panelPrincipal = new GridBagLayout();
+			gbl_panelPrincipal.columnWidths = new int[]{218, 218, 0};
+			gbl_panelPrincipal.rowHeights = new int[]{261, 261, 0};
+			gbl_panelPrincipal.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_panelPrincipal.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			panelPrincipal.setLayout(gbl_panelPrincipal);
+			GridBagConstraints gbc_panelSecretaria = new GridBagConstraints();
+			gbc_panelSecretaria.gridheight = 2;
+			gbc_panelSecretaria.fill = GridBagConstraints.BOTH;
+			gbc_panelSecretaria.insets = new Insets(0, 0, 5, 5);
+			gbc_panelSecretaria.gridx = 0;
+			gbc_panelSecretaria.gridy = 0;
+			panelPrincipal.add(getPanelSecretaria(), gbc_panelSecretaria);
+			GridBagConstraints gbc_panelColegiado = new GridBagConstraints();
+			gbc_panelColegiado.fill = GridBagConstraints.BOTH;
+			gbc_panelColegiado.insets = new Insets(0, 0, 5, 0);
+			gbc_panelColegiado.gridx = 1;
+			gbc_panelColegiado.gridy = 0;
+			panelPrincipal.add(getPanelColegiado(), gbc_panelColegiado);
+			GridBagConstraints gbc_panelExterno = new GridBagConstraints();
+			gbc_panelExterno.fill = GridBagConstraints.BOTH;
+			gbc_panelExterno.gridx = 1;
+			gbc_panelExterno.gridy = 1;
+			panelPrincipal.add(getPanelExterno(), gbc_panelExterno);
 		}
 		return panelPrincipal;
 	}

@@ -20,11 +20,16 @@ public class DataBaseManagement
 {
 	private final static String QUERY_INSERT_ACTIVIDAD_PERICIAL = "INSERT INTO Actividad_Pericial(numero, tipo_pericial, prioridad, nombre_solicitante, mail_solicitante, telefono_solicitante, descripcion, estado) "
 																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
+	
 	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa,estado) VALUES(\"%s\",%s,%s,\"VIGENTE\");";
+	
 	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\" and estado != \"CANCELADA\";";
+	
 	private final static String QUERY_INSERT_FECHA_IMPARTICION  = "INSERT INTO Fecha_Imparticion(nombre_curso,fecha) VALUES(\"%s\",'%s');";
+	
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open  FROM Actividad_Formativa a "
 																	+ " WHERE a.fecha_orientativa >= \"%s\" and a.estado != \"CANCELADA\" ORDER BY a.nombre_curso;";
+	
 	private final static String QUERY_OBTENER_INSCRITOS_ACTIVIDAD_FORMATIVA = "SELECT c.nombre, c.apellidos, a.fecha_inscripcion, a.estado, a.cantidad_abonada, c.id_colegiado "
 																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.id_colegiado = c.id_colegiado"
 																			+ " WHERE a.nombre_curso = \"%s\" and a.estado != \"CANCELADA\" ORDER BY c.apellidos ASC, c.nombre ASC;";
@@ -41,7 +46,7 @@ public class DataBaseManagement
 	
 	private final static String QUERY_IMPARTE = "insert into Imparte(profesor,nombre_curso) VALUES (?,?)";
 	
-	private final static String QUERY_FIND_PROFESORS = "select * from Profesor";
+	private final static String QUERY_FIND_PROFESORS = "select dni, descripcion from Terceros where colectivo = \"PROFESOR\"";
 	
 	private final static String QUERY_FIND_FECHAS_CURSO = "select fecha from Fecha_Imparticion where nombre_curso = ?";
 	
@@ -54,7 +59,7 @@ public class DataBaseManagement
 	private final static String QUERY_UPDATE_IMPARTICION = "update Fecha_Imparticion set hora = ?, duracion = ? where nombre_curso = ? and fecha = ?";
 	
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS_CURRENT = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open, a.fin_inscripcion, a.numero_plazas, a.estado FROM Actividad_Formativa a "
-			+ " WHERE a.fin_inscripcion >= \"%s\" and a.estado != \"CANCELADA\";";
+			+ " WHERE a.fecha_orientativa >= \"%s\" and a.estado != \"CANCELADA\";";
 	
 	private Connection conn;
 	

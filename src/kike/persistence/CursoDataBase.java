@@ -14,10 +14,10 @@ import main.DatabaseConnection;
 
 public class CursoDataBase {
 
-	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false";
-	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre_curso = ?";
-	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ?";
-	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true";
+	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false and estado != \"CANCELADA\"";
+	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre_curso = ? and estado != \"CANCELADA\"";
+	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ? and estado != \"CANCELADA\"";
+	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true and estado != \"CANCELADA\"";
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
 	private static final String GET_COLECTIVOS = "select * from colectivos_asignados where nombre_curso = ?";
 	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,descuento) values (?,?,?)";
