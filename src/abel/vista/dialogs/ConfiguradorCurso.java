@@ -38,7 +38,7 @@ public class ConfiguradorCurso extends JDialog {
 		setModal(true);
 		setUndecorated(true);
 		setTitle("Condigurador de cursos");
-		setBounds(100, 100, 754, 400);
+		setBounds(100, 100, 754, 417);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());

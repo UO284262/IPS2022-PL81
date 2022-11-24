@@ -34,6 +34,7 @@ import kike.persistence.ColectivoDataBase;
 import kike.persistence.CursoDataBase;
 import kike.persistence.dto.ColectivoCursoDTO;
 import javax.swing.JCheckBox;
+import javax.swing.JSeparator;
 
 public class ConfigurarCurso extends JPanel {
 	
@@ -75,6 +76,10 @@ public class ConfigurarCurso extends JPanel {
 	private JList<String> ltProfesoresAsignados;
 	private JCheckBox chCancelable;
 	private JSpinner spinner;
+	private JSeparator separator;
+	private JSeparator separator_1;
+	private JSeparator separator_2;
+	private JSeparator separator_1_1;
 
 	/**
 	 * Create the panel.
@@ -103,6 +108,10 @@ public class ConfigurarCurso extends JPanel {
 		add(getSpProfesoresAsignados());
 		add(getChCancelable());
 		add(getSpinner());
+		add(getSeparator());
+		add(getSeparator_1());
+		add(getSeparator_2());
+		add(getSeparator_1_1());
 		cargarFechas();
 		cargarProfesores();
 		cargarColectivos();
@@ -172,7 +181,7 @@ public class ConfigurarCurso extends JPanel {
 	private JLabel getLbHora() {
 		if (lbHora == null) {
 			lbHora = new JLabel("Hora inicio:");
-			lbHora.setBounds(164, 91, 80, 13);
+			lbHora.setBounds(178, 91, 80, 13);
 		}
 		return lbHora;
 	}
@@ -311,14 +320,14 @@ public class ConfigurarCurso extends JPanel {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
 			spDescuento.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
-			spDescuento.setBounds(181, 201, 216, 20);
+			spDescuento.setBounds(178, 246, 219, 20);
 		}
 		return spDescuento;
 	}
 	private JComboBox<String> getCbColectivo() {
 		if (cbColectivo == null) {
 			cbColectivo = new JComboBox<String>();
-			cbColectivo.setBounds(183, 241, 214, 21);
+			cbColectivo.setBounds(178, 215, 219, 21);
 		}
 		return cbColectivo;
 	}
@@ -332,7 +341,7 @@ public class ConfigurarCurso extends JPanel {
 				}
 			});
 			btAñadirDescuento.setBackground(new Color(154, 205, 50));
-			btAñadirDescuento.setBounds(181, 283, 216, 21);
+			btAñadirDescuento.setBounds(178, 283, 219, 21);
 		}
 		return btAñadirDescuento;
 	}
@@ -375,7 +384,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpColectivosAsignados() {
 		if (spColectivosAsignados == null) {
 			spColectivosAsignados = new JScrollPane();
-			spColectivosAsignados.setBounds(183, 314, 214, 90);
+			spColectivosAsignados.setBounds(178, 314, 219, 90);
 			spColectivosAsignados.setViewportView(getLtColectivosAsignados());
 		}
 		return spColectivosAsignados;
@@ -412,15 +421,45 @@ public class ConfigurarCurso extends JPanel {
 	private JCheckBox getChCancelable() {
 		if (chCancelable == null) {
 			chCancelable = new JCheckBox("Cancelable");
-			chCancelable.setBounds(448, 339, 111, 21);
+			chCancelable.setBounds(441, 352, 111, 21);
 		}
 		return chCancelable;
 	}
 	private JSpinner getSpinner() {
 		if (spinner == null) {
 			spinner = new JSpinner();
-			spinner.setBounds(588, 340, 144, 20);
+			spinner.setBounds(588, 353, 144, 20);
 		}
 		return spinner;
+	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+			separator.setOrientation(SwingConstants.VERTICAL);
+			separator.setBounds(407, 67, 8, 337);
+		}
+		return separator;
+	}
+	private JSeparator getSeparator_1() {
+		if (separator_1 == null) {
+			separator_1 = new JSeparator();
+			separator_1.setBounds(178, 196, 219, 13);
+		}
+		return separator_1;
+	}
+	private JSeparator getSeparator_2() {
+		if (separator_2 == null) {
+			separator_2 = new JSeparator();
+			separator_2.setOrientation(SwingConstants.VERTICAL);
+			separator_2.setBounds(164, 67, 8, 337);
+		}
+		return separator_2;
+	}
+	private JSeparator getSeparator_1_1() {
+		if (separator_1_1 == null) {
+			separator_1_1 = new JSeparator();
+			separator_1_1.setBounds(440, 343, 292, 13);
+		}
+		return separator_1_1;
 	}
 }
