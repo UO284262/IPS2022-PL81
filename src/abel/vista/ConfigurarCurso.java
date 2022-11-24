@@ -80,11 +80,18 @@ public class ConfigurarCurso extends JPanel {
 	private JSeparator separator_1;
 	private JSeparator separator_2;
 	private JSeparator separator_1_1;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JLabel lblNewLabel_3;
+	private JLabel lblNewLabel_4;
+	private AñadirActividadFormativa af;
 
 	/**
 	 * Create the panel.
 	 */
-	public ConfigurarCurso(ConfigurarActividadControler controler, String nombre_curso, JDialog d) {
+	public ConfigurarCurso(ConfigurarActividadControler controler, String nombre_curso, JDialog d,AñadirActividadFormativa af) {
+		this.af = af;
 		this.controler = controler;
 		this.nombre_curso = nombre_curso;
 		this.d = d;
@@ -112,6 +119,11 @@ public class ConfigurarCurso extends JPanel {
 		add(getSeparator_1());
 		add(getSeparator_2());
 		add(getSeparator_1_1());
+		add(getLblNewLabel());
+		add(getLblNewLabel_1());
+		add(getLblNewLabel_2());
+		add(getLblNewLabel_3());
+		add(getLblNewLabel_4());
 		cargarFechas();
 		cargarProfesores();
 		cargarColectivos();
@@ -131,7 +143,7 @@ public class ConfigurarCurso extends JPanel {
 			spFechas = new JScrollPane();
 			spFechas.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			spFechas.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			spFechas.setBounds(10, 89, 144, 132);
+			spFechas.setBounds(10, 67, 144, 132);
 			spFechas.setViewportView(getTableFechas());
 		}
 		return spFechas;
@@ -261,7 +273,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpProfesores() {
 		if (spProfesores == null) {
 			spProfesores = new JScrollPane();
-			spProfesores.setBounds(440, 89, 292, 144);
+			spProfesores.setBounds(440, 89, 292, 125);
 			spProfesores.setViewportView(getTableProfesores());
 		}
 		return spProfesores;
@@ -296,6 +308,7 @@ public class ConfigurarCurso extends JPanel {
 			btFinalizar.setEnabled(false);
 			btFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					af.configurado();
 					cerrar();
 					controler.finalizar();
 				}
@@ -307,11 +320,8 @@ public class ConfigurarCurso extends JPanel {
 	}
 	private void cerrar()
 	{
-		if(modeloFechas.getRowCount() == 0) {
-			CursoDataBase.inscribirColectivos(colectivos);
-			d.dispose();
-		} else
-			mostrarMensajeFaltanDatos();
+		CursoDataBase.inscribirColectivos(colectivos,controler.getConn());
+		d.dispose();
 	}
 	private void cerrarSioSi() {
 		d.dispose();
@@ -320,14 +330,14 @@ public class ConfigurarCurso extends JPanel {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
 			spDescuento.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
-			spDescuento.setBounds(178, 246, 219, 20);
+			spDescuento.setBounds(178, 272, 219, 20);
 		}
 		return spDescuento;
 	}
 	private JComboBox<String> getCbColectivo() {
 		if (cbColectivo == null) {
 			cbColectivo = new JComboBox<String>();
-			cbColectivo.setBounds(178, 215, 219, 21);
+			cbColectivo.setBounds(178, 241, 219, 21);
 		}
 		return cbColectivo;
 	}
@@ -341,7 +351,7 @@ public class ConfigurarCurso extends JPanel {
 				}
 			});
 			btAñadirDescuento.setBackground(new Color(154, 205, 50));
-			btAñadirDescuento.setBounds(178, 283, 219, 21);
+			btAñadirDescuento.setBounds(178, 302, 219, 21);
 		}
 		return btAñadirDescuento;
 	}
@@ -384,7 +394,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpColectivosAsignados() {
 		if (spColectivosAsignados == null) {
 			spColectivosAsignados = new JScrollPane();
-			spColectivosAsignados.setBounds(178, 314, 219, 90);
+			spColectivosAsignados.setBounds(178, 333, 219, 71);
 			spColectivosAsignados.setViewportView(getLtColectivosAsignados());
 		}
 		return spColectivosAsignados;
@@ -461,5 +471,40 @@ public class ConfigurarCurso extends JPanel {
 			separator_1_1.setBounds(440, 343, 292, 13);
 		}
 		return separator_1_1;
+	}
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("A\u00F1adir precios a colectivos: ");
+			lblNewLabel.setBounds(178, 208, 219, 13);
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLblNewLabel_1() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("Sesiones: ");
+			lblNewLabel_1.setBounds(10, 209, 144, 13);
+		}
+		return lblNewLabel_1;
+	}
+	private JLabel getLblNewLabel_2() {
+		if (lblNewLabel_2 == null) {
+			lblNewLabel_2 = new JLabel("A\u00F1adir sesiones: ");
+			lblNewLabel_2.setBounds(178, 67, 219, 13);
+		}
+		return lblNewLabel_2;
+	}
+	private JLabel getLblNewLabel_3() {
+		if (lblNewLabel_3 == null) {
+			lblNewLabel_3 = new JLabel("A\u00F1adir profesorado: ");
+			lblNewLabel_3.setBounds(440, 69, 292, 13);
+		}
+		return lblNewLabel_3;
+	}
+	private JLabel getLblNewLabel_4() {
+		if (lblNewLabel_4 == null) {
+			lblNewLabel_4 = new JLabel("Profesorado a\u00F1adido: ");
+			lblNewLabel_4.setBounds(440, 224, 292, 13);
+		}
+		return lblNewLabel_4;
 	}
 }

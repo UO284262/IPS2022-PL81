@@ -20,7 +20,7 @@ public class CursoDataBase {
 	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true and estado != \"CANCELADA\"";
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
 	private static final String GET_COLECTIVOS = "select * from colectivos_asignados where nombre_curso = ?";
-	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,descuento) values (?,?,?)";
+	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,precio_colectivo) values (?,?,?)";
 
 	
 	public static List<CursoDTO> getCursosSinAbrir() {
@@ -288,18 +288,15 @@ public class CursoDataBase {
 		return cols;
 	}
 	
-	public static void inscribirColectivos(List<ColectivoCursoDTO> colectivos) {
+	public static void inscribirColectivos(List<ColectivoCursoDTO> colectivos, Connection conn ) {
 		if(colectivos.isEmpty()) {
 			return;
 		}
 		
-		Connection conn = null;
 		PreparedStatement st = null;
 		
 		try
 		{
-			conn = DatabaseConnection.getConnection();			
-			conn.setAutoCommit(false);
 			
 			st = conn.prepareStatement(INSERT_COLECTIVO);
 			
@@ -311,20 +308,12 @@ public class CursoDataBase {
 				st.executeUpdate();	
 			}			
 			
-			conn.commit();
-			
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 			throw new RuntimeException(e);	
 			
 		} finally {
 			try {
 				st.close();
-				conn.close();
 			} catch (SQLException e) {
 				throw new RuntimeException(e);				
 			}			

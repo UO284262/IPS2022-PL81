@@ -17,6 +17,7 @@ public class PlanificadorCurso extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
+	private ActividadFormativaControler controler = new ActividadFormativaControler();
 
 	/**
 	 * Launch the application.
@@ -42,7 +43,13 @@ public class PlanificadorCurso extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(new AñadirActividadFormativa(new ActividadFormativaControler()));
+		getContentPane().add(new AñadirActividadFormativa(controler));
+	}
+	
+	@Override
+	public void dispose() {
+		controler.cancelar();
+		super.dispose();
 	}
 
 }

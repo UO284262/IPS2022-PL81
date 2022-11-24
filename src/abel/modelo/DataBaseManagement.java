@@ -21,7 +21,7 @@ public class DataBaseManagement
 	private final static String QUERY_INSERT_ACTIVIDAD_PERICIAL = "INSERT INTO Actividad_Pericial(numero, tipo_pericial, prioridad, nombre_solicitante, mail_solicitante, telefono_solicitante, descripcion, estado) "
 																	+ "VALUES(%s,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\");";
 	
-	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa,estado) VALUES(\"%s\",%s,%s,\"VIGENTE\");";
+	private final static String QUERY_INSERT_ACTIVIDAD_FORMATIVA = "INSERT INTO Actividad_Formativa(nombre_curso,precio,fecha_orientativa,estado) VALUES(?,?,?,\"VIGENTE\");";
 	
 	private final static String QUERY_FIND_ACTIVIDAD_FORMATIVA_BY_ID = "SELECT nombre_curso FROM Actividad_Formativa WHERE nombre_curso = \"%s\" and estado != \"CANCELADA\";";
 	
@@ -87,6 +87,10 @@ public class DataBaseManagement
 			
 	}
 	
+	public Connection getConn() {
+		return this.conn;
+	}
+	
 	public void cancelar()
 	{
 		try
@@ -102,16 +106,19 @@ public class DataBaseManagement
 		try
 		{	
 			conn.setAutoCommit(false);
-			
-			PreparedStatement st = conn.prepareStatement(String.format(QUERY_INSERT_ACTIVIDAD_FORMATIVA,actividad.title,actividad.price,actividad.days.get(0).toLocalDate().toString()));
+			System.out.println(actividad.days.get(0).toLocalDate().toString());
+			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_ACTIVIDAD_FORMATIVA);
+			st.setString(1, actividad.title);
+			st.setDouble(2, actividad.price);
+			st.setString(3, actividad.days.get(0).toLocalDate().toString());
 			st.executeUpdate();
-				for(Date day : actividad.days)
-				{
-					CallableStatement st2 = conn.prepareCall(String.format(QUERY_INSERT_FECHA_IMPARTICION,actividad.title,day));
-					st2.executeUpdate();
-				}
-				conn.commit();
+			for(Date day : actividad.days)
+			{
+				CallableStatement st2 = conn.prepareCall(String.format(QUERY_INSERT_FECHA_IMPARTICION,actividad.title,day));
+				st2.executeUpdate();
+			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;

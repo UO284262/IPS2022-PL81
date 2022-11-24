@@ -14,16 +14,20 @@ public class ActividadFormativaControler {
 	private List<Date> days = new ArrayList<Date>();
 	private DataBaseManagement db = new DataBaseManagement();
 	
-	public boolean añadirDia(int dia, int mes)
+	public String añadirDia(int dia, int mes)
 	{
 		@SuppressWarnings("deprecation")
-		Date d = new Date(LocalDate.now().getYear() - 1900,mes,dia);
+		Date d = mes + 1 < LocalDate.now().getMonthValue() ? new Date(LocalDate.now().getYear() - 1900 + 1,mes + 1,dia) : new Date(LocalDate.now().getYear() - 1900,mes + 1,dia);
 		if(!days.contains(d))
 		{
 			days.add(d);
-			return true;
+			return String.format("%s-%s-%s",dia,mes+1,d.getYear() + 1900);
 		}
-		return false;
+		return null;
+	}
+	
+	public DataBaseManagement getDb() {
+		return db;
 	}
 	
 	public boolean validarActividad(String titulo, String precioStr) throws TypeConvertException
@@ -57,6 +61,6 @@ public class ActividadFormativaControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 }

@@ -49,7 +49,6 @@ public class AperturaCursos extends JDialog {
 	
 	private SelectorCurso sc;
 	private JLabel lblErrores;
-	private JButton btConfigurar;
 
 	/**
 	 * Create the panel.
@@ -170,7 +169,6 @@ public class AperturaCursos extends JDialog {
 			panelFinalizar = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) panelFinalizar.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
-			panelFinalizar.add(getBtConfigurar());
 			panelFinalizar.add(getBtnCancelar());
 			panelFinalizar.add(getBtnFinalizar());
 		}
@@ -179,7 +177,6 @@ public class AperturaCursos extends JDialog {
 	private JButton getBtnFinalizar() {
 		if (btnFinalizar == null) {
 			btnFinalizar = new JButton("Finalizar");
-			btnFinalizar.setEnabled(false);
 			btnFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(fechasValidads()) {
@@ -251,26 +248,5 @@ public class AperturaCursos extends JDialog {
 			lblErrores.setBounds(10, 73, 420, 73);
 		}
 		return lblErrores;
-	}
-	private JButton getBtConfigurar() {
-		if (btConfigurar == null) {
-			btConfigurar = new JButton("Configurar");
-			btConfigurar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					abrirConfigurador();
-				}
-			});
-			btConfigurar.setBackground(Color.YELLOW);
-		}
-		return btConfigurar;
-	}
-	
-	private void abrirConfigurador() {
-		ConfiguradorCurso cc = new ConfiguradorCurso(sc.getCurso().title);
-		cc.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		cc.setModal(true);
-		cc.setLocationRelativeTo(this);
-		cc.setVisible(true);	
-		this.getBtnFinalizar().setEnabled(true);
 	}
 }

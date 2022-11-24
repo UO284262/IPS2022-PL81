@@ -1,5 +1,6 @@
 package abel.controlador;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +13,15 @@ import abel.modelo.ProfesorDTO;
 
 public class ConfigurarActividadControler {
 	
-	private DataBaseManagement db = new DataBaseManagement();
+	private DataBaseManagement db;
+	
+	public ConfigurarActividadControler(DataBaseManagement db) {
+		this.db = db;
+	}
+	
+	public Connection getConn() {
+		return this.db.getConn();
+	}
 
 	public static List<ProfesorDTO> toProfesorList(ResultSet rs) throws SQLException {
 		List<ProfesorDTO> profesores = new ArrayList<ProfesorDTO>();
