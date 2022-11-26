@@ -3,24 +3,27 @@ package kike.gui.colegiado;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import kike.gui.colectivo.SelectorColectivos;
+import kike.gui.terceros.MostrarDatosTercero;
 import kike.modelo.colegiado.ColegiadoDTO;
-import kike.modelo.colegiado.ColegiadoManager;
 import kike.modelo.curso.CursoDTO;
 import kike.modelo.curso.CursoManager;
-import kike.persistence.CursoDataBase;
+import kike.modelo.tercero.TerceroDTO;
+import kike.persistence.ColectivoDataBase;
+import kike.persistence.ColegiadoDataBase;
+import kike.persistence.InscripcionDataBase;
+import kike.persistence.TerceroDataBase;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -32,10 +35,20 @@ import java.awt.GridLayout;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JComboBox;
+import javax.swing.JSeparator;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 
 public class PreInscribeColegiado extends JDialog {
 
 	private static final long serialVersionUID = 1L;
+	private static final int OPTION_COL_PRECOL = 1;
+	private static final int OPTION_TERCEROS = 2;
 	
 	private JPanel panelCentral;
 	private JPanel panelFinalizar;
@@ -50,14 +63,19 @@ public class PreInscribeColegiado extends JDialog {
 	private JTextField textField;
 	private JLabel lblError;
 
-	private ColegiadoManager colm;
-	private double precio;
 	public CursoManager cm;
 	private JTable table;
 
 	private DefaultTableModel tm;
-	private String grupo;
-	private HashMap<String, Double> colectivos;
+	private JLabel lblNewLabel;
+	private JComboBox<String> comboBox;
+	private DefaultComboBoxModel<String> modeloCB;
+	private JSeparator separator;
+
+	private ColegiadoDTO col;
+	
+	private int option = -1;
+	private TerceroDTO tercero;
 	
 	/**
 	 * Launch the application.
@@ -76,10 +94,11 @@ public class PreInscribeColegiado extends JDialog {
 	 * Create the dialog.
 	 */
 	public PreInscribeColegiado() {
+		modeloCB = new DefaultComboBoxModel<>();
+		modeloCB.addAll(ColectivoDataBase.getColectivos());
 		setModal(true);
-		cursos = CursoManager.getModeloCursosAbiertos();
-		setMinimumSize(new Dimension(500, 400));
-		setBounds(100, 100, 500, 450);
+		setMinimumSize(new Dimension(900, 600));
+		setBounds(100, 100, 900, 600);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(getPanelCentral(), BorderLayout.CENTER);
 	}
@@ -135,6 +154,7 @@ public class PreInscribeColegiado extends JDialog {
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
+			scrollPane.setBorder(new EmptyBorder(20, 10, 5, 10));
 			scrollPane.setViewportView(getTable());
 		}
 		return scrollPane;
@@ -150,7 +170,7 @@ public class PreInscribeColegiado extends JDialog {
 	}
 	private JLabel getLblTitulo_1() {
 		if (lblTitulo == null) {
-			lblTitulo = new JLabel("Inscripci\u00F3n: Seleccione un curso");
+			lblTitulo = new JLabel("Inscripci\u00F3n: Seleccione un curso y su Colectivo");
 			lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 			lblTitulo.setFont(new Font("Arial Black", Font.PLAIN, 21));
 		}
@@ -159,17 +179,48 @@ public class PreInscribeColegiado extends JDialog {
 	private JPanel getPanelSelectorId() {
 		if (panelSelectorId == null) {
 			panelSelectorId = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) panelSelectorId.getLayout();
-			flowLayout.setVgap(10);
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			panelSelectorId.add(getLblID());
-			panelSelectorId.add(getTextField());
+			panelSelectorId.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2, true), new EmptyBorder(4, 4, 4, 4))));
+			GridBagLayout gbl_panelSelectorId = new GridBagLayout();
+			gbl_panelSelectorId.columnWidths = new int[]{78, 205, 0, 53, 84, 285, 0};
+			gbl_panelSelectorId.rowHeights = new int[]{31, 0};
+			gbl_panelSelectorId.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_panelSelectorId.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			panelSelectorId.setLayout(gbl_panelSelectorId);
+			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+			gbc_lblNewLabel.fill = GridBagConstraints.BOTH;
+			gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+			gbc_lblNewLabel.gridx = 0;
+			gbc_lblNewLabel.gridy = 0;
+			panelSelectorId.add(getLabel_1(), gbc_lblNewLabel);
+			GridBagConstraints gbc_comboBox = new GridBagConstraints();
+			gbc_comboBox.fill = GridBagConstraints.BOTH;
+			gbc_comboBox.insets = new Insets(0, 0, 0, 5);
+			gbc_comboBox.gridx = 1;
+			gbc_comboBox.gridy = 0;
+			panelSelectorId.add(getComboBox(), gbc_comboBox);
+			GridBagConstraints gbc_separator = new GridBagConstraints();
+			gbc_separator.fill = GridBagConstraints.BOTH;
+			gbc_separator.insets = new Insets(0, 0, 0, 5);
+			gbc_separator.gridx = 3;
+			gbc_separator.gridy = 0;
+			panelSelectorId.add(getSeparator(), gbc_separator);
+			GridBagConstraints gbc_lblID = new GridBagConstraints();
+			gbc_lblID.fill = GridBagConstraints.BOTH;
+			gbc_lblID.insets = new Insets(0, 0, 0, 5);
+			gbc_lblID.gridx = 4;
+			gbc_lblID.gridy = 0;
+			panelSelectorId.add(getLblID(), gbc_lblID);
+			GridBagConstraints gbc_textField = new GridBagConstraints();
+			gbc_textField.fill = GridBagConstraints.BOTH;
+			gbc_textField.gridx = 5;
+			gbc_textField.gridy = 0;
+			panelSelectorId.add(getTextField(), gbc_textField);
 		}
 		return panelSelectorId;
 	}
 	private JLabel getLblID() {
 		if (lblID == null) {
-			lblID = new JLabel("N\u00FAmero de Colegiado/Precolegiado:");
+			lblID = new JLabel("DNI:");
 			lblID.setFont(new Font("Tahoma", Font.BOLD, 13));
 		}
 		return lblID;
@@ -194,107 +245,169 @@ public class PreInscribeColegiado extends JDialog {
 
 	private void mostrarPreincripcion() {
 		getLblError().setText("");
-		int index = getTable().getSelectedRow();
-		if(index < 0) {
-			getLblError().setText("Error: seleccione un curso.");
-			return;
-		}
-		CursoDTO cc = cursos.get(index);
 		
-		if(!selectorCol(cc)) {
-			return;
-		}
+		if(colectivoCorrecto()) {
 		
-		colm = new ColegiadoManager(getTextField().getText());
-		if(!colm.validaID()) { 
-			getLblError().setText("Error: id invalido.");
-
-		} else if(colm.isInscrito(cc.title)) {  
-			getLblError().setText("Error: Este usuario ya ha sido preinscrito.");
-		
-		} else {			
-			cm = new CursoManager(cc);			
-			colm.getInfo();
-			precio = cc.price;
+			int index = getTable().getSelectedRow();
+			if(index < 0) {
+				getLblError().setText("Error: seleccione un curso.");
+				return;
+			}
 			
+			CursoDTO cc = cursos.get(index);
+			
+			if(InscripcionDataBase.isInscrito(getTextField().getText(), cc.title)) {
+				getLblError().setText("Error: usted ya se ha inscrito a dicho curso.");
+				return;
+			}
+			
+			cm = new CursoManager(cc);			
+			
+			mostrarDatosInscripcion();
+
+		}
+		
+	}
+
+	private void mostrarDatosInscripcion() {
+		
+		if(option == OPTION_COL_PRECOL) {
 			MostrarDatosInscripcion ventana = new MostrarDatosInscripcion(this);
 			ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			ventana.setModal(true);
 			ventana.setLocationRelativeTo(this);
 			ventana.setVisible(true);
-			
-		}		
+		} else if (option == OPTION_TERCEROS) {
+			MostrarDatosTercero ventana = new MostrarDatosTercero(this);
+			ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			ventana.setModal(true);
+			ventana.setLocationRelativeTo(this);
+			ventana.setVisible(true);
+		}
 		
 	}
 
-	public ColegiadoDTO getColegiadoDTO() {
-		return colm.dto;
-	}
 
-	public Double getPrecio() {
-		return precio;
-	}
 	private JTable getTable() {
 		if (table == null) {
-			tm=new DefaultTableModel(new String[]{"Title", "Price", "Days", "Fecha de inicio de inscipcion", "Fecha de fin de inscipcion", "Plazas Disponibles"}, cursos.size()) ;
-			//carga cada uno de los valores de pojos usando PropertyUtils (de apache coommons beanutils)
-			for (int i=0; i<cursos.size(); i++) {
-				CursoDTO pojo=cursos.get(i);
-				tm.setValueAt(pojo.title, i, 0);
-				tm.setValueAt(pojo.price, i, 1);
-				tm.setValueAt(pojo.days, i, 2);
-				tm.setValueAt(pojo.fechaInicioInscipcion, i, 3);
-				tm.setValueAt(pojo.fechaFinInscipcion, i, 4);
-				tm.setValueAt(pojo.plazasDisponibles, i, 5);
-			}
+			//establecerCursos(); 
 			table = new JTable();
 			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			table.setFocusable(false);
 			table.setDefaultEditor(Object.class, null);
-			table.setModel(tm);
 		}
 		return table;
 	}
 
-	private boolean selectorCol(CursoDTO curso) {
-		colectivos = CursoDataBase.getColectivos(curso);
-		if(!colectivos.isEmpty()) {
-			int respuesta = JOptionPane.showConfirmDialog(null, "<html>Existend descuentos por colectivos para este curso<br>"
-					+ "¿Deseas seleccionar un colectivo para un posible descuento?<html>", "Confirmacion", JOptionPane.YES_NO_CANCEL_OPTION);
-			if(respuesta == JOptionPane.NO_OPTION)
-				grupo = null;
-			else if(respuesta == JOptionPane.YES_OPTION) {
-				seleccionaColectivo();
-			} else {
-				return false;
-			}
-		} else {
-			grupo = null;
-		}
-		return true;
-	}
-	
-	private void seleccionaColectivo() {
-		SelectorColectivos ventana = new SelectorColectivos(this, colectivos);
-		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		ventana.setModal(true);
-		ventana.setLocationRelativeTo(this);
-		ventana.setVisible(true);
-	}
-
-	public String getGrupo() {
-		return grupo;
-	}
-
-	public void setGrupo(String grupo) {
-		this.grupo = grupo;
-	}
-	
-	public double getDescuento() {
-		if(grupo == null) {
-			return 0;
+	private void establecerCursos() {
+		if(modeloCB.getSelectedItem() == null) {
+			getLblError().setText("Error, seleccione un colectivo");
+			return;
 		}
 		
-		return colectivos.get(grupo)/100;
+		getLblError().setText("");
+		
+		cursos = CursoManager.getModeloCursosAbiertosColectivo((String)modeloCB.getSelectedItem());
+		
+		tm=new DefaultTableModel(new String[]{"Title", "Price", "Days", "Fecha de inicio de inscipcion", "Fecha de fin de inscipcion", "Plazas Disponibles", "Plazas Solicitadas"}, cursos.size()) ;
+		//carga cada uno de los valores de pojos usando PropertyUtils (de apache coommons beanutils)
+		for (int i=0; i<cursos.size(); i++) {
+			CursoDTO pojo=cursos.get(i);
+			tm.setValueAt(pojo.title, i, 0);
+			tm.setValueAt(pojo.price, i, 1);
+			tm.setValueAt(pojo.days, i, 2);
+			tm.setValueAt(pojo.fechaInicioInscipcion, i, 3);
+			tm.setValueAt(pojo.fechaFinInscipcion, i, 4);
+			tm.setValueAt(pojo.plazasDisponibles, i, 5);
+			tm.setValueAt(pojo.plazasSolicitadas, i, 6);
+		}
+		getTable().setModel(tm);
 	}
+
+	private JLabel getLabel_1() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("Colectivo:");
+			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+		}
+		return lblNewLabel;
+	}
+	private JComboBox<String> getComboBox() {
+		if (comboBox == null) {
+			comboBox = new JComboBox<String>();
+			comboBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					establecerCursos();
+				}
+			});
+			comboBox.setModel(modeloCB);
+		}
+		return comboBox;
+	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+			separator.setBorder(new EmptyBorder(0, 15, 0, 0));
+			separator.setForeground(Color.BLACK);
+			separator.setOrientation(SwingConstants.VERTICAL);
+		}
+		return separator;
+	}
+
+	private boolean colectivoCorrecto() {		
+		if(modeloCB.getSelectedItem() == null) {
+			getLblError().setText("Error, seleccione un colectivo");
+			return false;
+		} 
+		if(getTextField().getText() == null || getTextField().getText().isBlank()) {
+			getLblError().setText("Error, introduzca un dni valido");
+			return false;
+		}
+		
+		
+		getLblError().setText("");
+		
+		String colectivo = (String) modeloCB.getSelectedItem();
+		
+		if(colectivo.equals("colegiado")) {
+			Optional<ColegiadoDTO> ocol = ColegiadoDataBase.getColegiadoByDNI(getTextField().getText());
+			if(ocol.isPresent()) {
+				col = ocol.get();
+				if(col.tipo == ColegiadoDTO.SOLICITUD_COLEGIADO ) {
+					option = OPTION_COL_PRECOL;
+					return true;
+				}
+			}
+		} else if(colectivo.equals("pre-colegiado")) {
+			Optional<ColegiadoDTO> ocol = ColegiadoDataBase.getColegiadoByDNI(getTextField().getText());
+			if(ocol.isPresent()) {
+				col = ocol.get();
+				if(col.tipo == ColegiadoDTO.SOLICITUD_PRE_COLEGIADO) {
+					option = OPTION_COL_PRECOL;
+					return true;
+				}
+			}
+		} else {
+			Optional<TerceroDTO> otercero = TerceroDataBase.getTerceroByDNI(getTextField().getText());
+			if(otercero.isPresent()) {
+				tercero = otercero.get();
+				if(tercero.colectivo.equals(colectivo)) {
+					option = OPTION_TERCEROS;
+					return true;
+				}
+			}
+		}
+		
+		getLblError().setText("DNI incorrecto o colectivo equivocado");
+		
+		return false;
+	}
+
+	public ColegiadoDTO getColegiadoDTO() {
+		return col;
+	}
+	
+	public TerceroDTO getTerceroDTO() {
+		return tercero;
+	}
+
 }

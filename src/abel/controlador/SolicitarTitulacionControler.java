@@ -9,6 +9,9 @@ import abel.modelo.ColegiadoInscritoDTO;
 import abel.modelo.DataBaseManagement;
 
 public class SolicitarTitulacionControler {
+	
+	private DataBaseManagement db = new DataBaseManagement();
+	
 	public static List<String[]> toStringArray(ResultSet rs)
 	{
 		List<String[]> lista = new ArrayList<String[]>();
@@ -44,17 +47,17 @@ public class SolicitarTitulacionControler {
 	
 	public List<ColegiadoInscritoDTO> getListaPendientes()
 	{
-		return DataBaseManagement.getAllColegiadosPendientes();
+		return db.getAllColegiadosPendientes();
 	}
 	
 	public ColegiadoInscritoDTO getPendiente(String dni)
 	{
-		return DataBaseManagement.getColegiadoPendienteByDni(dni);
+		return db.getColegiadoPendienteByDni(dni);
 	}
 	
 	public List<String[]> getPendientes(List<String> dnis)
 	{
-		return DataBaseManagement.getColegiadosPendientes(dnis);
+		return db.getColegiadosPendientes(dnis);
 	}
 	
 	public static List<ColegiadoInscritoDTO> toApuntadoList(ResultSet rs) throws SQLException
@@ -74,6 +77,14 @@ public class SolicitarTitulacionControler {
 	
 	public void setValidando(List<String> dnis)
 	{
-		DataBaseManagement.setValidando(dnis);
+		db.setValidando(dnis);
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.finalizar();
 	}
 }

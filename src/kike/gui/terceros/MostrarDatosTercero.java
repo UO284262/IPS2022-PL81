@@ -1,4 +1,4 @@
-package kike.gui.colegiado;
+package kike.gui.terceros;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -8,7 +8,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import kike.modelo.colegiado.ColegiadoDTO;
+import kike.gui.colegiado.PreInscribeColegiado;
+import kike.modelo.tercero.TerceroDTO;
 
 import java.awt.Dimension;
 import javax.swing.JLabel;
@@ -22,7 +23,7 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.awt.event.ActionEvent;
 
-public class MostrarDatosInscripcion extends JDialog {
+public class MostrarDatosTercero extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -35,11 +36,8 @@ public class MostrarDatosInscripcion extends JDialog {
 	private JPanel panelNombre;
 	private JLabel lblNombre;
 	private JLabel lblNombreData;
-	private JPanel panelApellidos;
-	private JLabel lblApellidos;
-	private JLabel lblApellidosData;
 	private JPanel panelNumCol;
-	private JLabel lblNumCol;
+	private JLabel lblDni;
 	private JLabel lblNumColData;
 	private JPanel panelFechaSol;
 	private JLabel lblFechaSol;
@@ -50,7 +48,6 @@ public class MostrarDatosInscripcion extends JDialog {
 	
 	
 	private PreInscribeColegiado pic;
-
 	private JPanel panelPosCola;
 	private JLabel lblPosCola;
 	private JLabel lblPosColaData;
@@ -62,7 +59,7 @@ public class MostrarDatosInscripcion extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public MostrarDatosInscripcion(PreInscribeColegiado pic) {
+	public MostrarDatosTercero(PreInscribeColegiado pic) {
 		this.pic = pic;
 		inicializarDatos();
 		setMinimumSize(new Dimension(560, 450));
@@ -74,10 +71,9 @@ public class MostrarDatosInscripcion extends JDialog {
 	}
 
 	private void inicializarDatos() {
-		ColegiadoDTO cdto = pic.getColegiadoDTO();
-		getLblNombreData().setText(cdto.nombre);
-		getLblApellidosData().setText(cdto.apellidos);
-		getLblNumColData().setText(cdto.id_colegiado);
+		TerceroDTO tdto = pic.getTerceroDTO();
+		getLblNombreData().setText(tdto.nombre);
+		getLblNumColData().setText(tdto.dni);
 		getLblFechaSolData().setText(new Date(System.currentTimeMillis()).toString());
 		getLblPrecioData().setText("" + pic.cm.getCurosDTO().price);
 		plazasCola = pic.cm.getCurosDTO().plazasSolicitadas - pic.cm.getCurosDTO().plazasDisponibles + 1;
@@ -148,7 +144,6 @@ public class MostrarDatosInscripcion extends JDialog {
 			panelCentral.setBorder(new EmptyBorder(20, 0, 20, 0));
 			panelCentral.setLayout(new GridLayout(0, 1, 0, 0));
 			panelCentral.add(getPanelNombre());
-			panelCentral.add(getPanelApellidos());
 			panelCentral.add(getPanelNumCol());
 			panelCentral.add(getPanelFechaSol());
 			panelCentral.add(getPanelPrecio());
@@ -181,50 +176,24 @@ public class MostrarDatosInscripcion extends JDialog {
 		}
 		return lblNombreData;
 	}
-	private JPanel getPanelApellidos() {
-		if (panelApellidos == null) {
-			panelApellidos = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) panelApellidos.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			panelApellidos.setBorder(new EmptyBorder(0, 30, 0, 0));
-			panelApellidos.add(getLblApellidos());
-			panelApellidos.add(getLblApellidosData());
-		}
-		return panelApellidos;
-	}
-	private JLabel getLblApellidos() {
-		if (lblApellidos == null) {
-			lblApellidos = new JLabel("Apellidos:");
-			lblApellidos.setFont(new Font("Arial", Font.PLAIN, 15));
-			lblApellidos.setHorizontalAlignment(SwingConstants.TRAILING);
-		}
-		return lblApellidos;
-	}
-	private JLabel getLblApellidosData() {
-		if (lblApellidosData == null) {
-			lblApellidosData = new JLabel("");
-			lblApellidosData.setFont(new Font("Arial", Font.PLAIN, 15));
-		}
-		return lblApellidosData;
-	}
 	private JPanel getPanelNumCol() {
 		if (panelNumCol == null) {
 			panelNumCol = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) panelNumCol.getLayout();
 			flowLayout.setAlignment(FlowLayout.LEFT);
 			panelNumCol.setBorder(new EmptyBorder(0, 30, 0, 0));
-			panelNumCol.add(getLblNumCol());
+			panelNumCol.add(getLblDni());
 			panelNumCol.add(getLblNumColData());
 		}
 		return panelNumCol;
 	}
-	private JLabel getLblNumCol() {
-		if (lblNumCol == null) {
-			lblNumCol = new JLabel("Numero de Colegiado:");
-			lblNumCol.setFont(new Font("Arial", Font.PLAIN, 15));
-			lblNumCol.setHorizontalAlignment(SwingConstants.TRAILING);
+	private JLabel getLblDni() {
+		if (lblDni == null) {
+			lblDni = new JLabel("Dni:");
+			lblDni.setFont(new Font("Arial", Font.PLAIN, 15));
+			lblDni.setHorizontalAlignment(SwingConstants.TRAILING);
 		}
-		return lblNumCol;
+		return lblDni;
 	}
 	private JLabel getLblNumColData() {
 		if (lblNumColData == null) {
@@ -288,10 +257,10 @@ public class MostrarDatosInscripcion extends JDialog {
 
 	private void inscribirCurso() {
 		if(hayCola) {
-			pic.cm.inscribirse(pic.getColegiadoDTO().dni, plazasCola);
+			pic.cm.inscribirse(pic.getTerceroDTO().dni, plazasCola);
 			JOptionPane.showConfirmDialog(null, "Se le ha añadido a la cola correctamente", "Confirmacion", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			pic.cm.inscribirse(pic.getColegiadoDTO().dni);
+			pic.cm.inscribirse(pic.getTerceroDTO().dni);
 			JOptionPane.showConfirmDialog(null, "Se le ha inscrito al curso correctamente", "Confirmacion", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
 		}
 		pic.dispose();

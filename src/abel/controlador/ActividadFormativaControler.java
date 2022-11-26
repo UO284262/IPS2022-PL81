@@ -1,8 +1,8 @@
 package abel.controlador;
 
-import java.util.ArrayList;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import abel.modelo.ActividadFormativaDTO;
@@ -12,17 +12,22 @@ import exception.TypeConvertException;
 public class ActividadFormativaControler {
 	
 	private List<Date> days = new ArrayList<Date>();
+	private DataBaseManagement db = new DataBaseManagement();
 	
-	public boolean añadirDia(int dia, int mes)
+	public String añadirDia(int dia, int mes)
 	{
 		@SuppressWarnings("deprecation")
-		Date d = new Date(LocalDate.now().getYear() - 1900,mes,dia);
+		Date d = mes + 1 < LocalDate.now().getMonthValue() ? new Date(LocalDate.now().getYear() - 1900 + 1,mes + 1,dia) : new Date(LocalDate.now().getYear() - 1900,mes + 1,dia);
 		if(!days.contains(d))
 		{
 			days.add(d);
-			return true;
+			return String.format("%s-%s-%s",dia,mes+1,d.getYear() + 1900);
 		}
-		return false;
+		return null;
+	}
+	
+	public DataBaseManagement getDb() {
+		return db;
 	}
 	
 	public boolean validarActividad(String titulo, String precioStr) throws TypeConvertException
@@ -42,12 +47,20 @@ public class ActividadFormativaControler {
 			af.price = precio;
 			af.days = days;
 			days = new ArrayList<Date>();
-			if(DataBaseManagement.addActividadToDataBase(af))
+			if(db.addActividadToDataBase(af))
 			{
 				return true;
 			}
 			return false;
 		}
 		return false;
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.cancelar();
 	}
 }

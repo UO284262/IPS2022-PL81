@@ -7,12 +7,10 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import abel.controlador.ConfigurarActividadControler;
-import abel.modelo.DataBaseManagement;
-import abel.vista.AñadirActividadFormativa;
-import abel.vista.ConfigurarCurso;
+import abel.controlador.CanceladorCursoControler;
+import abel.vista.CancelarCursoFormativo;
 
-public class ConfiguradorCurso extends JDialog {
+public class CanceladorCurso extends JDialog {
 
 	/**
 	 * 
@@ -25,7 +23,7 @@ public class ConfiguradorCurso extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			ConfiguradorCurso dialog = new ConfiguradorCurso("",null,null);
+			CanceladorCurso dialog = new CanceladorCurso();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -36,16 +34,20 @@ public class ConfiguradorCurso extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ConfiguradorCurso(String curso, DataBaseManagement db,AñadirActividadFormativa af) {
+	public CanceladorCurso() {
 		setModal(true);
 		setUndecorated(true);
 		setTitle("Condigurador de cursos");
-		setBounds(100, 100, 754, 417);
+		setBounds(100, 100, 452, 308);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(new ConfigurarCurso(new ConfigurarActividadControler(db),curso,this,af));
+		getContentPane().add(new CancelarCursoFormativo(new CanceladorCursoControler(),this));
+	}
+	
+	public void cerrar() {
+		this.dispose();
 	}
 
 }

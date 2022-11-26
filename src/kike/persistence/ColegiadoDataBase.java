@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import kike.modelo.colegiado.ColegiadoDTO;
 import main.DatabaseConnection;
@@ -12,6 +13,7 @@ public class ColegiadoDataBase {
 
 	private static final String EXISTS_COLEGIADO = "select id_colegiado from colegiado where id_colegiado = ?";
 	private static final String FIND_COLEGIADO_ID = "select * from colegiado where id_colegiado = ?";
+	private static final String FIND_COLEGIADO_DNI = "select * from colegiado where dni = ?";
 
 	public static boolean isValidId(String id_colegiado) {
 		
@@ -111,6 +113,49 @@ public class ColegiadoDataBase {
 		cdto.dni = rs.getString("dni");
 		cdto.cuentaBancaria = rs.getString("iban");
 		cdto.tlfn = rs.getString("telefono");
+		cdto.tipo = rs.getInt("tipo");
+		
+		return cdto;
+	}
+
+	public static Optional<ColegiadoDTO> getColegiadoByDNI(String dni) {
+		Optional<ColegiadoDTO> cdto;
+		
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			conn = DatabaseConnection.getConnection();			
+			conn.setAutoCommit(false);
+			
+			st = conn.prepareStatement(FIND_COLEGIADO_DNI);
+			st.setString(1, dni);
+			
+			rs = st.executeQuery();			
+						
+			cdto = Optional.ofNullable(toColegiadoDTO(rs));
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				rs.close();
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}
 		
 		return cdto;
 	}

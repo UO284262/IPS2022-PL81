@@ -11,10 +11,14 @@ import kike.persistence.dto.InscripcionDTO.TipoInscripcion;
 
 public class CursoManager {
 	
-	CursoDTO curosDTO;
+	private CursoDTO curosDTO;
 	
 	public CursoManager(CursoDTO dto) {
 		curosDTO = dto;
+	}
+	
+	public CursoDTO getCurosDTO() {
+		return curosDTO;
 	}
 	
 	public void abrirCurso() {
@@ -22,19 +26,6 @@ public class CursoManager {
 		CursoDataBase.abrirCurso(curosDTO);
 	}
 	
-		
-	private void ocuparPlaza() {
-		if(hayPlazasDisponibles())
-			curosDTO.plazasDisponibles--;
-	}
-
-	public boolean hayPlazasDisponibles() {
-		if(curosDTO.plazasDisponibles>0)
-			return true;
-		return false;
-	}
-	
-		
 	@Override
 	public String toString() {
 		return curosDTO.title + " - Precio: " + curosDTO.price;
@@ -43,14 +34,17 @@ public class CursoManager {
 	public static List<CursoDTO> getModeloCursosAbiertos() {			
 		return getCursosDisponibles(CursoDataBase.getCursosAbiertos());
 	}
+	
+	public static List<CursoDTO> getModeloCursosAbiertosColectivo(String colectivo) {			
+		return getCursosDisponibles(CursoDataBase.getCursosAbiertosColectivo(colectivo));
+	}
 
 	private static List<CursoDTO> getCursosDisponibles(List<CursoDTO> cursosAbiertos) {
 		Iterator<CursoDTO> it = cursosAbiertos.iterator();
 		
 		while(it.hasNext()) {
 			CursoDTO dto = it.next();
-			if(dto.plazasDisponibles <= 0 || 
-					dto.fechaInicioInscipcion.compareTo(new Date(System.currentTimeMillis())) > 0 ||
+			if(dto.fechaInicioInscipcion.compareTo(new Date(System.currentTimeMillis())) > 0 ||
 					dto.fechaFinInscipcion.compareTo(new Date(System.currentTimeMillis())) < 0) {
 				it.remove();
 			}
@@ -59,18 +53,30 @@ public class CursoManager {
 		return cursosAbiertos;
 	}
 
-	public void inscribirse(String idSocio) {
-		ocuparPlaza();
+	public void inscribirse(String dni) {
 		InscripcionDTO idto = new InscripcionDTO();
 		
-		idto.id_socio = idSocio;
+		idto.dni = dni;
 		idto.nombre_curso = curosDTO.title;
 		idto.fecha_Inscripcion = new Date(System.currentTimeMillis());
 		idto.pagado = false;
 		idto.estado = TipoInscripcion.PRE_INSCRITO;
 		idto.cantidad_abonada = 0;
 		
-		CursoDataBase.actualizarCurso(curosDTO);
+		InscripcionDataBase.createPreInscripcion(idto);	
+	}
+	
+	public void inscribirse(String dni, int cola) {
+		InscripcionDTO idto = new InscripcionDTO();
+		
+		idto.dni = dni;
+		idto.nombre_curso = curosDTO.title;
+		idto.fecha_Inscripcion = new Date(System.currentTimeMillis());
+		idto.pagado = false;
+		idto.estado = TipoInscripcion.PRE_INSCRITO;
+		idto.cantidad_abonada = 0;
+		idto.pos_cola = cola;
+		
 		InscripcionDataBase.createPreInscripcion(idto);	
 	}
 

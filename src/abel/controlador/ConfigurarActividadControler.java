@@ -1,5 +1,6 @@
 package abel.controlador;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,16 @@ import abel.modelo.ImparticionDTO;
 import abel.modelo.ProfesorDTO;
 
 public class ConfigurarActividadControler {
+	
+	private DataBaseManagement db;
+	
+	public ConfigurarActividadControler(DataBaseManagement db) {
+		this.db = db;
+	}
+	
+	public Connection getConn() {
+		return this.db.getConn();
+	}
 
 	public static List<ProfesorDTO> toProfesorList(ResultSet rs) throws SQLException {
 		List<ProfesorDTO> profesores = new ArrayList<ProfesorDTO>();
@@ -40,21 +51,29 @@ public class ConfigurarActividadControler {
 	
 	public List<Date> getDatesFor(String curso)
 	{
-		return DataBaseManagement.findImparticionesFor(curso);
+		return db.findImparticionesFor(curso);
 	}
 	
 	public boolean añadirSesion(String curso, Date fecha, String hora, int duracion)
 	{
-		return DataBaseManagement.configurarImparticion(curso, fecha, hora, duracion);
+		return db.configurarImparticion(curso, fecha, hora, duracion);
 	}
 	
 	public List<ProfesorDTO> getAllProfesores()
 	{
-		return DataBaseManagement.findAllProfesor();
+		return db.findAllProfesor();
 	}
 	
 	public void asignarProfesor(String curso, String profesor)
 	{
-		DataBaseManagement.addProfesorCurso(curso, profesor);
+		db.addProfesorCurso(curso, profesor);
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.finalizar();
 	}
 }
