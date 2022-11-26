@@ -309,7 +309,7 @@ public class ConfigurarCurso extends JPanel {
 		if(this.getCbColectivo().getSelectedIndex() >= 0) {
 			ColectivoCursoDTO c = new ColectivoCursoDTO();
 			c.nombre_colectivo = (String) this.getCbColectivo().getSelectedItem();
-			c.descuento = (double) this.getSpDescuento().getValue();
+			c.precio = (double) this.getSpDescuento().getValue();
 			c.nombre_curso = nombre_curso;
 			colectivos.add(c);
 			this.modeloColectivos.removeElement(c.nombre_colectivo);
