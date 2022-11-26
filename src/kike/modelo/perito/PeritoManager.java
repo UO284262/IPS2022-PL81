@@ -53,6 +53,11 @@ public class PeritoManager {
 		
 		perito.activo = true;
 	}
+
+	public void renovarAntiguo() {
+		establecerUltimaPosicion();
+		renovar();
+	}
 		
 
 }

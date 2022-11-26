@@ -35,8 +35,11 @@ public class RegistroPericial extends JDialog {
 
 	private static final int INSCRIP = 0;
 	private static final int RENOV = 1;
+	private static final int RENOV_ANTIGUO = 2;
 
-	private static final String[] TEXTO_CONFIRMACION = new String[]{"inscrito","renovado"};
+	private static final String[] TEXTO_CONFIRMACION = new String[]{"inscrito","renovado","inscrito"};
+
+	
 	
 	private final JPanel PanelSolicitud = new JPanel();
 	private JPanel panelSuperior;
@@ -419,7 +422,7 @@ public class RegistroPericial extends JDialog {
 			if(p.activo == false) {
 				getLblFinalizarInfo().setText("Inscripcion de perito");
 				pm.establecerUltimaPosicion();
-				opcion = RENOV;
+				opcion = RENOV_ANTIGUO;
 			} else {
 				getLblFinalizarInfo().setText("Renovacion de perito");
 				opcion = RENOV;
@@ -610,6 +613,9 @@ public class RegistroPericial extends JDialog {
 			return;
 		}else if(opcion==RENOV) {
 			pm.renovar();
+			return;
+		} else if(opcion == RENOV_ANTIGUO) {
+			pm.renovarAntiguo();
 			return;
 		}
 		
