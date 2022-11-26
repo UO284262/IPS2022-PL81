@@ -3,7 +3,10 @@ package main.ui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -21,6 +24,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.dialogs.CanceladorCurso;
+import abel.vista.dialogs.ComprobadorTitulacion;
 import abel.vista.dialogs.PlanificadorCurso;
 import abel.vista.dialogs.SolicitarPericial;
 import abel.vista.dialogs.SolicitarTitulacion;
@@ -33,9 +37,6 @@ import kike.persistence.CursoDataBase;
 import rodro.controlador.EmitirRecibosControler;
 import rodro.controlador.SolicitudControler;
 import rodro.vista.VentanaSolicitud;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class Main {
 
@@ -60,6 +61,7 @@ public class Main {
 	private JPanel panelExternoBotones;
 	private JButton btPericial;
 	private JButton btCancelarCurso;
+	private JButton btComprobarTitulacion;
 
 	/**
 	 * Launch the application.
@@ -180,6 +182,7 @@ public class Main {
 			panelSecBotones.add(getBtSolicitarTitulacion());
 			panelSecBotones.add(getBtVisualizarInscritos());
 			panelSecBotones.add(getBtEmitirRecibos());
+			panelSecBotones.add(getBtComprobarTitulacion());
 			panelSecBotones.add(getBtCancelarCurso());
 		}
 		return panelSecBotones;
@@ -385,5 +388,19 @@ public class Main {
 			});
 		}
 		return btCancelarCurso;
+	}
+	private JButton getBtComprobarTitulacion() {
+		if (btComprobarTitulacion == null) {
+			btComprobarTitulacion = new JButton("Comprobar titulacion");
+			btComprobarTitulacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ComprobadorTitulacion dialog = new ComprobadorTitulacion();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btComprobarTitulacion;
 	}
 }

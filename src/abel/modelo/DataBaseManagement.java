@@ -61,6 +61,8 @@ public class DataBaseManagement
 	private final static String QUERY_OBTENER_ACTIVIDADES_FORMATIVAS_CURRENT = "SELECT a.nombre_curso, a.precio, a.fecha_orientativa, a.is_open, a.fin_inscripcion, a.numero_plazas, a.estado FROM Actividad_Formativa a "
 			+ " WHERE a.fecha_orientativa >= \"%s\" and a.estado != \"CANCELADA\";";
 	
+	private final static String QUERY_SET_ESTADO = "UPDATE Colegiado set tipoSolicitud = ? WHERE dni = ?";
+	
 	private Connection conn;
 	
 	public DataBaseManagement()
@@ -269,6 +271,17 @@ public class DataBaseManagement
 				st.setString(1, dni);
 				st.executeUpdate();
 			}
+		} catch (SQLException e) {
+		}
+	}
+	
+	public void setEstado(String dni, String estado) {
+		try
+		{	
+			PreparedStatement st = conn.prepareStatement(QUERY_SET_ESTADO);
+			st.setString(2, dni);
+			st.setString(1, estado);
+			st.executeUpdate();
 		} catch (SQLException e) {
 		}
 	}

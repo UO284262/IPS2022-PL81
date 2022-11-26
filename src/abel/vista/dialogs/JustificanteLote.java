@@ -9,10 +9,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import abel.vista.SolicitarTitulacionColegiado;
-import javax.swing.JTextArea;
 
 public class JustificanteLote extends JDialog {
 
