@@ -10,10 +10,12 @@ import com.toedter.calendar.JMonthChooser;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import abel.controlador.ActividadFormativaControler;
+import abel.vista.dialogs.ConfiguradorCurso;
 import exception.TypeConvertException;
 
 import java.awt.BorderLayout;
@@ -55,6 +57,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JLabel lbException;
 	private JLabel lbEuros;
 	private JScrollPane scrollPane;
+	private JButton btConfigurar;
 
 	/**
 	 * Create the panel.
@@ -77,6 +80,7 @@ public class AñadirActividadFormativa extends JPanel {
 		add(getLbException());
 		add(getLbEuros());
 		add(getScrollPane());
+		add(getBtConfigurar());
 
 	}
 	private JLabel getLbTitulo() {
@@ -121,6 +125,7 @@ public class AñadirActividadFormativa extends JPanel {
 	private JButton getBtAñadir() {
 		if (btAñadir == null) {
 			btAñadir = new JButton("A\u00F1adir");
+			btAñadir.setEnabled(false);
 			btAñadir.setForeground(Color.BLACK);
 			btAñadir.setFocusPainted(false);
 			btAñadir.setBackground(Color.GREEN);
@@ -133,18 +138,12 @@ public class AñadirActividadFormativa extends JPanel {
 			});
 			btAñadir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(validarActividad())
-					{
-						getLbMensajeConfirmacion().setVisible(true);
-						resetearCampos();
-					}
-					else
-					{
-						getLbMensajeDenegar().setVisible(true);
-					}
+					controler.finalizar();
+					getLbMensajeConfirmacion().setText("Añadido correctamente");
+					resetearCampos();
 				}
 			});
-			btAñadir.setBounds(258, 269, 85, 21);
+			btAñadir.setBounds(300, 269, 85, 21);
 		}
 		return btAñadir;
 	}
@@ -222,14 +221,15 @@ public class AñadirActividadFormativa extends JPanel {
 	
 	private void añadirDia()
 	{
-		if(!controler.añadirDia(this.getDayChooser().getDay(), this.getMonthChooser().getMonth()))
+		String c = controler.añadirDia(this.getDayChooser().getDay(), this.getMonthChooser().getMonth());
+		if(c == null)
 		{
 			getLbAvisoDia1().setVisible(true);
 		}
 		else
 		{
 			getLbAvisoDia1().setVisible(false);
-			modeloDias.addElement(String.format("%d-%d-%d  ",this.getDayChooser().getDay(),this.getMonthChooser().getMonth(),LocalDate.now().getYear()));
+			modeloDias.addElement(c);
 		}
 	}
 	
@@ -312,5 +312,44 @@ public class AñadirActividadFormativa extends JPanel {
 			scrollPane.setViewportView(getLtDays());
 		}
 		return scrollPane;
+	}
+	
+	private JButton getBtConfigurar() {
+		if (btConfigurar == null) {
+			btConfigurar = new JButton("Configurar");
+			btConfigurar.setSize(107, 21);
+			btConfigurar.setLocation(183, 269);
+			btConfigurar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(añadirCurso()) abrirConfigurador();
+				}
+			});
+			btConfigurar.setBackground(Color.YELLOW);
+		}
+		return btConfigurar;
+	}
+	public void configurado() {
+		this.getBtAñadir().setEnabled(true);
+		this.getBtConfigurar().setEnabled(false);
+		this.getLbMensajeConfirmacion().setText("Configurada correctamente");
+		this.getLbMensajeConfirmacion().setVisible(true);
+	}
+	private void abrirConfigurador() {
+		ConfiguradorCurso cc = new ConfiguradorCurso(this.getTfNombre().getText(),controler.getDb(),this);
+		cc.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		cc.setModal(true);
+		cc.setLocationRelativeTo(this);
+		cc.setVisible(true);	
+	}
+	private boolean añadirCurso() {
+		if(validarActividad())
+		{
+			return true;
+		}
+		else
+		{
+			getLbMensajeDenegar().setVisible(true);
+			return false;
+		}
 	}
 }

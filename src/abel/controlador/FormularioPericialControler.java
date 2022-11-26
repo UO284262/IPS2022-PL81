@@ -8,6 +8,8 @@ import abel.modelo.FormularioPericialDTO;
 
 public class FormularioPericialControler {
 	
+	private DataBaseManagement db = new DataBaseManagement();
+	
 	public int añadirFormulario(String descripcion, String nombre_solicitante, String telefono_solicitante, String mail_solicitante, String prioridad)
 	{
 		Pattern pattern = Pattern
@@ -41,11 +43,19 @@ public class FormularioPericialControler {
 		f.prioridad = prioridad;
 		f.tipo_pericial = "PARTE";
 		f.telefono_solicitante = telefono;
-		f.numero = DataBaseManagement.getNextNumeroFormulario();
-		if(!DataBaseManagement.addFormulario(f))
+		f.numero = db.getNextNumeroFormulario();
+		if(!db.addFormulario(f))
 		{
 			return -1;
 		}
 		return f.numero;
+	}
+	
+	public void finalizar() {
+		db.finalizar();
+	}
+	
+	public void cancelar() {
+		db.finalizar();
 	}
 }
