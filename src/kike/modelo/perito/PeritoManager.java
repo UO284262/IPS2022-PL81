@@ -56,6 +56,7 @@ public class PeritoManager {
 
 	public void renovarAntiguo() {
 		establecerUltimaPosicion();
+		perito.activo = true;
 		renovar();
 	}
 		

@@ -421,7 +421,6 @@ public class RegistroPericial extends JDialog {
 			
 			if(p.activo == false) {
 				getLblFinalizarInfo().setText("Inscripcion de perito");
-				pm.establecerUltimaPosicion();
 				opcion = RENOV_ANTIGUO;
 			} else {
 				getLblFinalizarInfo().setText("Renovacion de perito");
