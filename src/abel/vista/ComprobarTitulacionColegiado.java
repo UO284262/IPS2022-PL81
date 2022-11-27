@@ -17,7 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
-import abel.controlador.ComprobarTitulacionControler;
+import abel.controlador.ComprobarTitulacionColegiadoControler;
 import abel.modelo.ColegiadoSolicitadoDTO;
 import abel.vista.dialogs.ComprobadorTitulacion;
 
@@ -27,7 +27,7 @@ public class ComprobarTitulacionColegiado extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ComprobarTitulacionControler controler;
+	private ComprobarTitulacionColegiadoControler controler;
 	private DefaultTableModel modeloRecibidos = new DefaultTableModel();
 	private JLabel lbTitulo;
 	private JButton btActualizar;
@@ -40,7 +40,7 @@ public class ComprobarTitulacionColegiado extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ComprobarTitulacionColegiado(ComprobarTitulacionControler controler, ComprobadorTitulacion padre) {
+	public ComprobarTitulacionColegiado(ComprobarTitulacionColegiadoControler controler, ComprobadorTitulacion padre) {
 		this.controler = controler;
 		this.padre = padre;
 		setLayout(null);

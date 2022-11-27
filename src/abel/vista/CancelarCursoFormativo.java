@@ -83,7 +83,7 @@ public class CancelarCursoFormativo extends JPanel {
 					btCancelar.setEnabled(false);
 				}
 			});
-			btCancelar.setBounds(216, 277, 129, 21);
+			btCancelar.setBounds(216, 311, 129, 21);
 		}
 		return btCancelar;
 	}
@@ -118,7 +118,7 @@ public class CancelarCursoFormativo extends JPanel {
 				(this,new String("Está seguro de que quiere cancelar el curso " + curso + ". Esto es una acción irreversible y desabilitará dicho curso."),"Cancelar curso",
 						JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
 			controler.cancelarCurso(curso);
-			this.getLbLastCancelado().setText("El curso " + curso + "fue cancelado con éxito.");
+			this.getLbLastCancelado().setText("El curso " + curso + " fue cancelado con éxito.");
 			this.modeloTabla.removeRow(selectedRow);
 			this.selectedRow = 0;
 		}
@@ -126,7 +126,7 @@ public class CancelarCursoFormativo extends JPanel {
 	private JLabel getLbLastCancelado() {
 		if (lbLastCancelado == null) {
 			lbLastCancelado = new JLabel("");
-			lbLastCancelado.setBounds(10, 277, 291, 21);
+			lbLastCancelado.setBounds(10, 277, 430, 27);
 		}
 		return lbLastCancelado;
 	}
@@ -140,7 +140,7 @@ public class CancelarCursoFormativo extends JPanel {
 				}
 			});
 			btCerrar.setBackground(Color.RED);
-			btCerrar.setBounds(355, 277, 85, 21);
+			btCerrar.setBounds(355, 311, 85, 21);
 		}
 		return btCerrar;
 	}

@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import abel.controlador.VisualizarInscritosCursoControler;
 import abel.modelo.ActividadFormativaDTO;
-import abel.modelo.ColegiadoInscritoDTO;
+import abel.modelo.ApuntadoDTO;
 
 public class VisualizarInscritosCurso extends JPanel {
 
@@ -105,7 +105,7 @@ public class VisualizarInscritosCurso extends JPanel {
 	{
 		String nombre = (String) actividad;
 		
-		List<ColegiadoInscritoDTO> apuntados = controler.getListaApuntados(nombre);
+		List<ApuntadoDTO> apuntados = controler.getListaApuntados(nombre);
 		if(apuntados == null)
 		{
 			mostrarMensajeNoActividad();
@@ -126,13 +126,13 @@ public class VisualizarInscritosCurso extends JPanel {
 		}
 	}
 	
-	private void cargarTablaApuntados(List<ColegiadoInscritoDTO> colegiados)
+	private void cargarTablaApuntados(List<ApuntadoDTO> colegiados)
 	{
-		Object[] columns = {"Nombre","Apellidos","Fecha inscripción","Estado", "Abonado (€)"};
+		Object[] columns = {"Nombre","Apellidos","Fecha inscripción","Estado", "Abonado (€)","Colectivo"};
 		modeloApuntados.setColumnIdentifiers(columns);
-		for(ColegiadoInscritoDTO ci : colegiados)
+		for(ApuntadoDTO ci : colegiados)
 		{
-			Object[] data = {ci.nombre, ci.apellidos, ci.fecha_inscripcion.toString() , ci.estado , ci.cantidad_abonada};
+			Object[] data = {ci.nombre, ci.apellidos, ci.fecha_inscripcion.toString() , ci.estado , ci.cantidad_abonada, ci.colectivo};
 			modeloApuntados.addRow(data);
 		}
 	}

@@ -5,11 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import abel.modelo.ColegiadoSolicitadoDTO;
 import abel.modelo.DataBaseManagement;
-import abel.modelo.FileUtil;
 
-public class ComprobarTitulacionControler {
+public class DarDeBajaColegiadoControler {
 	
 	private DataBaseManagement db = new DataBaseManagement();
 	
@@ -46,14 +44,14 @@ public class ComprobarTitulacionControler {
 		return null;
 	}
 	
-	public List<ColegiadoSolicitadoDTO> getListaRecibidos()
+	public double getRecibosPendientes(String id_colegiado)
 	{
-		return FileUtil.ReadFile("recibirTitulacion.csv", ",");
+		return db.amountAPagar(id_colegiado);
 	}
 	
-	public void setEstado(String dni, String estado)
+	public boolean darDeBaja(String id_colegiado)
 	{
-		db.setEstado(dni,estado);
+		return db.darDeBaja(id_colegiado);
 	}
 	
 	public void finalizar() {
@@ -62,9 +60,5 @@ public class ComprobarTitulacionControler {
 	
 	public void cancelar() {
 		db.finalizar();
-	}
-	
-	public void eleminarFichero() {
-		FileUtil.deleteRecibidos();
 	}
 }

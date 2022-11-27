@@ -58,7 +58,7 @@ public class FileUtil {
 	}
 	
 	public static void deleteRecibidos() {
-		File file = new File("/files/recibirTitulacion.csv");
+		File file = new File("files/recibirTitulacion.csv");
 		file.delete();
 	}
 }

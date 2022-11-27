@@ -38,7 +38,7 @@ public class CanceladorCurso extends JDialog {
 		setModal(true);
 		setUndecorated(true);
 		setTitle("Condigurador de cursos");
-		setBounds(100, 100, 452, 308);
+		setBounds(100, 100, 452, 346);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());

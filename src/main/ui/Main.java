@@ -25,6 +25,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import abel.vista.dialogs.CanceladorCurso;
 import abel.vista.dialogs.ComprobadorTitulacion;
+import abel.vista.dialogs.DarDeBaja;
 import abel.vista.dialogs.PlanificadorCurso;
 import abel.vista.dialogs.SolicitarPericial;
 import abel.vista.dialogs.SolicitarTitulacion;
@@ -62,6 +63,7 @@ public class Main {
 	private JButton btPericial;
 	private JButton btCancelarCurso;
 	private JButton btComprobarTitulacion;
+	private JButton btDarseDeBaja;
 
 	/**
 	 * Launch the application.
@@ -210,6 +212,7 @@ public class Main {
 			panelColBotones.add(getBtSolicitudColegiado());
 			panelColBotones.add(getBtnInscribirColegiado());
 			panelColBotones.add(getBtnRIPerito());
+			panelColBotones.add(getBtDarseDeBaja());
 		}
 		return panelColBotones;
 	}
@@ -402,5 +405,19 @@ public class Main {
 			});
 		}
 		return btComprobarTitulacion;
+	}
+	private JButton getBtDarseDeBaja() {
+		if (btDarseDeBaja == null) {
+			btDarseDeBaja = new JButton("Darse de baja");
+			btDarseDeBaja.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					DarDeBaja dialog = new DarDeBaja();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setLocationRelativeTo(frame);
+					dialog.setVisible(true);
+				}
+			});
+		}
+		return btDarseDeBaja;
 	}
 }
