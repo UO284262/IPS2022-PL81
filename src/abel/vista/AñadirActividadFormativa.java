@@ -94,6 +94,7 @@ public class AñadirActividadFormativa extends JPanel {
 		return lbTitulo;
 	}
 	private JButton getBtCancelar() {
+		
 		if (btCancelar == null) {
 			btCancelar = new JButton("Reiniciar");
 			btCancelar.setFocusPainted(false);
