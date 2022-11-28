@@ -352,7 +352,7 @@ public class ConfigurarCurso extends JPanel {
 	}
 	private JButton getBtAñadirDescuento() {
 		if (btAñadirDescuento == null) {
-			btAñadirDescuento = new JButton("Asignar descuento por colectivo");
+			btAñadirDescuento = new JButton("Asignar precio por colectivo");
 			btAñadirDescuento.setForeground(Color.WHITE);
 			btAñadirDescuento.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
