@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.time.LocalDate;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;

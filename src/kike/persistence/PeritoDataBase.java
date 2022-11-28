@@ -13,9 +13,9 @@ public class PeritoDataBase {
 	
 	private static final String PERITO_BY_COLEGIADO = "Select * from perito where id_colegiado = ?";
 	private static final String LAST_IN_QUEUE = "Select max(posicion_lista) from perito";
-	private static final String ADD_PERITO = "INSERT INTO perito (id_perito, id_colegiado, posicion_lista, fecha_tope_renovacion) "
-			+ "VALUES (?,?,?,?)";
-	private static final String RENUEVA_PERITO = "UPDATE perito SET fecha_tope_renovacion = ? WHERE id_perito = ?";
+	private static final String ADD_PERITO = "INSERT INTO perito (id_perito, id_colegiado, posicion_lista, fecha_tope_renovacion, activo) "
+			+ "VALUES (?,?,?,?, ?)";
+	private static final String RENUEVA_PERITO = "UPDATE perito SET fecha_tope_renovacion = ?, posicion_lista = ?, activo = ? WHERE id_perito = ?";
 
 	public static PeritoDTO findByColegiadoId(String id) {
 		PeritoDTO perito = null;
@@ -130,6 +130,7 @@ public class PeritoDataBase {
 			st.setString(2, perito.id_colegiado);
 			st.setInt(3, perito.pos_Lista);
 			st.setDate(4, perito.fecha_Tope);
+			st.setBoolean(5, perito.activo);
 			
 			st.execute();
 			
@@ -165,7 +166,11 @@ public class PeritoDataBase {
 			
 			st = conn.prepareStatement(RENUEVA_PERITO);
 			st.setDate(1, perito.fecha_Tope);
-			st.setString(2, perito.id_perito);
+			st.setInt(2, perito.pos_Lista);
+			st.setBoolean(3, perito.activo);
+			st.setString(4, perito.id_perito);
+			
+			
 			
 			st.execute();
 

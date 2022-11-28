@@ -121,7 +121,7 @@ public class DataBaseManagement
 		try
 		{	
 			conn.setAutoCommit(false);
-			System.out.println(actividad.days.get(0).toLocalDate().toString());
+			//System.out.println(actividad.days.get(0).toLocalDate().toString());
 			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_ACTIVIDAD_FORMATIVA);
 			st.setString(1, actividad.title);
 			st.setDouble(2, actividad.price);

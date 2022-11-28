@@ -14,10 +14,14 @@ import main.DatabaseConnection;
 
 public class CursoDataBase {
 
-	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false and estado != \"CANCELADA\"";
-	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre_curso = ? and estado != \"CANCELADA\"";
-	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ? and estado != \"CANCELADA\"";
-	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true and estado != \"CANCELADA\"";
+	private final static String CURSOS_SIN_ABRIR = "select * from Actividad_formativa where is_open = false and estado != 'CANCELADA'";
+	private final static String CURSOS_ABRIR = "update Actividad_formativa set is_open = true, numero_plazas = ?, inicio_inscripcion = ?, fin_inscripcion = ? where nombre_curso = ? and estado != 'CANCELADA'";
+	private final static String CURSOS_INSCRIBIR = "update Actividad_formativa set numero_plazas = ? where nombre_curso = ? and estado != 'CANCELADA'";
+	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true and estado != 'CANCELADA'";
+	private final static String CURSOS_ABIERTOS_COLECTIVO = "select * from Actividad_formativa af natural join colectivos_asignados ca where af.is_open = true and ca.nombre_colectivo = ? and estado != 'CANCELADA'";
+
+	private final static String CURSOS_MAKE_CANCELABLE = "update Actividad_formativa set cancelable = true, a_devolver = ? where nombre_curso = ?";
+	
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
 	private static final String GET_COLECTIVOS = "select * from colectivos_asignados where nombre_curso = ?";
 	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,precio_colectivo) values (?,?,?)";
@@ -91,7 +95,6 @@ public class CursoDataBase {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			throw new RuntimeException(e);	
@@ -169,7 +172,6 @@ public class CursoDataBase {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			throw new RuntimeException(e);	
@@ -236,12 +238,9 @@ public class CursoDataBase {
 		
 		dto.days = new ArrayList<>();
 		
-		return dto;
-	}
-
-	public static void actualizarCurso(CursoDTO curso) {
-		// TODO Auto-generated method stub
+		dto.plazasSolicitadas = InscripcionDataBase.getApuntados(dto.title);
 		
+		return dto;
 	}
 
 	public static HashMap<String, Double> getColectivos(CursoDTO curso) {
@@ -262,7 +261,7 @@ public class CursoDataBase {
 			rs = st.executeQuery();			
 			
 			while(rs.next()) {
-				cols.put(rs.getString("nombre_colectivo"), rs.getDouble("descuento"));
+				cols.put(rs.getString("nombre_colectivo"), rs.getDouble("precio_colectivo"));
 			}
 			
 			conn.commit();
@@ -318,6 +317,109 @@ public class CursoDataBase {
 				throw new RuntimeException(e);				
 			}			
 		}	
+	}
+
+	public static List<CursoDTO> getCursosAbiertosColectivo(String colectivo) {
+		List<CursoDTO> cursos = null;
+		
+		Connection conn = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			conn = DatabaseConnection.getConnection();			
+			conn.setAutoCommit(false);
+			
+			st = conn.prepareStatement(CURSOS_ABIERTOS_COLECTIVO);
+			st.setString(1, colectivo);
+			
+			rs = st.executeQuery();			
+			
+			cursos = toCursoDTOListWithCol(rs);
+			
+			for(CursoDTO c : cursos) {
+				rellenarFechas(c, conn);
+			}
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				rs.close();
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}
+		
+		return cursos;
+	}
+	
+	private static List<CursoDTO> toCursoDTOListWithCol(ResultSet rs) throws SQLException {
+		List<CursoDTO> res = new ArrayList<>();
+		while(rs.next()) {
+			res.add( toCursoDtoWithCol( rs ) );
+		}
+		return res;
+	}
+	
+	private static CursoDTO toCursoDtoWithCol(ResultSet m) throws SQLException {
+		CursoDTO dto = new CursoDTO();
+		dto.title = m.getString("nombre_curso");
+		dto.price = m.getDouble("precio_colectivo");
+		
+		dto.fechaInicioInscipcion = m.getDate("inicio_inscripcion");
+		dto.fechaFinInscipcion = m.getDate("fin_inscripcion");
+		dto.plazasDisponibles = m.getInt("numero_plazas");
+		dto.abierto = m.getBoolean("is_open");
+		
+		dto.days = new ArrayList<>();
+		
+		dto.plazasSolicitadas = InscripcionDataBase.getApuntados(dto.title);
+		
+		return dto;
+	}
+
+	public static void makeCancelable(String nombre_curso, int porcentajeDevolver, Connection conn) {
+		
+		PreparedStatement st = null;
+		
+		try
+		{
+			
+			st = conn.prepareStatement(CURSOS_MAKE_CANCELABLE);
+			
+			st.setInt(1, porcentajeDevolver);
+			st.setString(2, nombre_curso);
+			
+			st.executeUpdate();	
+						
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				st.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}	
+		
 	}
 	
 }

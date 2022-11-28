@@ -86,6 +86,8 @@ public class ConfigurarCurso extends JPanel {
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_4;
 	private AñadirActividadFormativa af;
+	private JLabel lblPorcDevolver;
+	private boolean cancelable = false;
 
 	/**
 	 * Create the panel.
@@ -124,6 +126,7 @@ public class ConfigurarCurso extends JPanel {
 		add(getLblNewLabel_2());
 		add(getLblNewLabel_3());
 		add(getLblNewLabel_4());
+		add(getLblPorcDevolver());
 		cargarFechas();
 		cargarProfesores();
 		cargarColectivos();
@@ -266,6 +269,8 @@ public class ConfigurarCurso extends JPanel {
 	{
 		JOptionPane.showConfirmDialog(this,new String("Esta actividad se esta solapando con otra. Cambie la hora y duración."),"Aviso solapamiento",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
+
+	@SuppressWarnings("unused")
 	private void mostrarMensajeFaltanDatos()
 	{
 		JOptionPane.showConfirmDialog(this,new String("Termine de asignar todas las sesiones."),"Aviso faltan datos",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
@@ -273,7 +278,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpProfesores() {
 		if (spProfesores == null) {
 			spProfesores = new JScrollPane();
-			spProfesores.setBounds(440, 89, 292, 125);
+			spProfesores.setBounds(440, 89, 292, 113);
 			spProfesores.setViewportView(getTableProfesores());
 		}
 		return spProfesores;
@@ -309,8 +314,9 @@ public class ConfigurarCurso extends JPanel {
 			btFinalizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					af.configurado();
-					cerrar();
+					cerrar();					
 					controler.finalizar();
+					d.dispose();
 				}
 			});
 			btFinalizar.setBackground(new Color(154, 205, 50));
@@ -321,11 +327,14 @@ public class ConfigurarCurso extends JPanel {
 	private void cerrar()
 	{
 		CursoDataBase.inscribirColectivos(colectivos,controler.getConn());
-		d.dispose();
+		if(cancelable) {
+			CursoDataBase.makeCancelable(nombre_curso,(int) getSpinner().getValue(), controler.getConn());
+		}				
 	}
 	private void cerrarSioSi() {
 		d.dispose();
 	}
+	@SuppressWarnings("deprecation")
 	private JSpinner getSpDescuento() {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
@@ -416,7 +425,7 @@ public class ConfigurarCurso extends JPanel {
 	private JScrollPane getSpProfesoresAsignados() {
 		if (spProfesoresAsignados == null) {
 			spProfesoresAsignados = new JScrollPane();
-			spProfesoresAsignados.setBounds(440, 243, 292, 90);
+			spProfesoresAsignados.setBounds(440, 231, 292, 71);
 			spProfesoresAsignados.setViewportView(getLtProfesoresAsignados());
 		}
 		return spProfesoresAsignados;
@@ -431,14 +440,21 @@ public class ConfigurarCurso extends JPanel {
 	private JCheckBox getChCancelable() {
 		if (chCancelable == null) {
 			chCancelable = new JCheckBox("Cancelable");
-			chCancelable.setBounds(441, 352, 111, 21);
+			chCancelable.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cacelable();
+				}
+			});
+			chCancelable.setBounds(450, 324, 111, 21);
 		}
 		return chCancelable;
 	}
 	private JSpinner getSpinner() {
 		if (spinner == null) {
 			spinner = new JSpinner();
-			spinner.setBounds(588, 353, 144, 20);
+			spinner.setEnabled(false);
+			spinner.setModel(new SpinnerNumberModel(0, 0, 100, 1));
+			spinner.setBounds(579, 352, 153, 20);
 		}
 		return spinner;
 	}
@@ -468,7 +484,7 @@ public class ConfigurarCurso extends JPanel {
 	private JSeparator getSeparator_1_1() {
 		if (separator_1_1 == null) {
 			separator_1_1 = new JSeparator();
-			separator_1_1.setBounds(440, 343, 292, 13);
+			separator_1_1.setBounds(440, 310, 292, 13);
 		}
 		return separator_1_1;
 	}
@@ -503,8 +519,20 @@ public class ConfigurarCurso extends JPanel {
 	private JLabel getLblNewLabel_4() {
 		if (lblNewLabel_4 == null) {
 			lblNewLabel_4 = new JLabel("Profesorado a\u00F1adido: ");
-			lblNewLabel_4.setBounds(440, 224, 292, 13);
+			lblNewLabel_4.setBounds(440, 213, 292, 13);
 		}
 		return lblNewLabel_4;
+	}
+	private JLabel getLblPorcDevolver() {
+		if (lblPorcDevolver == null) {
+			lblPorcDevolver = new JLabel("Porcentaje a devolver:");
+			lblPorcDevolver.setBounds(450, 352, 119, 20);
+		}
+		return lblPorcDevolver;
+	}
+
+	private void cacelable() {
+		cancelable = getChCancelable().isSelected();
+		getSpinner().setEnabled(cancelable);
 	}
 }

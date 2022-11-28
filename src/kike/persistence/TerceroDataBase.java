@@ -4,17 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
+import kike.modelo.tercero.TerceroDTO;
 import main.DatabaseConnection;
 
-public class ColectivoDataBase {
+public class TerceroDataBase {
 
-	private static final String GET_COLECTIVOS = "select * from colectivo";
-	
-	public static List<String> getColectivos() {
-		List<String> cols = new ArrayList<String>();
+	private static final String FIND_TERCERO_DNI = "select * from terceros where dni = ?";
+
+	public static Optional<TerceroDTO> getTerceroByDNI(String dni) {
+		Optional<TerceroDTO> cdto;
 		
 		Connection conn = null;
 		PreparedStatement st = null;
@@ -25,13 +25,12 @@ public class ColectivoDataBase {
 			conn = DatabaseConnection.getConnection();			
 			conn.setAutoCommit(false);
 			
-			st = conn.prepareStatement(GET_COLECTIVOS);
+			st = conn.prepareStatement(FIND_TERCERO_DNI);
+			st.setString(1, dni);
 			
 			rs = st.executeQuery();			
-			
-			while(rs.next()) {
-				cols.add(rs.getString("nombre_colectivo"));
-			}
+						
+			cdto = Optional.ofNullable(toTerceroDTO(rs));
 			
 			conn.commit();
 			
@@ -53,7 +52,21 @@ public class ColectivoDataBase {
 			}			
 		}
 		
-		return cols;
+		return cdto;
+	}
+
+	private static TerceroDTO toTerceroDTO(ResultSet rs) throws SQLException {
+		if(!rs.next()) {
+			return null;
+		}
+		
+		TerceroDTO ter = new TerceroDTO();
+		
+		ter.colectivo = rs.getString("colectivo");
+		ter.dni = rs.getString("dni");
+		ter.nombre = rs.getString("nombre");
+		
+		return ter;
 	}
 
 }

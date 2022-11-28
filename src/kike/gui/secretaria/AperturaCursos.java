@@ -3,7 +3,6 @@ package kike.gui.secretaria;
 import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
 
-import abel.vista.dialogs.ConfiguradorCurso;
 import kike.modelo.curso.CursoManager;
 
 import java.awt.BorderLayout;
