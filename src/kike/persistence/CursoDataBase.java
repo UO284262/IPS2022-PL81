@@ -20,6 +20,8 @@ public class CursoDataBase {
 	private final static String CURSOS_ABIERTOS = "select * from Actividad_formativa where is_open = true and estado != 'CANCELADA'";
 	private final static String CURSOS_ABIERTOS_COLECTIVO = "select * from Actividad_formativa af natural join colectivos_asignados ca where af.is_open = true and ca.nombre_colectivo = ? and estado != 'CANCELADA'";
 
+	private final static String CURSOS_MAKE_CANCELABLE = "update Actividad_formativa set cancelable = true, a_devolver = ? where nombre_curso = ?";
+	
 	private static final String FECHAS_CURSOS = "select * from fecha_imparticion where nombre_curso = ?";
 	private static final String GET_COLECTIVOS = "select * from colectivos_asignados where nombre_curso = ?";
 	private static final String INSERT_COLECTIVO = "insert into colectivos_asignados(nombre_curso,nombre_colectivo,precio_colectivo) values (?,?,?)";
@@ -93,7 +95,6 @@ public class CursoDataBase {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			throw new RuntimeException(e);	
@@ -171,7 +172,6 @@ public class CursoDataBase {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			throw new RuntimeException(e);	
@@ -348,7 +348,6 @@ public class CursoDataBase {
 			try {
 				conn.rollback();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			throw new RuntimeException(e);	
@@ -389,6 +388,38 @@ public class CursoDataBase {
 		dto.plazasSolicitadas = InscripcionDataBase.getApuntados(dto.title);
 		
 		return dto;
+	}
+
+	public static void makeCancelable(String nombre_curso, int porcentajeDevolver, Connection conn) {
+		
+		PreparedStatement st = null;
+		
+		try
+		{
+			
+			st = conn.prepareStatement(CURSOS_MAKE_CANCELABLE);
+			
+			st.setInt(1, porcentajeDevolver);
+			st.setString(2, nombre_curso);
+			
+			st.executeUpdate();	
+						
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				st.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}	
+		
 	}
 	
 }

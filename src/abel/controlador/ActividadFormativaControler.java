@@ -14,9 +14,9 @@ public class ActividadFormativaControler {
 	private List<Date> days = new ArrayList<Date>();
 	private DataBaseManagement db = new DataBaseManagement();
 	
+	@SuppressWarnings("deprecation")
 	public String añadirDia(int dia, int mes)
 	{
-		@SuppressWarnings("deprecation")
 		Date d = mes + 1 < LocalDate.now().getMonthValue() ? new Date(LocalDate.now().getYear() - 1900 + 1,mes + 1,dia) : new Date(LocalDate.now().getYear() - 1900,mes + 1,dia);
 		if(!days.contains(d))
 		{

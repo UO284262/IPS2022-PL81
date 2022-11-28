@@ -46,7 +46,7 @@ public class DataBaseManagement
 	
 	private final static String QUERY_IMPARTE = "insert into Imparte(profesor,nombre_curso) VALUES (?,?)";
 	
-	private final static String QUERY_FIND_PROFESORS = "select dni, descripcion from Terceros where colectivo = \"PROFESOR\"";
+	private final static String QUERY_FIND_PROFESORS = "select nombre, descripcion from Terceros where colectivo = \"PROFESOR\"";
 	
 	private final static String QUERY_FIND_FECHAS_CURSO = "select fecha from Fecha_Imparticion where nombre_curso = ?";
 	
@@ -106,7 +106,7 @@ public class DataBaseManagement
 		try
 		{	
 			conn.setAutoCommit(false);
-			System.out.println(actividad.days.get(0).toLocalDate().toString());
+			//System.out.println(actividad.days.get(0).toLocalDate().toString());
 			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_ACTIVIDAD_FORMATIVA);
 			st.setString(1, actividad.title);
 			st.setDouble(2, actividad.price);
