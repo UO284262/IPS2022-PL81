@@ -17,13 +17,20 @@ public class ActividadFormativaControler {
 	@SuppressWarnings("deprecation")
 	public String añadirDia(int dia, int mes)
 	{
-		Date d = mes + 1 < LocalDate.now().getMonthValue() ? new Date(LocalDate.now().getYear() - 1900 + 1,mes + 1,dia) : new Date(LocalDate.now().getYear() - 1900,mes + 1,dia);
+		Date d = (mes + 1 < LocalDate.now().getMonthValue()) ? (new Date(LocalDate.now().getYear() - 1900 + 1,mes,dia)) : ((mes + 1 == LocalDate.now().getMonthValue()) ?
+				((dia < LocalDate.now().getDayOfMonth()) ? (new Date(LocalDate.now().getYear() - 1900 + 1,mes,dia)) : (new Date(LocalDate.now().getYear() - 1900,mes,dia))) 
+						: new Date(LocalDate.now().getYear() - 1900,mes,dia));
 		if(!days.contains(d))
 		{
 			days.add(d);
 			return String.format("%s-%s-%s",dia,mes+1,d.getYear() + 1900);
 		}
 		return null;
+	}
+	
+	public void resetear() {
+		this.days = new ArrayList<Date>();
+		db.cancelar();
 	}
 	
 	public DataBaseManagement getDb() {
@@ -46,9 +53,9 @@ public class ActividadFormativaControler {
 			af.title = titulo;
 			af.price = precio;
 			af.days = days;
-			days = new ArrayList<Date>();
 			if(db.addActividadToDataBase(af))
 			{
+				days = new ArrayList<Date>();
 				return true;
 			}
 			return false;

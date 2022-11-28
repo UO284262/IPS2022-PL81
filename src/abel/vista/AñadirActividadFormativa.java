@@ -102,6 +102,8 @@ public class AñadirActividadFormativa extends JPanel {
 			btCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					resetearCampos();
+					getBtAñadir().setEnabled(false);
+					getBtConfigurar().setEnabled(true);
 				}
 			});
 			btCancelar.setBounds(395, 269, 85, 21);
@@ -109,7 +111,7 @@ public class AñadirActividadFormativa extends JPanel {
 		return btCancelar;
 	}
 	
-	private void resetearCampos()
+	public void resetearCampos()
 	{
 		this.getTfNombre().setText("");
 		this.getTfPrecio().setText("");
@@ -119,6 +121,7 @@ public class AñadirActividadFormativa extends JPanel {
 		this.getLbException().setVisible(false);
 		this.getLbException().setText("");
 		this.getLbMensajeDenegar().setVisible(false);
+		controler.resetear();
 	}
 	
 	private JButton getBtAñadir() {
@@ -140,6 +143,8 @@ public class AñadirActividadFormativa extends JPanel {
 					controler.finalizar();
 					getLbMensajeConfirmacion().setText("Añadido correctamente");
 					resetearCampos();
+					getBtAñadir().setEnabled(false);
+					getBtConfigurar().setEnabled(true);
 				}
 			});
 			btAñadir.setBounds(300, 269, 85, 21);

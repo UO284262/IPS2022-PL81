@@ -175,7 +175,7 @@ public class ConfigurarCurso extends JPanel {
 	private void cargarColectivos()
 	{
 		this.modeloColectivos = new DefaultComboBoxModel<String>();
-		this.modeloColectivos.addAll(ColectivoDataBase.getColectivos());
+		this.modeloColectivos.addAll(controler.getColectivos());
 		this.getCbColectivo().setModel(modeloColectivos);
 		this.getCbColectivo().setSelectedIndex(0);
 		this.colectivos = new ArrayList<>();
@@ -240,6 +240,7 @@ public class ConfigurarCurso extends JPanel {
 					int row = getTableFechas().getSelectedRow();
 					if(row < 0) mostrarMensajeElegirFecha();
 					else añadirSesion(row);
+					if(finalizar()) getBtFinalizar().setEnabled(true);
 				}
 			});
 			btAñadir.setBackground(new Color(154, 205, 50));
@@ -292,9 +293,10 @@ public class ConfigurarCurso extends JPanel {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					Object profesor = tableProfesores.getValueAt(tableProfesores.getSelectedRow(),0);
-					controler.asignarProfesor(nombre_curso,(String) profesor);
-					modeloProfesoresAsignados.addElement(String.format("%s - %s",(String) profesor, tableProfesores.getValueAt(tableProfesores.getSelectedRow(),1)));
-					if(finalizar()) getBtFinalizar().setEnabled(true);
+						if(controler.asignarProfesor(nombre_curso,(String) profesor)) {
+							modeloProfesoresAsignados.addElement(String.format("%s - %s",(String) profesor, tableProfesores.getValueAt(tableProfesores.getSelectedRow(),1)));
+							if(finalizar()) getBtFinalizar().setEnabled(true);
+						}
 				}
 			});
 		}
@@ -315,7 +317,6 @@ public class ConfigurarCurso extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					af.configurado();
 					cerrar();					
-					controler.finalizar();
 					d.dispose();
 				}
 			});
@@ -333,8 +334,8 @@ public class ConfigurarCurso extends JPanel {
 	}
 	private void cerrarSioSi() {
 		d.dispose();
+		af.resetearCampos();
 	}
-	@SuppressWarnings("deprecation")
 	private JSpinner getSpDescuento() {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
@@ -357,6 +358,7 @@ public class ConfigurarCurso extends JPanel {
 			btAñadirDescuento.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añadirDescuento();
+					if(finalizar()) getBtFinalizar().setEnabled(true);
 				}
 			});
 			btAñadirDescuento.setBackground(new Color(154, 205, 50));

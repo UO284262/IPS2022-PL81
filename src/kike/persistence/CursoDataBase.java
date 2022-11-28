@@ -405,11 +405,6 @@ public class CursoDataBase {
 			st.executeUpdate();	
 						
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 			throw new RuntimeException(e);	
 			
 		} finally {

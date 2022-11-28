@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import abel.modelo.DataBaseManagement;
@@ -64,9 +65,9 @@ public class ConfigurarActividadControler {
 		return db.findAllProfesor();
 	}
 	
-	public void asignarProfesor(String curso, String profesor)
+	public boolean asignarProfesor(String curso, String profesor)
 	{
-		db.addProfesorCurso(curso, profesor);
+		return db.addProfesorCurso(curso, profesor);
 	}
 	
 	public void finalizar() {
@@ -74,6 +75,10 @@ public class ConfigurarActividadControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
+	}
+
+	public List<String> getColectivos() {
+		return db.getColectivos();
 	}
 }

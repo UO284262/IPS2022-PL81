@@ -34,6 +34,8 @@ public class DataBaseManagement
 																			+ "FROM apuntado a INNER JOIN Colegiado c ON a.dni = c.id_colegiado"
 																			+ " WHERE a.nombre_curso = \"%s\" and a.estado != \"CANCELADA\" ORDER BY c.apellidos ASC, c.nombre ASC;";
 	
+	private static final String GET_COLECTIVOS = "select * from colectivo";
+	
 	private final static String QUERY_OBTENER_INSCRITOS_TERCEROS = "SELECT t.nombre, t.dni, a.fecha_inscripcion, a.estado, a.cantidad_abonada, t.colectivo "
 			+ "FROM apuntado a INNER JOIN Terceros t ON a.dni = t.dni"
 			+ " WHERE a.nombre_curso = \"%s\" and a.estado != \"CANCELADA\" ORDER BY t.colectivo ASC, t.nombre ASC;";
@@ -86,7 +88,7 @@ public class DataBaseManagement
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			
 		}
 			
 	}
@@ -97,7 +99,7 @@ public class DataBaseManagement
 		{
 			conn.commit();
 		} catch(Exception e) {
-			e.printStackTrace();
+			
 		}
 			
 	}
@@ -112,7 +114,7 @@ public class DataBaseManagement
 		{
 			conn.rollback();
 		} catch(Exception e) {
-			e.printStackTrace();
+		
 		}
 	}
 	
@@ -120,8 +122,6 @@ public class DataBaseManagement
 	{
 		try
 		{	
-			conn.setAutoCommit(false);
-			//System.out.println(actividad.days.get(0).toLocalDate().toString());
 			PreparedStatement st = conn.prepareStatement(QUERY_INSERT_ACTIVIDAD_FORMATIVA);
 			st.setString(1, actividad.title);
 			st.setDouble(2, actividad.price);
@@ -133,7 +133,6 @@ public class DataBaseManagement
 				st2.executeUpdate();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -179,7 +178,7 @@ public class DataBaseManagement
 			rs3.close();
 			return nombres;
 			
-		} catch (SQLException e) { e.printStackTrace();}
+		} catch (SQLException e) {}
 		return nombres;
 	}
 	
@@ -197,7 +196,7 @@ public class DataBaseManagement
 			st.close();
 			rs.close();
 			
-		} catch (SQLException e) { e.printStackTrace();}
+		} catch (SQLException e) {}
 		return d;
 	}
 
@@ -216,7 +215,7 @@ public class DataBaseManagement
 			st.close();
 			rs.close();
 			
-		} catch (SQLException e) { e.printStackTrace();}
+		} catch (SQLException e) {}
 		return d;
 	}
 	
@@ -291,7 +290,7 @@ public class DataBaseManagement
 			pendientes = SolicitarTitulacionControler.toApuntadoList(rs);
 			st.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+	
 		}
 		return pendientes.size() == 1 ? pendientes.get(0) : null;
 	}
@@ -370,7 +369,7 @@ public class DataBaseManagement
 		return true;
 	}
 	
-	public void addProfesorCurso(String curso, String profesor)
+	public boolean addProfesorCurso(String curso, String profesor)
 	{
 		try
 		{	
@@ -380,8 +379,42 @@ public class DataBaseManagement
 			st.setString(2, curso);
 			st.executeUpdate();
 			st.close();
+			return true;
 		} catch (SQLException e) {
+			return false;
 		}
+	}
+	
+	public List<String> getColectivos() {
+		List<String> cols = new ArrayList<String>();
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			
+			st = conn.prepareStatement(GET_COLECTIVOS);
+			
+			rs = st.executeQuery();			
+			
+			while(rs.next()) {
+				cols.add(rs.getString("nombre_colectivo"));
+			}
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);	
+			
+		} finally {
+			try {
+				rs.close();
+				st.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);				
+			}			
+		}
+		
+		return cols;
 	}
 	
 	private boolean seSolapa(Date fecha, String hora, int duracion)
@@ -469,10 +502,8 @@ public class DataBaseManagement
 				st.executeUpdate();
 				st.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 				return false;
 			}
-			System.out.println(id_colegiado);
 			deleteColegiado(id_colegiado);
 			return true;
 		}
@@ -495,22 +526,20 @@ public class DataBaseManagement
 			st2.close();
 			st3.close();
 			
-		} catch (SQLException e) { e.printStackTrace();}
+		} catch (SQLException e) {}
 	}
 	
 	public double amountAPagar(String id_colegiado) {
 		double amount = 0;
 		try 
 		{	
-			System.out.println(id_colegiado);
 			PreparedStatement st = conn.prepareStatement(QUERY_GET_PENDING_AMOUNT);
 			st.setString(1, id_colegiado);
 			ResultSet rs = st.executeQuery();
 			rs.next();
 			amount = rs.getDouble(1);
-			System.out.println(amount);
 			st.close();
-		} catch (SQLException e) { e.printStackTrace();
+		} catch (SQLException e) { 
 		}
 		return amount;
 	}
