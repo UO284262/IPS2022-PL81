@@ -23,13 +23,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import abel.vista.dialogs.CanceladorCurso;
-import abel.vista.dialogs.ComprobadorTitulacion;
-import abel.vista.dialogs.DarDeBaja;
-import abel.vista.dialogs.PlanificadorCurso;
-import abel.vista.dialogs.SolicitarPericial;
-import abel.vista.dialogs.SolicitarTitulacion;
-import abel.vista.dialogs.VisualizadorInscritos;
+import mvc.vista.dialogs.CanceladorCurso;
+import mvc.vista.dialogs.ComprobadorTitulacion;
+import mvc.vista.dialogs.DarDeBaja;
+import mvc.vista.dialogs.PlanificadorCurso;
+import mvc.vista.dialogs.SolicitarPericial;
+import mvc.vista.dialogs.SolicitarTitulacion;
+import mvc.vista.dialogs.VisualizadorInscritos;
 import kike.gui.colegiado.PreInscribeColegiado;
 import kike.gui.colegiado.RegistroPericial;
 import kike.gui.secretaria.SelectorCurso;
