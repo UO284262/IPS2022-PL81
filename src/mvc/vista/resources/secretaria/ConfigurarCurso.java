@@ -183,11 +183,11 @@ public class ConfigurarCurso extends JPanel {
 	{
 		modeloProfesores = new DefaultTableModel();
 		List<ProfesorDTO> profesores = controler.getAllProfesores();
-		Object[] data = {"Nombre","Especialidad"};
+		Object[] data = {"Dni","Nombre","Especialidad"};
 		modeloProfesores.setColumnIdentifiers(data);
 		for(ProfesorDTO p : profesores)
 		{
-			Object[] profesor = {p.profesor,p.especialidad};
+			Object[] profesor = {p.dni,p.profesor,p.especialidad};
 			modeloProfesores.addRow(profesor);
 		}
 		this.getTableProfesores().setModel(modeloProfesores);
@@ -291,9 +291,10 @@ public class ConfigurarCurso extends JPanel {
 			tableProfesores.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					Object profesor = tableProfesores.getValueAt(tableProfesores.getSelectedRow(),0);
-						if(controler.asignarProfesor(nombre_curso,(String) profesor)) {
-							modeloProfesoresAsignados.addElement(String.format("%s - %s",(String) profesor, tableProfesores.getValueAt(tableProfesores.getSelectedRow(),1)));
+					Object profesor = tableProfesores.getValueAt(tableProfesores.getSelectedRow(),1);
+					Object dni = tableProfesores.getValueAt(tableProfesores.getSelectedRow(),0);
+						if(controler.asignarProfesor(nombre_curso,(String) dni,(String) profesor)) {
+							modeloProfesoresAsignados.addElement(String.format("%s - %s",(String) profesor, tableProfesores.getValueAt(tableProfesores.getSelectedRow(),2)));
 							if(finalizar()) getBtFinalizar().setEnabled(true);
 						}
 				}

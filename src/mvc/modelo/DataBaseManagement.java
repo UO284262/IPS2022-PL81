@@ -56,9 +56,9 @@ public class DataBaseManagement
 	
 	private final static String QUERY_SET_VALIDANDO = "UPDATE Colegiado set tipoSolicitud = \"VALIDANDO\" WHERE dni = ?";
 	
-	private final static String QUERY_IMPARTE = "insert into Imparte(profesor,nombre_curso) VALUES (?,?)";
+	private final static String QUERY_IMPARTE = "insert into Imparte(profesor,nombre_curso,dni_profesor) VALUES (?,?,?)";
 	
-	private final static String QUERY_FIND_PROFESORS = "select nombre, descripcion from Terceros where colectivo = \"PROFESOR\"";
+	private final static String QUERY_FIND_PROFESORS = "select dni, nombre, descripcion from Terceros where colectivo = \"PROFESOR\"";
 	
 	private final static String QUERY_FIND_FECHAS_CURSO = "select fecha from Fecha_Imparticion where nombre_curso = ?";
 	
@@ -375,7 +375,7 @@ public class DataBaseManagement
 		return true;
 	}
 	
-	public boolean addProfesorCurso(String curso, String profesor)
+	public boolean addProfesorCurso(String curso,String dni, String profesor)
 	{
 		try
 		{	
@@ -383,6 +383,7 @@ public class DataBaseManagement
 			PreparedStatement st = conn.prepareStatement(QUERY_IMPARTE);
 			st.setString(1, profesor);
 			st.setString(2, curso);
+			st.setString(3, dni);
 			st.executeUpdate();
 			st.close();
 			return true;

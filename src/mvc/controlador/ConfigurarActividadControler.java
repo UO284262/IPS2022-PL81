@@ -28,8 +28,9 @@ public class ConfigurarActividadControler {
 		while(rs.next())
 		{
 			ProfesorDTO profesor = new ProfesorDTO();
-			profesor.profesor = rs.getString(1);
-			profesor.especialidad = rs.getString(2);
+			profesor.profesor = rs.getString(2);
+			profesor.especialidad = rs.getString(3);
+			profesor.dni = rs.getString(1);
 			profesores.add(profesor);
 		}
 		return profesores;
@@ -64,9 +65,9 @@ public class ConfigurarActividadControler {
 		return db.findAllProfesor();
 	}
 	
-	public boolean asignarProfesor(String curso, String profesor)
+	public boolean asignarProfesor(String curso, String dni, String profesor)
 	{
-		return db.addProfesorCurso(curso, profesor);
+		return db.addProfesorCurso(curso, dni, profesor);
 	}
 	
 	public void finalizar() {
