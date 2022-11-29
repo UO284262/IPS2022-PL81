@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mvc.modelo.DataBaseManagement;
-import mvc.modelo.FormularioPericialDTO;
+import mvc.modelo.tercero.FormularioPericialDTO;
 
 public class FormularioPericialControler {
 	

@@ -5,12 +5,11 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import mvc.modelo.DataBaseManagement;
-import mvc.modelo.ImparticionDTO;
-import mvc.modelo.ProfesorDTO;
+import mvc.modelo.curso.ImparticionDTO;
+import mvc.modelo.tercero.ProfesorDTO;
 
 public class ConfigurarActividadControler {
 	

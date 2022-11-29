@@ -15,6 +15,12 @@ import mvc.controlador.CanceladorCursoControler;
 import mvc.controlador.ConfigurarActividadControler;
 import mvc.controlador.SolicitarTitulacionControler;
 import mvc.controlador.VisualizarInscritosCursoControler;
+import mvc.modelo.colegiado.ColegiadoInscritoDTO;
+import mvc.modelo.curso.ActividadFormativaDTO;
+import mvc.modelo.curso.ImparticionDTO;
+import mvc.modelo.tercero.ApuntadoDTO;
+import mvc.modelo.tercero.FormularioPericialDTO;
+import mvc.modelo.tercero.ProfesorDTO;
 
 public class DataBaseManagement 
 {

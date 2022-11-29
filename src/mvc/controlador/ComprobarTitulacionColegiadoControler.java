@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import mvc.modelo.ActividadFormativaDTO;
-import mvc.modelo.ColegiadoSolicitadoDTO;
 import mvc.modelo.DataBaseManagement;
+import mvc.modelo.colegiado.ColegiadoSolicitadoDTO;
+import mvc.modelo.curso.ActividadFormativaDTO;
 import util.FileUtil;
 
 public class ComprobarTitulacionColegiadoControler {

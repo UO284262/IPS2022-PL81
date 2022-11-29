@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import mvc.modelo.ActividadFormativaDTO;
-import mvc.modelo.ApuntadoDTO;
 import mvc.modelo.DataBaseManagement;
+import mvc.modelo.curso.ActividadFormativaDTO;
+import mvc.modelo.tercero.ApuntadoDTO;
 
 public class VisualizarInscritosCursoControler {
 	

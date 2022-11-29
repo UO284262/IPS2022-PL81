@@ -23,21 +23,21 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import mvc.vista.dialogs.CanceladorCurso;
-import mvc.vista.dialogs.ComprobadorTitulacion;
-import mvc.vista.dialogs.DarDeBaja;
-import mvc.vista.dialogs.PlanificadorCurso;
-import mvc.vista.dialogs.SolicitarPericial;
-import mvc.vista.dialogs.SolicitarTitulacion;
-import mvc.vista.dialogs.VisualizadorInscritos;
-import kike.gui.colegiado.PreInscribeColegiado;
-import kike.gui.colegiado.RegistroPericial;
-import kike.gui.secretaria.SelectorCurso;
-import kike.modelo.curso.CursoDTO;
-import kike.persistence.CursoDataBase;
-import rodro.controlador.EmitirRecibosControler;
-import rodro.controlador.SolicitudControler;
-import rodro.vista.VentanaSolicitud;
+import mvc.controlador.CursoDataBase;
+import mvc.controlador.EmitirRecibosControler;
+import mvc.controlador.SolicitudControler;
+import mvc.modelo.curso.CursoDTO;
+import mvc.vista.dialogs.colegiado.DarDeBaja;
+import mvc.vista.dialogs.colegiado.PreInscribeColegiado;
+import mvc.vista.dialogs.colegiado.RegistroPericial;
+import mvc.vista.dialogs.secretaria.CanceladorCurso;
+import mvc.vista.dialogs.secretaria.ComprobadorTitulacion;
+import mvc.vista.dialogs.secretaria.PlanificadorCurso;
+import mvc.vista.dialogs.secretaria.SelectorCurso;
+import mvc.vista.dialogs.secretaria.SolicitarTitulacion;
+import mvc.vista.dialogs.secretaria.VentanaSolicitud;
+import mvc.vista.dialogs.secretaria.VisualizadorInscritos;
+import mvc.vista.dialogs.terceros.SolicitarPericial;
 
 public class Main {
 

@@ -1,6 +1,7 @@
 package util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 //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
 
-import mvc.modelo.ColegiadoSolicitadoDTO;
+import mvc.modelo.colegiado.ColegiadoSolicitadoDTO;
+import mvc.modelo.recibo.ReciboDto;
 
 public class FileUtil {
 	public static void appendToFile(String file, String toAppend)
@@ -61,5 +63,20 @@ public class FileUtil {
 	public static void deleteRecibidos() {
 		File file = new File("files/recibirTitulacion.csv");
 		file.delete();
+	}
+	
+	public static void saveToFile(String nombreFicheroSalida, List<ReciboDto> listaRecibos) { 
+		try {
+			BufferedWriter fichero = new BufferedWriter(new FileWriter("files/" + nombreFicheroSalida + ".dat"));
+			String linea = listaRecibos.toString();
+			fichero.write(linea);
+			fichero.close();
+		}
+
+		catch (FileNotFoundException fnfe) {
+			System.out.println("El archivo no se ha podido guardar");
+		} catch (IOException ioe) {
+			new RuntimeException("Error de entrada/salida");
+		}
 	}
 }
