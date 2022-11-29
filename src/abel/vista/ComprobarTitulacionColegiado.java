@@ -61,6 +61,7 @@ public class ComprobarTitulacionColegiado extends JPanel {
 			this.mostrarMensajeNadaRecibido();
 			controler.cancelar();
 			this.cerrar();
+			this.getBtActualizar().setEnabled(false);
 			return false;
 		}
 		else

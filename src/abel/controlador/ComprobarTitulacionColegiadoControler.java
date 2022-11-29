@@ -45,7 +45,7 @@ public class ComprobarTitulacionColegiadoControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 
 	public void setEstado(String dni, String estado) {

@@ -48,7 +48,7 @@ public class CanceladorCursoControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 	
 	

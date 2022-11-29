@@ -25,6 +25,7 @@ import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 
@@ -143,6 +144,7 @@ public class AñadirActividadFormativa extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					controler.finalizar();
 					getLbMensajeConfirmacion().setText("Añadido correctamente");
+					mostrarMensajeAñadido();
 					resetearCampos();
 					getBtAñadir().setEnabled(false);
 					getBtConfigurar().setEnabled(true);
@@ -151,6 +153,11 @@ public class AñadirActividadFormativa extends JPanel {
 			btAñadir.setBounds(300, 269, 85, 21);
 		}
 		return btAñadir;
+	}
+	private void mostrarMensajeAñadido() {
+		JOptionPane.showConfirmDialog(this,
+				new String("Se ha añadido la actividad correctamente"),"Aviso actividad añadida",
+				JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 	}
 	private JLabel getLbNombre() {
 		if (lbNombre == null) {

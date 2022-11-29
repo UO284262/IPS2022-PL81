@@ -84,6 +84,6 @@ public class SolicitarTitulacionControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 }

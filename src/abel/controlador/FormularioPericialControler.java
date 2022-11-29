@@ -56,6 +56,6 @@ public class FormularioPericialControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 }

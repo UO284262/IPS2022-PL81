@@ -49,7 +49,6 @@ public class FileUtil {
 	    		fichero.close();
 	    }
 	    catch (FileNotFoundException fnfe) {
-	      System.out.println("El archivo no se ha encontrado.");
 	    }
 	    catch (IOException ioe) {
 	      new RuntimeException("Error de entrada/salida.");

@@ -59,6 +59,6 @@ public class DarDeBajaColegiadoControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 }

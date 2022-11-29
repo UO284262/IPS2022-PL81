@@ -88,6 +88,6 @@ public class VisualizarInscritosCursoControler {
 	}
 	
 	public void cancelar() {
-		db.finalizar();
+		db.cancelar();
 	}
 }
