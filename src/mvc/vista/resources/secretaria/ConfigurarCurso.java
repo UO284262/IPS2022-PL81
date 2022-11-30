@@ -336,6 +336,7 @@ public class ConfigurarCurso extends JPanel {
 		d.dispose();
 		af.resetearCampos();
 	}
+	@SuppressWarnings("deprecation")
 	private JSpinner getSpDescuento() {
 		if (spDescuento == null) {
 			spDescuento = new JSpinner();
